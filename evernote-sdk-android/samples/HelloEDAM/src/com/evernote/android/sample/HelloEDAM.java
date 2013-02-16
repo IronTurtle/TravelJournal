@@ -41,6 +41,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -127,6 +128,11 @@ public class HelloEDAM extends Activity {
     public String mimeType;
     public String fileName;
   }
+  
+  //Note fields
+  EditText title;
+  EditText location;
+  EditText entry;
 
   private ImageData mImageData;
 
@@ -143,13 +149,15 @@ public class HelloEDAM extends Activity {
     //mBtnSelect = (Button) findViewById(R.id.select_button);
     mBtnSave = (Button) findViewById(R.id.save_button);
     mImageView = (ImageView) findViewById(R.id.note_image);
-    //mTextArea = (EditText) findViewById(R.id.note_text_area);
+    title = (EditText) findViewById(R.id.note_title);
+    location = (EditText) findViewById(R.id.note_location);
+    entry = (EditText) findViewById(R.id.note_entry);
 
     btnTakePhoto = (Button) findViewById(R.id.camera_button);
     imgTakenPhoto = (ImageView) findViewById(R.id.note_image);
 
     btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
-  
+    entry.setOnKeyListener(new NoteEntryField());
     
     if (getLastNonConfigurationInstance() != null) {
       mImageData = (ImageData) getLastNonConfigurationInstance();
@@ -206,7 +214,8 @@ public class HelloEDAM extends Activity {
   private void updateUi() {
     if (mEvernoteSession.isLoggedIn()) {
       mBtnAuth.setText(R.string.label_log_out);
-      if (mImageData != null && !TextUtils.isEmpty(mImageData.filePath)) {
+      if ((mImageData != null && !TextUtils.isEmpty(mImageData.filePath)) || 
+    		  (entry.getText().length() > 0)) {
         mBtnSave.setEnabled(true);
       } else {
         mBtnSave.setEnabled(false);
@@ -265,6 +274,22 @@ public class HelloEDAM extends Activity {
     		  
     	  }
     }
+  }
+  
+  /**
+   * Button to capture image for note
+   * @author ironsuturtle
+   * Sends the user to the camera application to take a photo and save
+   */
+  class NoteEntryField implements EditText.OnKeyListener
+  {
+      
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		updateUi();
+		return false;
+	}
   }
   
   /**
@@ -346,9 +371,6 @@ public class HelloEDAM extends Activity {
 
         // Create a new Note
         Note note = new Note();
-        EditText title = (EditText) findViewById(R.id.note_title);
-        EditText location = (EditText) findViewById(R.id.note_location);
-        EditText entry = (EditText) findViewById(R.id.note_entry);
         String noteTitleString = title.getText().toString();// + " at " + location.getText().toString();
         note.setTitle(noteTitleString);
         note.addToResources(resource);
@@ -357,7 +379,8 @@ public class HelloEDAM extends Activity {
         // http://dev.evernote.com/documentation/cloud/chapters/ENML.php
         String content =
             EvernoteUtil.NOTE_PREFIX +
-                "<p>" + entry.getText().toString() + "</p>" +
+                "<p>" + "Location: " + location.getText().toString() +
+                "\n" + entry.getText().toString() + "</p>" +
                 EvernoteUtil.createEnMediaTag(resource) +
                 EvernoteUtil.NOTE_SUFFIX;
 
