@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<!-- <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"> -->
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
@@ -20,11 +21,45 @@
             android:padding="3dp" >
 
             <Button
+                android:id="@+id/save_button"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/label_save_button"
+                android:onClick="saveImage"
+                android:layout_weight="1"/>
+
+            <Button
                 android:id="@+id/auth_button"
+                style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="startAuth"
+                android:layout_weight="1"
                 android:text="@string/label_log_in" />
+            
+            <!--<android.support.v7.widget.Space
+                android:id="@+id/space4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10" />
+                -->
+                        
+            <Button
+                android:id="@+id/camera_button"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_camera_button"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/note_award"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/awardIcon"
+                android:layout_weight="1" />
 
         </LinearLayout>
 	
@@ -74,7 +109,7 @@
 
     </LinearLayout>
 
-    <LinearLayout android:id="@+id/image_button_wrapper"
+    <!--<LinearLayout android:id="@+id/image_button_wrapper"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
@@ -106,8 +141,8 @@
                 android:text="@string/label_save_button"
                 android:onClick="saveImage"
                 android:layout_weight="1"/>
-
-    </LinearLayout>
+		
+    	</LinearLayout> -->
 
     <!-- <EditText
         android:id="@+id/note_text_area"
@@ -120,4 +155,4 @@
         android:inputType="textMultiLine" />
 	-->
 
-</FrameLayout>
+<!--</FrameLayout> -->

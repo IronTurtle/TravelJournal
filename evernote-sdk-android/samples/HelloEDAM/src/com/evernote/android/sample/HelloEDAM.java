@@ -140,7 +140,7 @@ public class HelloEDAM extends Activity {
     setContentView(R.layout.main);
 
     mBtnAuth = (Button) findViewById(R.id.auth_button);
-    mBtnSelect = (Button) findViewById(R.id.select_button);
+    //mBtnSelect = (Button) findViewById(R.id.select_button);
     mBtnSave = (Button) findViewById(R.id.save_button);
     mImageView = (ImageView) findViewById(R.id.note_image);
     //mTextArea = (EditText) findViewById(R.id.note_text_area);
@@ -211,11 +211,11 @@ public class HelloEDAM extends Activity {
       } else {
         mBtnSave.setEnabled(false);
       }
-      mBtnSelect.setEnabled(true);
+      //mBtnSelect.setEnabled(true);
     } else {
       mBtnAuth.setText(R.string.label_log_in);
       mBtnSave.setEnabled(false);
-      mBtnSelect.setEnabled(false);
+      //mBtnSelect.setEnabled(false);
     }
   }
 
@@ -347,6 +347,7 @@ public class HelloEDAM extends Activity {
         // Create a new Note
         Note note = new Note();
         EditText title = (EditText) findViewById(R.id.note_title);
+        EditText location = (EditText) findViewById(R.id.note_location);
         EditText entry = (EditText) findViewById(R.id.note_entry);
         
         note.setTitle(title.getText().toString());
@@ -356,7 +357,7 @@ public class HelloEDAM extends Activity {
         // http://dev.evernote.com/documentation/cloud/chapters/ENML.php
         String content =
             EvernoteUtil.NOTE_PREFIX +
-                "<p>" + entry.getText().toString() + "</p>" +
+                "<p>" + entry.getText().toString() + " @ " + location.getText().toString()  + "</p>" +
                 EvernoteUtil.createEnMediaTag(resource) +
                 EvernoteUtil.NOTE_SUFFIX;
 
