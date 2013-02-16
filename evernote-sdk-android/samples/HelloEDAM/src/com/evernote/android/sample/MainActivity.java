@@ -213,7 +213,7 @@ public class MainActivity extends Activity {
       mBtnAuth.setText(R.string.label_log_out);
       listViewCreate();
     } else {
-      mBtnAuth.setText(R.string.label_log_in);
+//      mBtnAuth.setText(R.string.label_log_in);
     }
   }
 
@@ -332,7 +332,7 @@ public class MainActivity extends Activity {
       }    
 
       ListView listView = (ListView) findViewById(R.id.lview);
-      SnippetAdapter adapter = new SnippetAdapter(MainActivity.this, R.layout.snippet, entries);
+      SnippetAdapter adapter = new SnippetAdapter(MainActivity.this, R.layout.snippet, entries, mEvernoteSession);
       listView.setAdapter(adapter);
       //listView.setScrollingCacheEnabled(false);
       listView.setOnItemClickListener(new OnItemClickListener()
