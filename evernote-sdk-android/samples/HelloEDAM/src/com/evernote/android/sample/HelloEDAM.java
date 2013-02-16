@@ -349,15 +349,15 @@ public class HelloEDAM extends Activity {
         EditText title = (EditText) findViewById(R.id.note_title);
         EditText location = (EditText) findViewById(R.id.note_location);
         EditText entry = (EditText) findViewById(R.id.note_entry);
-        
-        note.setTitle(title.getText().toString());
+        String noteTitleString = title.getText().toString();// + " at " + location.getText().toString();
+        note.setTitle(noteTitleString);
         note.addToResources(resource);
 
         // Set the note's ENML content. Learn about ENML at
         // http://dev.evernote.com/documentation/cloud/chapters/ENML.php
         String content =
             EvernoteUtil.NOTE_PREFIX +
-                "<p>" + entry.getText().toString() + " @ " + location.getText().toString()  + "</p>" +
+                "<p>" + entry.getText().toString() + "</p>" +
                 EvernoteUtil.createEnMediaTag(resource) +
                 EvernoteUtil.NOTE_SUFFIX;
 
@@ -541,6 +541,47 @@ public class HelloEDAM extends Activity {
       mImageData = image;
     }
   }
+  /**
+   * Called when control returns from the image gallery picker.
+   * Loads the image that the user selected.
+   */
+  private class Test extends AsyncTask<Intent, Void, ImageData> {
 
+    // using showDialog, could use Fragments instead
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onPreExecute() {
+      showDialog(DIALOG_PROGRESS);
+    }
+
+    /**
+     * The callback from the gallery contains a pointer into a table.
+     * Look up the appropriate record and pull out the information that we need,
+     * in this case, the path to the file on disk, the file name and the MIME type.
+     *
+     * @param intents
+     * @return
+     */
+    // using Display.getWidth and getHeight on older SDKs
+    @SuppressWarnings("deprecation")
+    @Override
+    // suppress lint check on Display.getSize(Point)
+    @TargetApi(16)
+    protected ImageData doInBackground(Intent... intents) {
+      if (intents == null || intents.length == 0) {
+        return null;
+      }
+
+      try {
+        
+        
+      } catch (Exception e) {
+        Log.e(TAG, "Error retrieving image");
+      } finally {
+        
+      }
+	return mImageData;
+    }
+  }
 
 }
