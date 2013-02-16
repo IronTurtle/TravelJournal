@@ -122,12 +122,20 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
        JsonUploader uploader = new JsonUploader();
      */
 
-    snippetText.setText(snippetEntry.getTitle());
-    snippetDate.setText("test");
+    snippetEvent.setText(snippetEntry.getTitle());
+    snippetDate.setText(String.valueOf(snippetEntry.getUpdated()));
+try{
+    new ContentDler().execute(snippetEntry, snippetText);
+}
+catch(Exception e)
+{
+  e.printStackTrace();
+}
+  snippetLocation.setText("Evernote Hack");
 
     ThumbDler mThumbDler = new ThumbDler();
     try{
-    mThumbDler.execute(snippetEntry, snippetPic).get();
+      mThumbDler.execute(snippetEntry, snippetPic);
     }
     catch(Exception e)
     {
@@ -155,12 +163,12 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
     // TODO Auto-generated catch block
     e.printStackTrace();
        }
-*/
-/*
+     */
+    /*
        try
        {
     //   String path = jp.getJSONObject(0).getString("path");
-     //  String imageUrl = "http://kevinsutardji.com:8080/images/" + path;
+    //  String imageUrl = "http://kevinsutardji.com:8080/images/" + path;
     String imageUrl="http://lorempixel.com/100/80/";
     Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(imageUrl).getContent());
     Bitmap resized = Bitmap.createScaledBitmap(bitmap, 100, 80, false);
@@ -179,8 +187,37 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
   {
   e.printStackTrace();
 
-  */   
+     */   
     return snippetView;
+  }
+
+  private class ContentDler extends AsyncTask<Object, String, String>
+  {
+    TextView snippetText;
+
+    @Override
+    protected String doInBackground(Object... param)
+    {
+      NoteMetadata snippetEntry = (NoteMetadata) param[0];
+      snippetText = (TextView) param[1];
+      String output;
+      try
+      {
+        output = mEvernoteSession.createNoteStore().getNote(mEvernoteSession.getAuthToken(), snippetEntry.getGuid(), true, true, false, false).getContent();
+      }
+      catch(Exception e)
+      {
+        e.printStackTrace();
+        output = "Exception";
+      }
+      return output;
+
+    }
+
+    @Override
+    protected void onPostExecute(String text) {
+      snippetText.setText(text);
+    }
   }
 
   private class ThumbDler extends AsyncTask<Object, String, Bitmap>
@@ -221,7 +258,7 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {
-snippetPic.setImageBitmap(bitmap);
+      snippetPic.setImageBitmap(bitmap);
     }
   }
 }
