@@ -142,11 +142,11 @@ public class HelloEDAM extends Activity {
     mBtnAuth = (Button) findViewById(R.id.auth_button);
     mBtnSelect = (Button) findViewById(R.id.select_button);
     mBtnSave = (Button) findViewById(R.id.save_button);
-    mImageView = (ImageView) findViewById(R.id.image);
+    mImageView = (ImageView) findViewById(R.id.note_image);
     //mTextArea = (EditText) findViewById(R.id.note_text_area);
 
     btnTakePhoto = (Button) findViewById(R.id.camera_button);
-    imgTakenPhoto = (ImageView) findViewById(R.id.image);
+    imgTakenPhoto = (ImageView) findViewById(R.id.note_image);
 
     btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
   
@@ -346,14 +346,17 @@ public class HelloEDAM extends Activity {
 
         // Create a new Note
         Note note = new Note();
-        note.setTitle("Android test note");
+        EditText title = (EditText) findViewById(R.id.note_title);
+        EditText entry = (EditText) findViewById(R.id.note_entry);
+        
+        note.setTitle(title.getText().toString());
         note.addToResources(resource);
 
         // Set the note's ENML content. Learn about ENML at
         // http://dev.evernote.com/documentation/cloud/chapters/ENML.php
         String content =
             EvernoteUtil.NOTE_PREFIX +
-                "<p>" + "" + "</p>" +
+                "<p>" + entry.getText().toString() + "</p>" +
                 EvernoteUtil.createEnMediaTag(resource) +
                 EvernoteUtil.NOTE_SUFFIX;
 

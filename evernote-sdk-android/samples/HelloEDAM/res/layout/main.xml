@@ -5,23 +5,74 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout android:id="@+id/auth_button_wrapper"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:layout_gravity="top"
-                  android:gravity="center"
-                  android:background="#aacccccc"
-                  android:padding="3dp">
-        <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+	
+        <LinearLayout
+            android:id="@+id/auth_button_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#aacccccc"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="3dp" >
+
+            <Button
                 android:id="@+id/auth_button"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="@string/label_log_in"
-                android:onClick="startAuth"/>
+                android:layout_height="wrap_content"
+                android:onClick="startAuth"
+                android:text="@string/label_log_in" />
+
+        </LinearLayout>
+	
+        <EditText
+            android:id="@+id/note_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/titlePlaceholder"
+            android:inputType="text" >
+
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/note_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/locationPlaceholder"
+            android:inputType="textPostalAddress" />
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/note_entry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/entryPlaceholder"
+                android:inputType="textMultiLine" />
+
+            <ImageView
+                android:id="@+id/note_image"
+                android:layout_width="match_parent"
+                android:layout_height="128dp"
+                android:layout_marginTop="54dp"
+                android:layout_weight="2"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/img_desc" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
-
 
     <LinearLayout android:id="@+id/image_button_wrapper"
                   android:layout_width="match_parent"
@@ -68,12 +119,5 @@
         android:gravity="top|left"
         android:inputType="textMultiLine" />
 	-->
-
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="128dp"
-        android:layout_marginTop="54dp"
-        android:scaleType="centerInside" />
 
 </FrameLayout>
