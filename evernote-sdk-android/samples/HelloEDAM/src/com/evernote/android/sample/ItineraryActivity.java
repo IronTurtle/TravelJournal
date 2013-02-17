@@ -210,8 +210,9 @@ public class ItineraryActivity extends BaseActivity {
     {
       int pageSize = 10;
       NoteFilter filter = new NoteFilter();
-      filter.setOrder(NoteSortOrder.UPDATED.getValue());
-      filter.setWords("itinerary");
+    //  filter.setOrder(NoteSortOrder.UPDATED.getValue());
+
+      filter.setWords("tag:itinerary*");
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);
@@ -231,6 +232,17 @@ public class ItineraryActivity extends BaseActivity {
 //      entries.addAll(notes.getNotes());     
     for(NoteMetadata note : notes.getNotes())
     {
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
+        System.out.println(note.getTitle());
       entries.add(note.getTitle());
     }
       
