@@ -1,0 +1,5 @@
+INDEX VERSION 1.126+/home/ironsuturtle/TravelJournal/.metadata/.plugins/org.eclipse.jdt.core
+2040064081.index
+529527897.index
+2825756525.index
+765453901.index

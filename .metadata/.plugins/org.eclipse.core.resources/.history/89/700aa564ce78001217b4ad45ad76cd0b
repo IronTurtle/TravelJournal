@@ -72,20 +72,11 @@
                 android:layout_weight="1" />
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/note_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:contentDescription="@string/img_desc"
-            android:scaleType="centerInside" />
 	
         <EditText
             android:id="@+id/note_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ems="10"
             android:hint="@string/titlePlaceholder"
             android:inputType="text" >
@@ -97,19 +88,32 @@
             android:id="@+id/note_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ems="10"
             android:hint="@string/locationPlaceholder"
             android:inputType="textPostalAddress" />
-
-        <EditText
-            android:id="@+id/note_entry"
+        
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_weight="2"
-            android:ems="10"
-            android:hint="@string/entryPlaceholder"
-            android:inputType="textMultiLine" />
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/note_entry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/entryPlaceholder"
+                android:inputType="textMultiLine" />
+
+            <ImageView
+                android:id="@+id/note_image"
+                android:layout_width="match_parent"
+                android:layout_height="128dp"
+                android:layout_weight="2"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/img_desc" />
+
+        </LinearLayout>
 
 
     </LinearLayout>

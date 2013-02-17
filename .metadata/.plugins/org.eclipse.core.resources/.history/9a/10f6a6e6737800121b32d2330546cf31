@@ -1,0 +1,14 @@
+package com.evernote.android.sample;
+
+import android.content.Context;
+import android.widget.TabHost;
+
+
+public class TabLayoutActivity extends TabHost {
+
+	public TabLayoutActivity(Context context) {
+		super(context);
+		// TODO Auto-generated constructor stub
+	}
+	
+}

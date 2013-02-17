@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- <FrameLayout
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"> -->
+        android:layout_height="match_parent">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
@@ -21,100 +20,61 @@
             android:padding="3dp" >
 
             <Button
-                android:id="@+id/save_button"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/label_save_button"
-                android:onClick="saveImage"
-                android:layout_weight="1"/>
-
-            <Button
                 android:id="@+id/auth_button"
-                style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="startAuth"
-                android:layout_weight="1"
                 android:text="@string/label_log_in" />
-            
-            <!--<android.support.v7.widget.Space
-                android:id="@+id/space4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="10" />
-                -->
-               
-		        <Button
-		        android:id="@+id/select_button"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_weight="1"
-		        android:scaleType="fitEnd"
-		        android:drawableRight="@drawable/plus"
-		        android:minWidth="@android:dimen/app_icon_size"
-		        android:onClick="startSelectImage"
-		        />         
-            <!-- <Button
-                android:id="@+id/camera_button"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/label_camera_button"
-                android:layout_weight="1" />
-			-->
-            <Button
-                android:id="@+id/note_award"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/awardIcon"
-                android:layout_weight="1" />
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/note_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:contentDescription="@string/img_desc"
-            android:scaleType="centerInside" />
 	
         <EditText
-            android:id="@+id/note_title"
+            android:id="@+id/editText2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/titlePlaceholder"
+            android:hint="@id/titlePlaceholder"
             android:inputType="text" >
 
             <requestFocus />
         </EditText>
 
         <EditText
-            android:id="@+id/note_location"
+            android:id="@+id/editText3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ems="10"
             android:hint="@string/locationPlaceholder"
             android:inputType="textPostalAddress" />
-
-        <EditText
-            android:id="@+id/note_entry"
+        
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_weight="2"
-            android:ems="10"
-            android:hint="@string/entryPlaceholder"
-            android:inputType="textMultiLine" />
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@id/notePlaceholder"
+                android:inputType="textMultiLine" />
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="128dp"
+                android:layout_marginTop="54dp"
+                android:layout_weight="2"
+                android:scaleType="centerInside"
+                android:contentDescription="@id/img_desc" />
+
+        </LinearLayout>
 
 
     </LinearLayout>
 
-    <!--<LinearLayout android:id="@+id/image_button_wrapper"
+    <LinearLayout android:id="@+id/image_button_wrapper"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
@@ -146,8 +106,8 @@
                 android:text="@string/label_save_button"
                 android:onClick="saveImage"
                 android:layout_weight="1"/>
-		
-    	</LinearLayout> -->
+
+    </LinearLayout>
 
     <!-- <EditText
         android:id="@+id/note_text_area"
@@ -160,4 +120,4 @@
         android:inputType="textMultiLine" />
 	-->
 
-<!--</FrameLayout> -->
+</FrameLayout>
