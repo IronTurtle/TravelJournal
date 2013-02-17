@@ -370,7 +370,7 @@ public class MainActivity extends Activity {/*BaseActivity {
               long id)
             {
               String item = "clicked3";
-              Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
+              //Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
               //            Intent i = new Intent(getApplicationContext(), JournalEntry.class);
               //            startActivityForResult(i, 100);
             }
