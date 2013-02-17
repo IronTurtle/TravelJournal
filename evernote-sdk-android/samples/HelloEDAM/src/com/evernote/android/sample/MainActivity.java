@@ -252,12 +252,9 @@ public class MainActivity extends Activity {/*BaseActivity {
 
   
   public void addNoteOnClick(View view) {
-<<<<<<< HEAD
 	  
 	  Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
-=======
-	  Intent intent = new Intent(getApplicationContext(), ItineraryActivity.class);
->>>>>>> origin
+
 	  this.startActivityForResult(intent, 100);
 	  
   }
