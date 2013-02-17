@@ -27,6 +27,7 @@ package com.evernote.android.sample;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -144,6 +145,7 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
+    
 
     mBtnAuth = (Button) findViewById(R.id.auth_button);
     mBtnSelect = (Button) findViewById(R.id.select_button);
@@ -335,6 +337,7 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
       new EvernoteNoteCreator().execute(mImageData);
     }
   }
+  
   
   private class EvernoteNoteCreator extends AsyncTask<ImageData, Void, Note> {
     // using showDialog, could use Fragments instead

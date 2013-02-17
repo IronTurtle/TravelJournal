@@ -111,7 +111,7 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
 
     //Get the text boxes from the listitem.xml file
     TextView snippetEvent = (TextView)snippetView.findViewById(R.id.snippetEvent);
-    TextView snippetDate = (TextView)snippetView.findViewById(R.id.snippetDate);
+    //TextView snippetDate = (TextView)snippetView.findViewById(R.id.snippetDate);
     TextView snippetLocation = (TextView)snippetView.findViewById(R.id.snippetLocation);
     TextView snippetText = (TextView)snippetView.findViewById(R.id.snippetText);
     ImageView snippetPic = (ImageView)snippetView.findViewById(R.id.snippetPic);
@@ -125,14 +125,7 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
        JsonUploader uploader = new JsonUploader();
      */
 
-    snippetEvent.setText(snippetEntry.getTitle());
-   
-    Date date = new Date(snippetEntry.getUpdated());
-Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-    snippetDate.setText(format.format(date).toString());
-    
-
-try{
+    snippetEvent.setText(snippetEntry.getTitle().toUpperCase());
     new ContentDler().execute(snippetEntry, snippetText);
 }
 catch(Exception e)

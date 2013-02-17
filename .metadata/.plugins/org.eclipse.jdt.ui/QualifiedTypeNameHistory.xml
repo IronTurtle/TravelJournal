@@ -9,6 +9,6 @@
 <fullyQualifiedTypeName name="android.view.MenuInflater"/>
 <fullyQualifiedTypeName name="android.view.MenuItem"/>
 <fullyQualifiedTypeName name="android.view.Menu"/>
-<fullyQualifiedTypeName name="android.view.Window"/>
 <fullyQualifiedTypeName name="com.evernote.android.sample.R.id"/>
+<fullyQualifiedTypeName name="android.view.Window"/>
 </qualifiedTypeNameHistroy>
