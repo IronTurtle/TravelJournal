@@ -329,6 +329,7 @@ public class MainActivity extends Activity {/*BaseActivity {
       int pageSize = 10;
       NoteFilter filter = new NoteFilter();
       filter.setOrder(NoteSortOrder.UPDATED.getValue());
+      filter.setWords("-tag:itinerary*");
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);

@@ -1,5 +1,8 @@
 package com.evernote.android.sample;
 
+import java.text.SimpleDateFormat;
+import java.text.Format;
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -123,14 +126,19 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
      */
 
     snippetEvent.setText(snippetEntry.getTitle());
-    snippetDate.setText(String.valueOf(snippetEntry.getUpdated()));
-/*try{
+   
+    Date date = new Date(snippetEntry.getUpdated());
+Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+    snippetDate.setText(format.format(date).toString());
+    
+
+try{
     new ContentDler().execute(snippetEntry, snippetText);
 }
 catch(Exception e)
 {
   e.printStackTrace();
-}*/
+}
   snippetLocation.setText("Evernote Hack");
 
     ThumbDler mThumbDler = new ThumbDler();
@@ -203,7 +211,7 @@ catch(Exception e)
       String output;
       try
       {
-        output = mEvernoteSession.createNoteStore().getNote(mEvernoteSession.getAuthToken(), snippetEntry.getGuid(), true, true, false, false).getContent();
+        output = android.text.Html.fromHtml(mEvernoteSession.createNoteStore().getNote(mEvernoteSession.getAuthToken(), snippetEntry.getGuid(), true, true, false, false).getContent()).toString();
       }
       catch(Exception e)
       {

@@ -232,17 +232,6 @@ public class ItineraryActivity extends BaseActivity {
 //      entries.addAll(notes.getNotes());     
     for(NoteMetadata note : notes.getNotes())
     {
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
-        System.out.println(note.getTitle());
       entries.add(note.getTitle());
     }
       
@@ -253,7 +242,7 @@ public class ItineraryActivity extends BaseActivity {
       }    
 */
       ListView listView = (ListView) findViewById(R.id.lview);
-      ArrayAdapter<String> adapter = new ArrayAdapter<String>(ItineraryActivity.this, android.R.layout.simple_list_item_1, entries);
+      ArrayAdapter<String> adapter = new ArrayAdapter<String>(ItineraryActivity.this, android.R.layout.simple_list_item_activated_1, entries);
       listView.setAdapter(adapter);
       listView.setScrollingCacheEnabled(false);
       listView.setOnItemClickListener(new OnItemClickListener()
