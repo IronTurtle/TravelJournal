@@ -14,14 +14,14 @@
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/save_button"
+                android:id="@+id/settings_button"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_weight="1"
                 android:background="@color/primaryOrange"
                 android:drawableLeft="@drawable/airplane"
                 android:fadingEdge="horizontal"
-                android:onClick="saveImage"
+                android:onClick="goToSettings"
                 android:paddingLeft="25dp"
                 android:textColor="@android:color/background_dark"
                 android:textColorHint="@color/primaryOrange"
@@ -39,12 +39,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
             
-            <!--<android.support.v7.widget.Space
-                android:id="@+id/space4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="10" />
-                -->
                
         
 		        <Button

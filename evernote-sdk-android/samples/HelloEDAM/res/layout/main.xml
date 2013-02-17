@@ -81,7 +81,8 @@
                 android:layout_weight="1"
                 android:background="@color/primaryOrange"
                 android:drawableLeft="@drawable/trophy"
-                android:paddingLeft="30dp" />
+                android:paddingLeft="30dp"
+                android:onClick="giveAwardOnClick" />
 
         </LinearLayout>
 
