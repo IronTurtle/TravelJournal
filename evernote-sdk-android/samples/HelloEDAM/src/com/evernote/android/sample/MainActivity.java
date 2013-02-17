@@ -87,7 +87,7 @@ import android.util.Log;
  * and chooses an image from the device's image gallery. The image is then
  * saved directly to user's Evernote account as a new note.
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends Activity {/*BaseActivity {
 
   /**
    * ************************************************************************
