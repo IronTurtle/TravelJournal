@@ -44,15 +44,25 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="10" />
                 -->
-                        
-            <Button
+               
+		        <Button
+		        android:id="@+id/select_button"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:scaleType="fitEnd"
+		        android:drawableRight="@drawable/plus"
+		        android:minWidth="@android:dimen/app_icon_size"
+		        android:onClick="startSelectImage"
+		        />         
+            <!-- <Button
                 android:id="@+id/camera_button"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_camera_button"
                 android:layout_weight="1" />
-
+			-->
             <Button
                 android:id="@+id/note_award"
                 style="?android:attr/buttonStyleSmall"

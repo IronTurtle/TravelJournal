@@ -179,12 +179,12 @@ public class MainActivity extends Activity {/*BaseActivity {
     updateUi();
   }
 
-  /*
+  
      @Override
      public Object onRetainNonConfigurationInstance() {
      return mImageData;
      }
-   */
+   
 
   /*
   // using createDialog, could use Fragments instead

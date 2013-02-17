@@ -25,13 +25,13 @@
         android:src="@drawable/icon_48" />
 
     <Button
-      android:id="@+id/auth_button"
-      android:visibility="gone"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+        android:id="@+id/auth_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-      android:onClick="startAuth"
-      android:text="@string/label_log_in" />
+        android:onClick="startAuth"
+        android:text="@string/label_log_in"
+        android:visibility="visible" />
 
     <Button
         android:id="@+id/add_note_button"
@@ -53,7 +53,7 @@
         android:scaleType="fitEnd" />
 
   </LinearLayout>
-  -->
+  
   <ListView
     android:id="@+id/lview"
     android:layout_width="wrap_content"

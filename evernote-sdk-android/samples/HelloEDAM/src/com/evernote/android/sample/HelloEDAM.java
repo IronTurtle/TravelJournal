@@ -146,14 +146,14 @@ public class HelloEDAM extends Activity {
     setContentView(R.layout.main);
 
     mBtnAuth = (Button) findViewById(R.id.auth_button);
-    //mBtnSelect = (Button) findViewById(R.id.select_button);
+    mBtnSelect = (Button) findViewById(R.id.select_button);
     mBtnSave = (Button) findViewById(R.id.save_button);
     mImageView = (ImageView) findViewById(R.id.note_image);
     title = (EditText) findViewById(R.id.note_title);
     location = (EditText) findViewById(R.id.note_location);
     entry = (EditText) findViewById(R.id.note_entry);
 
-    btnTakePhoto = (Button) findViewById(R.id.camera_button);
+    //btnTakePhoto = (Button) findViewById(R.id.camera_button);
     imgTakenPhoto = (ImageView) findViewById(R.id.note_image);
 
     btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
