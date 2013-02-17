@@ -35,9 +35,12 @@
     <string name="title_activity_base">BaseActivity</string>
     <string name="menu_add_note">Add</string>
     <string name="menu_search">Search</string>
+
     <color name="primaryOrange">#f3c21c</color>
+
     <string name="app_name_banner">TRAVELJOURNAL</string>
     <string name="dialog_award_title">Give An Award:</string>
     <string name="dialog_award_message">Best of...</string>
+    <string name="title_activity_splash">SplashActivity</string>
 
 </resources>

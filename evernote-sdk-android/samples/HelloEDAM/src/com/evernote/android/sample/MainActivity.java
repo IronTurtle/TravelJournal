@@ -255,7 +255,7 @@ public class MainActivity extends Activity {/*BaseActivity {
 	  
 	  Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
 
-	  this.startActivityForResult(intent, 100);
+	  this.startActivityForResult(intent, 200);
 	  
   }
   

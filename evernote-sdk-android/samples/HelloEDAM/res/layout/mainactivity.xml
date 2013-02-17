@@ -18,9 +18,9 @@
                 android:id="@+id/logo_button"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:layout_weight="1"
+                android:layout_weight="0.88"
                 android:background="@color/primaryOrange"
-                android:drawableLeft="@drawable/airplane"
+                android:drawableLeft="@drawable/traveljournal"
                 android:fadingEdge="horizontal"
                 android:onClick="goToItineraryOnClick"
                 android:paddingLeft="25dp"
@@ -29,7 +29,7 @@
                 android:textSize="20sp"
                 android:typeface="sans" />
 
-            <TextView
+            <!--<TextView
                 android:id="@+id/appname"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
                 android:textColor="@android:color/background_dark"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-            
+            -->
                
         
 		        <Button
@@ -48,7 +48,7 @@
 		            android:layout_height="50dp"
 		            android:layout_weight="1"
 		            android:background="@color/primaryOrange"
-		            android:drawableRight="@drawable/plus"
+		            android:drawableRight="@drawable/plus2"
 		            android:minWidth="@android:dimen/app_icon_size"
 		            android:paddingRight="30dp"
 		            android:scaleType="fitEnd"

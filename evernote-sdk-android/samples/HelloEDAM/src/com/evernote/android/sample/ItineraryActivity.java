@@ -87,7 +87,7 @@ import android.util.Log;
  * and chooses an image from the device's image gallery. The image is then
  * saved directly to user's Evernote account as a new note.
  */
-public class ItineraryActivity extends BaseActivity {
+public class ItineraryActivity extends Activity {
 
   /**
    * ************************************************************************
