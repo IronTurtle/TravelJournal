@@ -259,6 +259,12 @@ public class MainActivity extends Activity {/*BaseActivity {
 	  
   }
   
+  public void goToItineraryOnClick(View view) {
+	  Intent intent = new Intent(getApplicationContext(), ItineraryActivity.class);
+	  
+	  this.startActivityForResult(intent, 100);
+  }
+  
   /***************************************************************************
    * The remaining code in this class simply demonstrates the use of the     *
    * Evernote API once authnetication is complete. You don't need any of it  *
@@ -333,7 +339,7 @@ public class MainActivity extends Activity {/*BaseActivity {
     @Override
     protected NotesMetadataList doInBackground(String... strings) 
     {
-      int pageSize = 10;
+      int pageSize = 5;
       NoteFilter filter = new NoteFilter();
       filter.setOrder(NoteSortOrder.UPDATED.getValue());
       filter.setWords("-tag:itinerary*");

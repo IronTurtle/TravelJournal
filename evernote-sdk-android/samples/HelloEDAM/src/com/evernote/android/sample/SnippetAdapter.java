@@ -124,7 +124,7 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
        JSONArray jp = null;
        JsonUploader uploader = new JsonUploader();
      */
-
+try{
     snippetEvent.setText(snippetEntry.getTitle().toUpperCase());
     new ContentDler().execute(snippetEntry, snippetText);
 }
