@@ -27,7 +27,11 @@ package com.evernote.android.sample;
 
 import java.util.ArrayList;
 import android.widget.ListView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.AdapterView.OnItemClickListener;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView.OnItemClickListener;
@@ -35,8 +39,12 @@ import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -79,7 +87,7 @@ import android.util.Log;
  * and chooses an image from the device's image gallery. The image is then
  * saved directly to user's Evernote account as a new note.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
   /**
    * ************************************************************************
@@ -123,6 +131,7 @@ public class MainActivity extends Activity {
   private Button mBtnAuth;
   private Button mBtnSave;
   private Button mBtnSelect;
+  private Button mBtnAddNote;
   private EditText mTextArea;
   private ImageView mImageView;
   private final int DIALOG_PROGRESS = 101;
@@ -154,10 +163,16 @@ public class MainActivity extends Activity {
     setContentView(R.layout.mainactivity);
 
     mBtnAuth = (Button) findViewById(R.id.auth_button);
-
+    /*mBtnAddNote = (Button) findViewById(R.id.menu_add_note);
+    */
+    
+    
+    
     setupSession();
   }
 
+  
+  
   @Override
   public void onResume() {
     super.onResume();
@@ -213,7 +228,7 @@ public class MainActivity extends Activity {
       mBtnAuth.setText(R.string.label_log_out);
       listViewCreate();
     } else {
-//      mBtnAuth.setText(R.string.label_log_in);
+      mBtnAuth.setText(R.string.label_log_in);
     }
   }
 
@@ -231,6 +246,12 @@ public class MainActivity extends Activity {
     updateUi();
   }
 
+  
+  public void addNoteOnClick(View view) {
+	  Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
+	  this.startActivityForResult(intent, 100);
+  }
+  
   /***************************************************************************
    * The remaining code in this class simply demonstrates the use of the     *
    * Evernote API once authnetication is complete. You don't need any of it  *

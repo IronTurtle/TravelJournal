@@ -14,14 +14,35 @@
     android:orientation="horizontal"
     android:padding="3dp" >
 
+    
+
     <Button
       android:id="@+id/auth_button"
+      style="?android:attr/buttonStyleSmall"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+        android:layout_weight="1"
       android:onClick="startAuth"
       android:text="@string/label_log_in" />
-
+	<!-- 
+    <Button
+        android:id="@+id/add_note_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/add_note"
+        android:onClick="addNoteOnClick" />
+    <Button
+        android:id="@+id/search_note_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/search_note" />
+	-->
   </LinearLayout>
+  
   <ListView
     android:id="@+id/lview"
     android:layout_width="wrap_content"

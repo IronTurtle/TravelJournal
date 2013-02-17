@@ -124,18 +124,18 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
 
     snippetEvent.setText(snippetEntry.getTitle());
     snippetDate.setText(String.valueOf(snippetEntry.getUpdated()));
-try{
+/*try{
     new ContentDler().execute(snippetEntry, snippetText);
 }
 catch(Exception e)
 {
   e.printStackTrace();
-}
+}*/
   snippetLocation.setText("Evernote Hack");
 
     ThumbDler mThumbDler = new ThumbDler();
     try{
-      mThumbDler.execute(snippetEntry, snippetPic);
+      mThumbDler.execute(snippetEntry, snippetPic).get();
     }
     catch(Exception e)
     {

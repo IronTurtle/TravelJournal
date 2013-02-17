@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">TravelJournal</string>
     <string name="err_creating_note">Error creating new Evernote note</string>
     <string name="msg_image_saved">Note Saved to Evernote</string>
@@ -7,14 +8,15 @@
     <string name="label_select_button">Select Image</string>
     <string name="label_message">No image selected</string>
     <string name="label_save_button">Save</string>
-    <string name="err_image_selected">Select Image</string>
+    <string name="err_image_selected">Error Select Image</string>
     <string name="err_retrieving_resource">Error retrieving resource</string>
     <string name="msg_retrieved_resource">Retrieved resource from server</string>
     <string name="label_log_in">Log In</string>
     <string name="label_log_out">Log Out</string>
     <string name="loading">Loading...</string>
     <string name="label_camera_button">Take Photo</string>
-    <string name="title_field"/><string name="location_field">Location</string>
+    <string name="title_field" />
+    <string name="location_field">Location</string>
     <string name="note_field">Note</string>
     <string name="titlePlaceholder">Title</string>
     <string name="locationPlaceholder">Location</string>
@@ -22,4 +24,16 @@
     <string name="img_desc">EntryImg</string>
     <string name="note_award">Award</string>
     <string name="awardIcon">!!!</string>
+    <string name="logo">Logo</string>
+    <string name="add_note">Add</string>
+    <string name="search_note">Search</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section1">Section 1</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_base">BaseActivity</string>
+    <string name="menu_add_note">Add</string>
+    <string name="menu_search">Search</string>
+
 </resources>
