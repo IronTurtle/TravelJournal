@@ -5,6 +5,73 @@
   android:layout_height="match_parent"
   android:orientation="vertical" >
 
+   <LinearLayout
+            android:id="@+id/auth_button_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primaryOrange"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@color/primaryOrange"
+                android:drawableLeft="@drawable/airplane"
+                android:fadingEdge="horizontal"
+                android:onClick="saveImage"
+                android:paddingLeft="25dp"
+                android:textColor="@android:color/background_dark"
+                android:textColorHint="@color/primaryOrange"
+                android:textSize="20sp"
+                android:typeface="sans" />
+
+            <TextView
+                android:id="@+id/appname"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/app_name_banner"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/background_dark"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+            
+            <!--<android.support.v7.widget.Space
+                android:id="@+id/space4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10" />
+                -->
+               
+        
+		        <Button
+		            android:id="@+id/add_note_button"
+		            android:layout_width="wrap_content"
+		            android:layout_height="50dp"
+		            android:layout_weight="1"
+		            android:background="@color/primaryOrange"
+		            android:drawableRight="@drawable/plus"
+		            android:minWidth="@android:dimen/app_icon_size"
+		            android:paddingRight="30dp"
+		            android:scaleType="fitEnd"
+					android:onClick="addNoteOnClick" />
+         
+            <!-- <Button
+                android:id="@+id/camera_button"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_camera_button"
+                android:layout_weight="1" />
+			-->
+
+            
+
+        </LinearLayout>  
+<!--
   <LinearLayout
     android:id="@+id/auth_button_wrapper"
     android:layout_width="match_parent"
@@ -53,11 +120,23 @@
         android:scaleType="fitEnd" />
 
   </LinearLayout>
-  
+  -->
+
+  <Button
+      android:id="@+id/auth_button"
+      style="@color/primaryOrange"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:background="@color/primaryOrange"
+      android:onClick="startAuth"
+      android:text="@string/label_log_in" />
+
   <ListView
-    android:id="@+id/lview"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:dividerHeight="1dp"
-    />
+      android:id="@+id/lview"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:dividerHeight="1dp" >
+  </ListView>
+
 </LinearLayout>

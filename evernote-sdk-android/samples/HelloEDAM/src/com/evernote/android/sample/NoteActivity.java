@@ -144,6 +144,7 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
+    
 
     mBtnAuth = (Button) findViewById(R.id.auth_button);
     mBtnSelect = (Button) findViewById(R.id.select_button);

@@ -161,7 +161,7 @@ public class MainActivity extends Activity {/*BaseActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.mainactivity);
-
+    
     mBtnAuth = (Button) findViewById(R.id.auth_button);
     /*mBtnAddNote = (Button) findViewById(R.id.menu_add_note);
     */
@@ -225,10 +225,14 @@ public class MainActivity extends Activity {/*BaseActivity {
    */
   private void updateUi() {
     if (mEvernoteSession.isLoggedIn()) {
-      mBtnAuth.setText(R.string.label_log_out);
-      listViewCreate();
+    	//mBtnAuth.setText(R.string.label_log_out);
+    	View b = findViewById(R.id.auth_button);
+		b.setVisibility(View.GONE);
+		listViewCreate();
     } else {
-      mBtnAuth.setText(R.string.label_log_in);
+    	View b = findViewById(R.id.auth_button);
+		b.setVisibility(View.VISIBLE);
+		//mBtnAuth.setText(R.string.label_log_in);
     }
   }
 
@@ -248,8 +252,10 @@ public class MainActivity extends Activity {/*BaseActivity {
 
   
   public void addNoteOnClick(View view) {
+	  
 	  Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
 	  this.startActivityForResult(intent, 100);
+	  
   }
   
   /***************************************************************************
@@ -306,13 +312,13 @@ public class MainActivity extends Activity {/*BaseActivity {
     new EntryUpdater().execute("");
 
     String item = "clicked1";
-    Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
+    //Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
   }
 
   public void listViewCreate()
   {
     String item = "clicked2";
-    Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
+    //Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
     entries = new ArrayList<NoteMetadata>();
     update();
   }
@@ -355,7 +361,7 @@ public class MainActivity extends Activity {/*BaseActivity {
       ListView listView = (ListView) findViewById(R.id.lview);
       SnippetAdapter adapter = new SnippetAdapter(MainActivity.this, R.layout.snippet, entries, mEvernoteSession);
       listView.setAdapter(adapter);
-      //listView.setScrollingCacheEnabled(false);
+      listView.setScrollingCacheEnabled(false);
       listView.setOnItemClickListener(new OnItemClickListener()
           {
             @Override

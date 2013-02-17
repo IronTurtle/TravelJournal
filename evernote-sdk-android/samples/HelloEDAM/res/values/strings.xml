@@ -35,5 +35,7 @@
     <string name="title_activity_base">BaseActivity</string>
     <string name="menu_add_note">Add</string>
     <string name="menu_search">Search</string>
+    <color name="primaryOrange">#f3c21c</color>
+    <string name="app_name_banner">TRAVELJOURNAL</string>
 
 </resources>
