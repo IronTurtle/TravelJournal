@@ -371,8 +371,15 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
 
         // Create a new Note
         Note note = new Note();
-        String noteTitleString = title.getText().toString();// + " at " + location.getText().toString();
-        note.setTitle(noteTitleString);
+        
+        String noteTitleString = "";
+        if(noteTitleString.length() > 0) {
+        		noteTitleString = title.getText().toString();// + " at " + location.getText().toString();
+        		note.setTitle(noteTitleString);
+        }
+        else {
+        	note.setTitle("");
+        }
         note.addToResources(resource);
 
         // Set the note's ENML content. Learn about ENML at
