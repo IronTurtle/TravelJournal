@@ -373,13 +373,9 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
         Note note = new Note();
         
         String noteTitleString = "";
-        if(noteTitleString.length() > 0) {
-        		noteTitleString = title.getText().toString();// + " at " + location.getText().toString();
-        		note.setTitle(noteTitleString);
-        }
-        else {
-        	note.setTitle("");
-        }
+		noteTitleString = title.getText().toString();// + " at " + location.getText().toString();
+		note.setTitle(noteTitleString);
+        
         note.addToResources(resource);
 
         // Set the note's ENML content. Learn about ENML at

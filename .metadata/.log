@@ -4142,3 +4142,9 @@ org.eclipse.core.internal.resources.ResourceException: A resource already exists
 	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:121)
 !SUBENTRY 1 org.eclipse.core.resources 4 272 2013-02-16 23:01:02.877
 !MESSAGE A resource already exists on disk '/home/ironsuturtle/TravelJournal/evernote-sdk-android/library/.settings'.
+
+!ENTRY com.android.ide.eclipse.adt 4 0 2013-02-16 23:15:55.088
+!MESSAGE main.xml: Dimension "1" in attribute "layout_width" is missing unit!
+
+!ENTRY com.android.ide.eclipse.adt 4 0 2013-02-16 23:16:03.166
+!MESSAGE main.xml: Dimension "1" in attribute "layout_width" is missing unit!
