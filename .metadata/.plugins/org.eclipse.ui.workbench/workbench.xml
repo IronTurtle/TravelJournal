@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="11" version="2.0">
+<workbench progressCount="15" version="2.0">
 <workbenchAdvisor/>
 <window height="768" maximized="true" width="1024" x="65" y="24">
 <fastViewData fastViewLocation="1024"/>
@@ -16,16 +16,16 @@
 <coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="156" y="30"/>
 <coolItem id="org.eclipse.jdt.ui.JavaElementCreationActionSet" itemType="typeToolBarContribution" x="88" y="30"/>
 <coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="88" y="30"/>
-<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="124" y="30"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="68" y="30"/>
 <coolItem id="org.eclipse.wst.xml.ui.perspective.NewFileToolBar" itemType="typeToolBarContribution" x="-1" y="-1"/>
-<coolItem id="org.eclipse.wst.xml.ui.design.DesignToolBar" itemType="typeToolBarContribution" x="68" y="30"/>
+<coolItem id="org.eclipse.wst.xml.ui.design.DesignToolBar" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="org.eclipse.debug.ui.launch.toolbar" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="org.eclipse.debug.ui.main.toolbar" itemType="typeToolBarContribution" x="40" y="30"/>
 <coolItem id="group.nav" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="232" y="30"/>
 <coolItem id="group.editor" itemType="typeGroupMarker"/>
-<coolItem id="org.eclipse.jdt.ui.CompilationUnitEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
-<coolItem id="com.android.ide.eclipse.editors.CommonXmlEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
+<coolItem id="org.eclipse.jdt.ui.CompilationUnitEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="com.android.ide.eclipse.editors.CommonXmlEditor" itemType="typePlaceholder" x="-1" y="-1"/>
 <coolItem id="group.help" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
 </coolbarLayout>
@@ -34,37 +34,10 @@
 <editorArea activeWorkbook="DefaultEditorWorkbook">
 <info part="DefaultEditorWorkbook">
 <folder appearance="1" expanded="2">
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
-<part id="1"/>
-<part id="2"/>
-<part id="3"/>
-<part id="4"/>
-<part id="5"/>
-</presentation>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
 </editorArea>
-<editor id="com.android.ide.eclipse.editors.CommonXmlEditor" name="main.xml" partName="main.xml" path="/home/ironsuturtle/TravelJournal/evernote-sdk-android/samples/HelloEDAM/res/layout/main.xml" title="main.xml" tooltip="MainActivity/res/layout/main.xml" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/MainActivity/res/layout/main.xml"/>
-</editor>
-<editor id="com.android.ide.eclipse.editors.CommonXmlEditor" name="mainactivity.xml" partName="mainactivity.xml" path="/home/ironsuturtle/TravelJournal/evernote-sdk-android/samples/HelloEDAM/res/layout/mainactivity.xml" title="mainactivity.xml" tooltip="MainActivity/res/layout/mainactivity.xml" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/MainActivity/res/layout/mainactivity.xml"/>
-</editor>
-<editor id="com.android.ide.eclipse.editors.CommonXmlEditor" name="snippet.xml" partName="snippet.xml" path="/home/ironsuturtle/TravelJournal/evernote-sdk-android/samples/HelloEDAM/res/layout/snippet.xml" title="snippet.xml" tooltip="MainActivity/res/layout/snippet.xml" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/MainActivity/res/layout/snippet.xml"/>
-</editor>
-<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="NoteActivity.java" partName="NoteActivity.java" path="/home/ironsuturtle/TravelJournal/evernote-sdk-android/samples/HelloEDAM/src/com/evernote/android/sample/NoteActivity.java" title="NoteActivity.java" tooltip="MainActivity/src/com/evernote/android/sample/NoteActivity.java" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/MainActivity/src/com/evernote/android/sample/NoteActivity.java"/>
-<editorState selectionHorizontalPixel="0" selectionLength="4" selectionOffset="5447" selectionTopPixel="1401"/>
-</editor>
-<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="MainActivity.java" partName="MainActivity.java" path="/home/ironsuturtle/TravelJournal/evernote-sdk-android/samples/HelloEDAM/src/com/evernote/android/sample/MainActivity.java" title="MainActivity.java" tooltip="MainActivity/src/com/evernote/android/sample/MainActivity.java" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/MainActivity/src/com/evernote/android/sample/MainActivity.java"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="12143" selectionTopPixel="6086"/>
-</editor>
-<editor id="com.android.ide.eclipse.editors.manifest.ManifestEditor" name="AndroidManifest.xml" partName="MainActivity Manifest" path="/home/ironsuturtle/TravelJournal/evernote-sdk-android/samples/HelloEDAM/AndroidManifest.xml" title="MainActivity Manifest" tooltip="MainActivity/AndroidManifest.xml" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/MainActivity/AndroidManifest.xml"/>
-</editor>
 </editors>
 <views>
 <view id="org.eclipse.jdt.ui.TypeHierarchy" partName="Type Hierarchy">
@@ -90,8 +63,7 @@
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
 <expanded>
-<category IMemento.internal.id="Warnings"/>
-<category IMemento.internal.id="Errors"/>
+<category IMemento.internal.id="Warnings (100 of 145 items)"/>
 </expanded>
 <columnWidths org.eclipse.ui.ide.locationField="105" org.eclipse.ui.ide.markerType="406" org.eclipse.ui.ide.pathField="140" org.eclipse.ui.ide.resourceField="105" org.eclipse.ui.ide.severityAndDescriptionField="350"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
@@ -100,9 +72,6 @@
 <visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
 </viewState>
-</view>
-<view id="org.eclipse.ui.console.ConsoleView" partName="Console">
-<viewState/>
 </view>
 <view id="org.eclipse.jdt.ui.PackageExplorer" partName="Package Explorer">
 <viewState group_libraries="1" layout="2" linkWithEditor="0" rootMode="1" workingSetName="">
@@ -131,12 +100,15 @@
 </customFilters>
 </viewState>
 </view>
+<view id="org.eclipse.ui.console.ConsoleView" partName="Console">
+<viewState/>
+</view>
 <view id="com.android.ide.eclipse.ddms.views.EmulatorControlView" partName="Emulator Control"/>
 <view id="org.eclipse.jdt.ui.SourceView" partName="Declaration"/>
 <view id="com.android.ide.eclipse.ddms.views.AllocTrackerView" partName="Allocation Tracker"/>
 <view id="org.eclipse.jdt.ui.JavadocView" partName="Javadoc"/>
 </views>
-<perspectives activePart="org.eclipse.jdt.ui.CompilationUnitEditor" activePerspective="org.eclipse.jdt.ui.JavaPerspective">
+<perspectives activePart="org.eclipse.jdt.ui.PackageExplorer" activePerspective="org.eclipse.jdt.ui.JavaPerspective">
 <perspective editorAreaTrimState="2" editorAreaVisible="0" fixed="0" version="0.016">
 <descriptor class="com.android.ide.eclipse.ddms.Perspective" id="com.android.ide.eclipse.ddms.Perspective" label="DDMS"/>
 <alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
@@ -265,8 +237,8 @@
 <view id="org.eclipse.jdt.ui.JavadocView"/>
 <view id="org.eclipse.jdt.ui.SourceView"/>
 <view id="org.eclipse.ui.console.ConsoleView"/>
-<view id="org.eclipse.search.ui.views.SearchView"/>
 <view id="com.android.ide.eclipse.ddms.views.LogCatView"/>
+<view id="org.eclipse.search.ui.views.SearchView"/>
 <view id="org.eclipse.jdt.ui.PackageExplorer"/>
 <view id="org.eclipse.jdt.ui.TypeHierarchy"/>
 <view id="org.eclipse.ui.views.ContentOutline"/>
@@ -330,127 +302,12 @@
 </perspective>
 </perspectives>
 <workingSets/>
-<navigationHistory>
-<editors>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/MainActivity/res/layout/main.xml"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/MainActivity/res/layout/mainactivity.xml"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/MainActivity/src/com/evernote/android/sample/NoteActivity.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/MainActivity/res/layout/snippet.xml"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/MainActivity/res/values/strings.xml"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/MainActivity/src/com/evernote/android/sample/MainActivity.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.manifest.ManifestEditor" path="/MainActivity/AndroidManifest.xml"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="" path="/MainActivity/res/layout/mainactivity.xml"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="" path="/MainActivity/AndroidManifest.xml"/>
-</editors>
-<item historyLabel="mainactivity.xml" index="1"/>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="snippet.xml" index="3"/>
-<item historyLabel="strings.xml" index="4"/>
-<item historyLabel="mainactivity.xml" index="1"/>
-<item historyLabel="snippet.xml" index="3"/>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="strings.xml" index="4"/>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="strings.xml" index="4"/>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="NoteActivity.java" index="2">
-<position info="not_deleted" x="5451" y="0"/>
-</item>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="NoteActivity.java" index="2">
-<position info="not_deleted" x="5451" y="0"/>
-</item>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="6106" y="0"/>
-</item>
-<item historyLabel="NoteActivity.java" index="2">
-<position info="not_deleted" x="5447" y="4"/>
-</item>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="6106" y="0"/>
-</item>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="MainActivity Manifest" index="6"/>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="mainactivity.xml" index="1"/>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="mainactivity.xml" index="1"/>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="mainactivity.xml" index="1">
-<position info="not_deleted" x="4482" y="0"/>
-</item>
-<item historyLabel="mainactivity.xml" index="7">
-<position info="not_deleted" x="39" y="0"/>
-</item>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="mainactivity.xml" index="1">
-<position info="not_deleted" x="1210" y="473"/>
-</item>
-<item historyLabel="strings.xml" index="4"/>
-<item historyLabel="mainactivity.xml" index="1">
-<position info="not_deleted" x="542" y="654"/>
-</item>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="mainactivity.xml" index="1"/>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="6106" y="0"/>
-</item>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="11250" y="0"/>
-</item>
-<item historyLabel="mainactivity.xml" index="1"/>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="11250" y="0"/>
-</item>
-<item historyLabel="mainactivity.xml" index="1"/>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="11250" y="0"/>
-</item>
-<item historyLabel="MainActivity.java" index="5">
-<position/>
-</item>
-<item historyLabel="MainActivity.java" index="5">
-<position/>
-</item>
-<item historyLabel="MainActivity.java" index="5">
-<position/>
-</item>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="7101" y="0"/>
-</item>
-<item historyLabel="mainactivity.xml" index="1">
-<position info="not_deleted" x="1683" y="0"/>
-</item>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="6111" y="0"/>
-</item>
-<item historyLabel="mainactivity.xml" index="1"/>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="7713" y="0"/>
-</item>
-<item historyLabel="mainactivity.xml" index="1">
-<position info="not_deleted" x="4486" y="322"/>
-</item>
-<item historyLabel="main.xml" index="0"/>
-<item historyLabel="MainActivity.java" index="5">
-<position info="not_deleted" x="12143" y="0"/>
-</item>
-<item active="true" historyLabel="MainActivity Manifest" index="8">
-<position info="not_deleted" x="441" y="0"/>
-</item>
-</navigationHistory>
+<navigationHistory/>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
 <workbenchWindowAdvisor/>
 <actionBarAdvisor/>
 <trimLayout>
-<trimArea IMemento.internal.id="16384">
-<trimItem IMemento.internal.id="left"/>
-</trimArea>
-<trimArea IMemento.internal.id="131072">
-<trimItem IMemento.internal.id="org.eclipse.ui.editorss"/>
-<trimItem IMemento.internal.id="right"/>
-</trimArea>
 <trimArea IMemento.internal.id="128">
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
 </trimArea>
@@ -459,7 +316,6 @@
 <trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.HeapStatus"/>
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
-<trimItem IMemento.internal.id="bottom"/>
 </trimArea>
 </trimLayout>
 </window>
