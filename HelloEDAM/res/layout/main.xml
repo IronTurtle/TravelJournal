@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/auth_button_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primaryOrange"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@color/primaryOrange"
+            android:drawableLeft="@drawable/save"
+            android:fadingEdge="horizontal"
+            android:onClick="saveImage"
+            android:paddingLeft="25dp"
+            android:textColor="@android:color/background_dark"
+            android:textColorHint="@color/primaryOrange"
+            android:textSize="20sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/auth_button"
+            style="@color/primaryOrange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/primaryOrange"
+            android:onClick="startAuth"
+            android:text="@string/label_log_in"
+            android:visibility="invisible" />
+
+        <!--
+                <android.support.v7.widget.Space
+                android:id="@+id/space4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10" />
+        -->
+
+        <Button
+            android:id="@+id/camera_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/primaryOrange"
+            android:drawableLeft="@drawable/camera"
+            android:fadingEdge="horizontal"
+            android:paddingLeft="25dp"
+            android:textColor="@android:color/background_dark"
+            android:textColorHint="@color/primaryOrange"
+            android:textSize="20sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/select_button"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@color/primaryOrange"
+            android:drawableRight="@drawable/photos"
+            android:minWidth="@android:dimen/app_icon_size"
+            android:onClick="startSelectImage"
+            android:paddingRight="20dp"
+            android:scaleType="fitEnd" />
+
+        <Button
+            android:id="@+id/note_award"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@color/primaryOrange"
+            android:drawableLeft="@drawable/trophy"
+            android:onClick="giveAwardOnClick"
+            android:paddingLeft="30dp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/note_image"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_weight="4"
+        android:background="@android:color/background_light"
+        android:contentDescription="@string/img_desc"
+        android:scaleType="centerInside" />
+
+    <EditText
+        android:id="@+id/note_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableTop="@color/primaryOrange"
+        android:ems="10"
+        android:gravity="bottom|left"
+        android:hint="@string/titlePlaceholder"
+        android:inputType="text"
+        android:paddingLeft="15dp" >
+    </EditText>
+
+    <EditText
+        android:id="@+id/note_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:gravity="bottom|left"
+        android:hint="@string/locationPlaceholder"
+        android:inputType="textPostalAddress" />
+
+    <EditText
+        android:id="@+id/note_entry"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="2"
+        android:ems="10"
+        android:gravity="bottom|left"
+        android:hint="@string/entryPlaceholder"
+        android:inputType="textMultiLine" />
+
+</LinearLayout><!--
+        <LinearLayout android:id="@+id/image_button_wrapper"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_gravity="bottom"
+                  android:gravity="center"
+                  android:background="#cccccccc"
+                  android:padding="3dp">
+
+        <Button
+            android:id="@+id/camera_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="startSelectImage"
+            android:text="@string/label_camera_button" />
+
+        <Button
+                android:id="@+id/select_button"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:text="@string/label_select_button"
+                android:onClick="startSelectImage"
+                android:layout_weight="1"/>
+
+        <Button
+                android:id="@+id/save_button"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:text="@string/label_save_button"
+                android:onClick="saveImage"
+                android:layout_weight="1"/>
+		
+    	</LinearLayout>
+-->
+
+<!--
+         <EditText
+        android:id="@+id/note_text_area"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="182dp"
+        android:ems="10"
+        android:gravity="top|left"
+        android:inputType="textMultiLine" />
+-->
+
+<!-- </FrameLayout> -->
