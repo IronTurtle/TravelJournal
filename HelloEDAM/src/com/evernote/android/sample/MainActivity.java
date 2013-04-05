@@ -343,7 +343,7 @@ public class MainActivity extends Activity {/*
 		@TargetApi(16)
 		@Override
 		protected NotesMetadataList doInBackground(String... strings) {
-			int pageSize = 5;
+			int pageSize = 10;
 			NoteFilter filter = new NoteFilter();
 			filter.setOrder(NoteSortOrder.UPDATED.getValue());
 			filter.setWords("-tag:itinerary*");

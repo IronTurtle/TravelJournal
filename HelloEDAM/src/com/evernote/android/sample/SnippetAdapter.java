@@ -98,7 +98,7 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata> {
 		this.mEvernoteSession = mEvernoteSession;
 
 		options = new DisplayImageOptions.Builder().cacheInMemory()
-				.cacheOnDisc().build();
+				.cacheOnDisc().showStubImage(R.drawable.traveljournal).build();
 
 	}
 
