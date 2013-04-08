@@ -30,6 +30,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -39,6 +40,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -61,21 +63,22 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 /**
- * This simple Android app demonstrates how to integrate with the
- * Evernote API (aka EDAM).
+ * This simple Android app demonstrates how to integrate with the Evernote API
+ * (aka EDAM).
  * <p/>
- * In this sample, the user authorizes access to their account using OAuth
- * and chooses an image from the device's image gallery. The image is then
- * saved directly to user's Evernote account as a new note.
+ * In this sample, the user authorizes access to their account using OAuth and
+ * chooses an image from the device's image gallery. The image is then saved
+ * directly to user's Evernote account as a new note.
  */
-public class NoteActivity /*extends BaseActivity*/ extends Activity {
+public class NoteActivity /* extends BaseActivity */extends Activity
+{
 
   /**
    * ************************************************************************
-   * You MUST change the following values to run this sample application.    *
+   * You MUST change the following values to run this sample application. *
    * *************************************************************************
    */
-
+  Uri mImageUri;
   // Your Evernote API key. See http://dev.evernote.com/documentation/cloud/
   // Please obfuscate your code to help keep these values secret.
   private static final String CONSUMER_KEY = "ironsuturtle";
@@ -98,7 +101,7 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
 
   /**
    * ************************************************************************
-   * The following values are simply part of the demo application.           *
+   * The following values are simply part of the demo application. *
    * *************************************************************************
    */
 
@@ -115,22 +118,22 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
   private EditText mTextArea;
   private ImageView mImageView;
   private final int DIALOG_PROGRESS = 101;
-  
+
   Button btnTakePhoto;
   ImageView imgTakenPhoto;
   private static final int CAMERA_PIC_REQUEST = 1313;
   final String TAG1 = "MyCamera";
-  
 
   // The path to and MIME type of the currently selected image from the gallery
-  private class ImageData {
+  private class ImageData
+  {
     public Bitmap imageBitmap;
     public String filePath;
     public String mimeType;
     public String fileName;
   }
-  
-  //Note fields
+
+  // Note fields
   EditText title;
   EditText location;
   EditText entry;
@@ -142,10 +145,10 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
    */
   @SuppressWarnings("deprecation")
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public void onCreate(Bundle savedInstanceState)
+  {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
-    
 
     mBtnAuth = (Button) findViewById(R.id.auth_button);
     mBtnSelect = (Button) findViewById(R.id.select_button);
@@ -160,8 +163,9 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
 
     btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
     entry.setOnKeyListener(new NoteEntryField());
-    
-    if (getLastNonConfigurationInstance() != null) {
+
+    if (getLastNonConfigurationInstance() != null)
+    {
       mImageData = (ImageData) getLastNonConfigurationInstance();
       mImageView.setImageBitmap(mImageData.imageBitmap);
     }
@@ -170,60 +174,73 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
   }
 
   @Override
-  public void onResume() {
+  public void onResume()
+  {
     super.onResume();
     updateUi();
   }
 
   @Override
-  public Object onRetainNonConfigurationInstance() {
+  public Object onRetainNonConfigurationInstance()
+  {
     return mImageData;
   }
 
   // using createDialog, could use Fragments instead
   @SuppressWarnings("deprecation")
   @Override
-  protected Dialog onCreateDialog(int id) {
-    switch (id) {
-      case DIALOG_PROGRESS:
-        return new ProgressDialog(NoteActivity.this);
+  protected Dialog onCreateDialog(int id)
+  {
+    switch (id)
+    {
+    case DIALOG_PROGRESS:
+      return new ProgressDialog(NoteActivity.this);
     }
     return super.onCreateDialog(id);
   }
 
   @Override
-  protected void onPrepareDialog(int id, Dialog dialog) {
-    switch (id) {
-      case DIALOG_PROGRESS:
-        ((ProgressDialog) dialog).setIndeterminate(true);
-        dialog.setCancelable(false);
-        ((ProgressDialog) dialog).setMessage(getString(R.string.loading));
+  protected void onPrepareDialog(int id, Dialog dialog)
+  {
+    switch (id)
+    {
+    case DIALOG_PROGRESS:
+      ((ProgressDialog) dialog).setIndeterminate(true);
+      dialog.setCancelable(false);
+      ((ProgressDialog) dialog).setMessage(getString(R.string.loading));
     }
   }
 
   /**
    * Setup the EvernoteSession used to access the Evernote API.
    */
-  private void setupSession() {
+  private void setupSession()
+  {
 
     // Retrieve persisted authentication information
-    mEvernoteSession = EvernoteSession.init(this, CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_HOST, null);
+    mEvernoteSession = EvernoteSession.init(this, CONSUMER_KEY,
+        CONSUMER_SECRET, EVERNOTE_HOST, null);
   }
 
   /**
    * Update the UI based on Evernote authentication state.
    */
-  private void updateUi() {
-    if (mEvernoteSession.isLoggedIn()) {
+  private void updateUi()
+  {
+    if (mEvernoteSession.isLoggedIn())
+    {
       mBtnAuth.setText(R.string.label_log_out);
-      if ((mImageData != null && !TextUtils.isEmpty(mImageData.filePath)) || 
-    		  (entry.getText().length() > 0)) {
+      if ((mImageData != null && !TextUtils.isEmpty(mImageData.filePath))
+          || (entry.getText().length() > 0))
+      {
         mBtnSave.setEnabled(true);
-      } else {
+      } else
+      {
         mBtnSave.setEnabled(false);
       }
       mBtnSelect.setEnabled(true);
-    } else {
+    } else
+    {
       mBtnAuth.setText(R.string.label_log_in);
       mBtnSave.setEnabled(false);
       mBtnSelect.setEnabled(false);
@@ -231,82 +248,127 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
   }
 
   /**
-   * Called when the user taps the "Log in to Evernote" button.
-   * Initiates the Evernote OAuth process, or logs out if the user is already
-   * logged in.
+   * Called when the user taps the "Log in to Evernote" button. Initiates the
+   * Evernote OAuth process, or logs out if the user is already logged in.
    */
-  public void startAuth(View view) {
-    if (mEvernoteSession.isLoggedIn()) {
+  public void startAuth(View view)
+  {
+    if (mEvernoteSession.isLoggedIn())
+    {
       mEvernoteSession.logOut(getApplicationContext());
-    } else {
+    } else
+    {
       mEvernoteSession.authenticate(this);
     }
     updateUi();
   }
 
   /***************************************************************************
-   * The remaining code in this class simply demonstrates the use of the     *
-   * Evernote API once authnetication is complete. You don't need any of it  *
-   * in your application.                                                    *
+   * The remaining code in this class simply demonstrates the use of the *
+   * Evernote API once authnetication is complete. You don't need any of it * in
+   * your application. *
    ***************************************************************************/
 
   /**
    * Called when the control returns from an activity that we launched.
    */
   @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+  public void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
     super.onActivityResult(requestCode, resultCode, data);
-    switch (requestCode) {
-      //Update UI when oauth activity returns result
-      case EvernoteSession.REQUEST_CODE_OAUTH:
-        if (resultCode == Activity.RESULT_OK) {
-          updateUi();
+    switch (requestCode)
+    {
+    // Update UI when oauth activity returns result
+    case EvernoteSession.REQUEST_CODE_OAUTH:
+      if (resultCode == Activity.RESULT_OK)
+      {
+        updateUi();
+      }
+      break;
+    // Grab image data when picker returns result
+    case SELECT_IMAGE:
+      if (resultCode == Activity.RESULT_OK)
+      {
+        mImageUri = data.getData();
+
+        new ImageSelector().execute(data);
+      }
+      break;
+    case CAMERA_PIC_REQUEST:
+      if (resultCode == RESULT_OK)
+      {
+        if (data != null)
+        {
+          Log.e("Intent value:", data.toString());
+          mImageUri = data.getData();
+        } else
+        {
+          Log.e("Intent is null", "yep it is.");
+          if (mImageUri == null)
+          {
+            Log.e("nullcheck on memberimageuri", "its null");
+          } else
+          {
+            Log.e("nullcheckon memberimage", mImageUri.toString());
+          }
         }
-        break;
-      //Grab image data when picker returns result
-      case SELECT_IMAGE:
-        if (resultCode == Activity.RESULT_OK) {
-          new ImageSelector().execute(data);
-        }
-        break;
-      case CAMERA_PIC_REQUEST:
-    	  if(resultCode == RESULT_OK) {
-    		  new ImageSelector().execute(data);
-    		  
-    		  
-    	  }
+
+        new ImageSelector().execute(data);
+
+        /*
+         * if(resultCode == RESULT_OK) { new ImageSelector().execute(data);
+         * 
+         * 
+         * }
+         */
+      }
     }
   }
-  
+
   /**
    * Button to capture image for note
-   * @author ironsuturtle
-   * Sends the user to the camera application to take a photo and save
+   * 
+   * @author ironsuturtle Sends the user to the camera application to take a
+   *         photo and save
    */
   class NoteEntryField implements EditText.OnKeyListener
   {
-      
-	@Override
-	public boolean onKey(View v, int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
-		updateUi();
-		return false;
-	}
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event)
+    {
+      // TODO Auto-generated method stub
+      updateUi();
+      return false;
+    }
   }
-  
+
   /**
    * Button to capture image for note
-   * @author ironsuturtle
-   * Sends the user to the camera application to take a photo and save
+   * 
+   * @author ironsuturtle Sends the user to the camera application to take a
+   *         photo and save
    */
   class btnTakePhotoClicker implements Button.OnClickListener
   {
-      @Override
-      public void onClick(View v) {
-          // TODO Auto-generated method stub
-             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-             startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+    @Override
+    public void onClick(View v)
+    {
+      // TODO Auto-generated method stub
+      Intent cameraIntent = new Intent(
+          android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+      ContentValues values = new ContentValues();
+
+      mImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+      if(mImageUri == null) {
+          Log.e("image uri is null", "what?");
       }
+      else {
+          Log.e("oh nevermind", "image uri is NOT null");
+      }
+      cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+      startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+    }
   }
 
   /**
@@ -314,7 +376,8 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
    * <p/>
    * Sends the user to the image gallery to choose an image to share.
    */
-  public void startSelectImage(View view) {
+  public void startSelectImage(View view)
+  {
     Intent intent = new Intent(Intent.ACTION_PICK,
         MediaStore.Images.Media.INTERNAL_CONTENT_URI);
     startActivityForResult(intent, SELECT_IMAGE);
@@ -323,41 +386,46 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
   /**
    * Called when the user taps the "Save Image" button.
    * <p/>
-   * You probably don't want to do this on your UI thread in the
-   * real world.
+   * You probably don't want to do this on your UI thread in the real world.
    * <p/>
-   * Saves the currently selected image to the user's Evernote account using
-   * the Evernote web service API.
+   * Saves the currently selected image to the user's Evernote account using the
+   * Evernote web service API.
    * <p/>
-   * Does nothing if the Evernote API wasn't successfully initialized
-   * when the activity started.
+   * Does nothing if the Evernote API wasn't successfully initialized when the
+   * activity started.
    */
-  public void saveImage(View view) {
-    if (mEvernoteSession.isLoggedIn() && mImageData != null && mImageData.filePath != null) {
+  public void saveImage(View view)
+  {
+    if (mEvernoteSession.isLoggedIn() && mImageData != null
+        && mImageData.filePath != null)
+    {
       new EvernoteNoteCreator().execute(mImageData);
     }
   }
-  
-  
-  private class EvernoteNoteCreator extends AsyncTask<ImageData, Void, Note> {
+
+  private class EvernoteNoteCreator extends AsyncTask<ImageData, Void, Note>
+  {
     // using showDialog, could use Fragments instead
     @SuppressWarnings("deprecation")
     @Override
-    protected void onPreExecute() {
+    protected void onPreExecute()
+    {
       showDialog(DIALOG_PROGRESS);
     }
 
     @Override
-    protected Note doInBackground(ImageData... imageDatas) {
-      if (imageDatas == null || imageDatas.length == 0) {
+    protected Note doInBackground(ImageData... imageDatas)
+    {
+      if (imageDatas == null || imageDatas.length == 0)
+      {
         return null;
       }
       ImageData imageData = imageDatas[0];
 
-
       Note createdNote = null;
       String f = imageData.filePath;
-      try {
+      try
+      {
         // Hash the data in the image file. The hash is used to reference the
         // file in the ENML note content.
         InputStream in = new BufferedInputStream(new FileInputStream(f));
@@ -374,29 +442,31 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
 
         // Create a new Note
         Note note = new Note();
-        
+
         String noteTitleString = "";
-		noteTitleString = title.getText().toString();// + " at " + location.getText().toString();
-		note.setTitle(noteTitleString);
-        
+        noteTitleString = title.getText().toString();// + " at " +
+                                                     // location.getText().toString();
+        note.setTitle(noteTitleString);
+
         note.addToResources(resource);
 
         // Set the note's ENML content. Learn about ENML at
         // http://dev.evernote.com/documentation/cloud/chapters/ENML.php
-        String content =
-            EvernoteUtil.NOTE_PREFIX +
-                "<p>" + "Location: " + location.getText().toString() +
-                "\n" + entry.getText().toString() + "</p>" +
-                EvernoteUtil.createEnMediaTag(resource) +
-                EvernoteUtil.NOTE_SUFFIX;
+        String content = EvernoteUtil.NOTE_PREFIX + "<p>" + "Location: "
+            + location.getText().toString() + "\n" + entry.getText().toString()
+            + "</p>" + EvernoteUtil.createEnMediaTag(resource)
+            + EvernoteUtil.NOTE_SUFFIX;
 
         note.setContent(content);
 
         // Create the note on the server. The returned Note object
         // will contain server-generated attributes such as the note's
-        // unique ID (GUID), the Resource's GUID, and the creation and update time.
-        createdNote = mEvernoteSession.createNoteStore().createNote(mEvernoteSession.getAuthToken(), note);
-      } catch (Exception e) {
+        // unique ID (GUID), the Resource's GUID, and the creation and update
+        // time.
+        createdNote = mEvernoteSession.createNoteStore().createNote(
+            mEvernoteSession.getAuthToken(), note);
+      } catch (Exception e)
+      {
         Log.e(TAG, getString(R.string.err_creating_note), e);
       }
 
@@ -406,39 +476,63 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
     // using removeDialog, could use Fragments instead
     @SuppressWarnings("deprecation")
     @Override
-    protected void onPostExecute(Note note) {
+    protected void onPostExecute(Note note)
+    {
       removeDialog(DIALOG_PROGRESS);
 
-      if (note == null) {
-        Toast.makeText(getApplicationContext(), R.string.err_creating_note, Toast.LENGTH_LONG).show();
+      if (note == null)
+      {
+        Toast.makeText(getApplicationContext(), R.string.err_creating_note,
+            Toast.LENGTH_LONG).show();
 
         finish();
         return;
       }
 
-      Toast.makeText(getApplicationContext(), R.string.msg_image_saved, Toast.LENGTH_LONG).show();
+      Toast.makeText(getApplicationContext(), R.string.msg_image_saved,
+          Toast.LENGTH_LONG).show();
       finish();
     }
   }
 
+  private Uri getImageUri()
+  {
+
+    File file1 = new File(Environment.getExternalStorageDirectory()
+        + "/Camerafolder");
+    if (!file1.exists())
+    {
+      file1.mkdirs();
+    }
+
+    File file = new File(Environment.getExternalStorageDirectory()
+        + "/Camerafolder/" + "img" + ".png");
+
+    Uri imgUri = Uri.fromFile(file);
+
+    return imgUri;
+  }
+
   /**
-   * Called when control returns from the image gallery picker.
-   * Loads the image that the user selected.
+   * Called when control returns from the image gallery picker. Loads the image
+   * that the user selected.
    */
-  private class ImageSelector extends AsyncTask<Intent, Void, ImageData> {
+  private class ImageSelector extends AsyncTask<Intent, Void, ImageData>
+  {
 
     // using showDialog, could use Fragments instead
     @SuppressWarnings("deprecation")
     @Override
-    protected void onPreExecute() {
+    protected void onPreExecute()
+    {
       showDialog(DIALOG_PROGRESS);
     }
 
     /**
-     * The callback from the gallery contains a pointer into a table.
-     * Look up the appropriate record and pull out the information that we need,
-     * in this case, the path to the file on disk, the file name and the MIME type.
-     *
+     * The callback from the gallery contains a pointer into a table. Look up
+     * the appropriate record and pull out the information that we need, in this
+     * case, the path to the file on disk, the file name and the MIME type.
+     * 
      * @param intents
      * @return
      */
@@ -447,28 +541,35 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
     @Override
     // suppress lint check on Display.getSize(Point)
     @TargetApi(16)
-    protected ImageData doInBackground(Intent... intents) {
-      if (intents == null || intents.length == 0) {
+    protected ImageData doInBackground(Intent... intents)
+    {
+     /* if (intents == null || intents.length == 0)
+      {
         return null;
-      }
+      }*/
 
-      Uri selectedImage = intents[0].getData();
-      String[] queryColumns = {
-          MediaStore.Images.Media._ID,
-          MediaStore.Images.Media.DATA,
-          MediaStore.Images.Media.MIME_TYPE,
-          MediaStore.Images.Media.DISPLAY_NAME};
+      Uri selectedImage = mImageUri;
+      String[] queryColumns = { MediaStore.Images.Media._ID,
+          MediaStore.Images.Media.DATA, MediaStore.Images.Media.MIME_TYPE,
+          MediaStore.Images.Media.DISPLAY_NAME };
 
       Cursor cursor = null;
       ImageData image = null;
-      try {
-        cursor = getContentResolver().query(selectedImage, queryColumns, null, null, null);
-        if (cursor.moveToFirst()) {
+      try
+      {
+        cursor = getContentResolver().query(selectedImage, queryColumns, null,
+            null, null);
+
+        if (cursor != null && cursor.moveToFirst())
+        {
           image = new ImageData();
 
-          image.filePath = cursor.getString(cursor.getColumnIndex(queryColumns[1]));
-          image.mimeType = cursor.getString(cursor.getColumnIndex(queryColumns[2]));
-          image.fileName = cursor.getString(cursor.getColumnIndex(queryColumns[3]));
+          image.filePath = cursor.getString(cursor
+              .getColumnIndex(queryColumns[1]));
+          image.mimeType = cursor.getString(cursor
+              .getColumnIndex(queryColumns[2]));
+          image.fileName = cursor.getString(cursor
+              .getColumnIndex(queryColumns[3]));
 
           // First decode with inJustDecodeBounds=true to check dimensions
           BitmapFactory.Options options = new BitmapFactory.Options();
@@ -480,13 +581,15 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
           int x = 0;
           int y = 0;
 
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
+          {
             Point size = new Point();
             getWindowManager().getDefaultDisplay().getSize(size);
 
             x = size.x;
             y = size.y;
-          } else {
+          } else
+          {
             x = getWindowManager().getDefaultDisplay().getWidth();
             y = getWindowManager().getDefaultDisplay().getHeight();
           }
@@ -501,14 +604,19 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
 
           tempBitmap = BitmapFactory.decodeFile(image.filePath, options);
 
-          image.imageBitmap = Bitmap.createScaledBitmap(tempBitmap, dimen, dimen, true);
+          image.imageBitmap = Bitmap.createScaledBitmap(tempBitmap, dimen,
+              dimen, true);
           tempBitmap.recycle();
 
         }
-      } catch (Exception e) {
+      } catch (Exception e)
+      {
+        e.printStackTrace();
         Log.e(TAG, "Error retrieving image");
-      } finally {
-        if (cursor != null) {
+      } finally
+      {
+        if (cursor != null)
+        {
           cursor.close();
         }
       }
@@ -519,27 +627,39 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
      * Calculates a sample size to be used when decoding a bitmap if you don't
      * require (or don't have enough memory) to load the full size bitmap.
      * <p/>
-     * <p>This function has been taken form Android's training materials,
-     * specifically the section about "Loading Large Bitmaps Efficiently".<p>
-     *
-     * @param options   a BitmapFactory.Options object, obtained from decoding only
-     *                  the bitmap's bounds.
-     * @param reqWidth  The required minimum width of the decoded bitmap.
-     * @param reqHeight The required minimum height of the decoded bitmap.
+     * <p>
+     * This function has been taken form Android's training materials,
+     * specifically the section about "Loading Large Bitmaps Efficiently".
+     * <p>
+     * 
+     * @param options
+     *          a BitmapFactory.Options object, obtained from decoding only the
+     *          bitmap's bounds.
+     * @param reqWidth
+     *          The required minimum width of the decoded bitmap.
+     * @param reqHeight
+     *          The required minimum height of the decoded bitmap.
      * @return the sample size needed to decode the bitmap to a size that meets
-     * the required width and height.
-     * @see <a href="http://developer.android.com/training/displaying-bitmaps/load-bitmap.html#load-bitmap">Load a Scaled Down Version into Memory</a>
+     *         the required width and height.
+     * @see <a
+     *      href="http://developer.android.com/training/displaying-bitmaps/load-bitmap.html#load-bitmap">Load
+     *      a Scaled Down Version into Memory</a>
      */
-    protected int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    protected int calculateInSampleSize(BitmapFactory.Options options,
+        int reqWidth, int reqHeight)
+    {
       // Raw height and width of image
       final int height = options.outHeight;
       final int width = options.outWidth;
       int inSampleSize = 1;
 
-      if (height > reqHeight || width > reqWidth) {
-        if (width > height) {
+      if (height > reqHeight || width > reqWidth)
+      {
+        if (width > height)
+        {
           inSampleSize = Math.round((float) height / (float) reqHeight);
-        } else {
+        } else
+        {
           inSampleSize = Math.round((float) width / (float) reqWidth);
         }
       }
@@ -548,49 +668,57 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
 
     /**
      * Sets the image to the background and enables saving it to evernote
-     *
+     * 
      * @param image
      */
     // using removeDialog, could use Fragments instead
     @SuppressWarnings("deprecation")
     @Override
-    protected void onPostExecute(ImageData image) {
+    protected void onPostExecute(ImageData image)
+    {
       removeDialog(DIALOG_PROGRESS);
 
-      if (image == null) {
-        Toast.makeText(getApplicationContext(), R.string.err_image_selected, Toast.LENGTH_SHORT).show();
+      if (image == null)
+      {
+        Toast.makeText(getApplicationContext(), R.string.err_image_selected,
+            Toast.LENGTH_SHORT).show();
         return;
       }
 
-      if (image.imageBitmap != null) {
+      if (image.imageBitmap != null)
+      {
         mImageView.setImageBitmap(image.imageBitmap);
       }
 
-      if (mEvernoteSession.isLoggedIn()) {
+      if (mEvernoteSession.isLoggedIn())
+      {
         mBtnSave.setEnabled(true);
       }
 
       mImageData = image;
     }
   }
+
   /**
-   * Called when control returns from the image gallery picker.
-   * Loads the image that the user selected.
+   * Called when control returns from the image gallery picker. Loads the image
+   * that the user selected.
    */
-  private class Test extends AsyncTask<Intent, Void, ImageData> {
+  private class Test extends AsyncTask<Intent, Void, ImageData>
+  {
 
     // using showDialog, could use Fragments instead
     @SuppressWarnings("deprecation")
     @Override
-    protected void onPreExecute() {
+    protected void onPreExecute()
+    {
       showDialog(DIALOG_PROGRESS);
     }
 
     /**
-     * The callback from the gallery contains a pointer into a table.
-     * Look up the appropriate record and pull out the information that we need,
-     * in this case, the path to the file on disk, the file name and the MIME type.
-     *
+     * The callback from the gallery contains a pointer into a table. Look up
+     * the appropriate record and pull out the information that we need, in this
+     * case, the path to the file on disk, the file name and the MIME type.
+     * 
      * @param intents
      * @return
      */
@@ -599,20 +727,44 @@ public class NoteActivity /*extends BaseActivity*/ extends Activity {
     @Override
     // suppress lint check on Display.getSize(Point)
     @TargetApi(16)
-    protected ImageData doInBackground(Intent... intents) {
-      if (intents == null || intents.length == 0) {
+    protected ImageData doInBackground(Intent... intents)
+    {
+      if (intents == null || intents.length == 0)
+      {
         return null;
       }
 
-      try {
-        
-        
-      } catch (Exception e) {
+      try
+      {
+
+      } catch (Exception e)
+      {
         Log.e(TAG, "Error retrieving image");
-      } finally {
-        
+      } finally
+      {
+
       }
-	return mImageData;
+      return mImageData;
+    }
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState)
+  {
+    super.onSaveInstanceState(outState);
+    if (mImageUri != null)
+    {
+      outState.putString("cameraImageUri", mImageUri.toString());
+    }
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState)
+  {
+    super.onRestoreInstanceState(savedInstanceState);
+    if (savedInstanceState.containsKey("cameraImageUri"))
+    {
+      mImageUri = Uri.parse(savedInstanceState.getString("cameraImageUri"));
     }
   }
 
