@@ -42,5 +42,7 @@
     <string name="dialog_award_title">Give An Award:</string>
     <string name="dialog_award_message">Best of...</string>
     <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_abs">AbsActivity</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

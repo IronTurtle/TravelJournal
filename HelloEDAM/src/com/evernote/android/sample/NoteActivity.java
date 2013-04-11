@@ -45,11 +45,15 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockFragment;
 import com.evernote.client.conn.mobile.FileData;
 import com.evernote.client.oauth.android.EvernoteSession;
 import com.evernote.client.oauth.android.EvernoteUtil;
@@ -70,7 +74,7 @@ import java.io.InputStream;
  * chooses an image from the device's image gallery. The image is then saved
  * directly to user's Evernote account as a new note.
  */
-public class NoteActivity /* extends BaseActivity */extends Activity
+public class NoteActivity /* extends BaseActivity extends Activity*/ extends SherlockFragment
 {
 
   /**
@@ -140,6 +144,35 @@ public class NoteActivity /* extends BaseActivity */extends Activity
 
   private ImageData mImageData;
 
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState)
+  {
+    View view = inflater.inflate(R.layout.main, container, false);
+    mBtnAuth = (Button) view.findViewById(R.id.auth_button);
+    mBtnSelect = (Button) view.findViewById(R.id.select_button);
+    mBtnSave = (Button) view.findViewById(R.id.save_button);
+    mImageView = (ImageView) view.findViewById(R.id.note_image);
+    title = (EditText) view.findViewById(R.id.note_title);
+    location = (EditText) view.findViewById(R.id.note_location);
+    entry = (EditText) view.findViewById(R.id.note_entry);
+
+    btnTakePhoto = (Button) view.findViewById(R.id.camera_button);
+    imgTakenPhoto = (ImageView) view.findViewById(R.id.note_image);
+
+    //btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
+    //entry.setOnKeyListener(new NoteEntryField());
+/*
+    if (getLastNonConfigurationInstance() != null)
+    {
+      mImageData = (ImageData) getLastNonConfigurationInstance();
+      mImageView.setImageBitmap(mImageData.imageBitmap);
+    }
+*/
+    setupSession();
+    return view;
+  }
+  
   /**
    * Called when the activity is first created.
    */
@@ -148,29 +181,7 @@ public class NoteActivity /* extends BaseActivity */extends Activity
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.main);
-
-    mBtnAuth = (Button) findViewById(R.id.auth_button);
-    mBtnSelect = (Button) findViewById(R.id.select_button);
-    mBtnSave = (Button) findViewById(R.id.save_button);
-    mImageView = (ImageView) findViewById(R.id.note_image);
-    title = (EditText) findViewById(R.id.note_title);
-    location = (EditText) findViewById(R.id.note_location);
-    entry = (EditText) findViewById(R.id.note_entry);
-
-    btnTakePhoto = (Button) findViewById(R.id.camera_button);
-    imgTakenPhoto = (ImageView) findViewById(R.id.note_image);
-
-    btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
-    entry.setOnKeyListener(new NoteEntryField());
-
-    if (getLastNonConfigurationInstance() != null)
-    {
-      mImageData = (ImageData) getLastNonConfigurationInstance();
-      mImageView.setImageBitmap(mImageData.imageBitmap);
-    }
-
-    setupSession();
+    //setContentView(R.layout.main);
   }
 
   @Override
@@ -179,17 +190,17 @@ public class NoteActivity /* extends BaseActivity */extends Activity
     super.onResume();
     updateUi();
   }
-
+/*
   @Override
   public Object onRetainNonConfigurationInstance()
   {
     return mImageData;
   }
-
+*/
   // using createDialog, could use Fragments instead
   @SuppressWarnings("deprecation")
-  @Override
-  protected Dialog onCreateDialog(int id)
+  
+ /* protected Dialog onCreateDialog(int id)
   {
     switch (id)
     {
@@ -198,7 +209,8 @@ public class NoteActivity /* extends BaseActivity */extends Activity
     }
     return super.onCreateDialog(id);
   }
-
+*/
+  /*
   @Override
   protected void onPrepareDialog(int id, Dialog dialog)
   {
@@ -210,7 +222,7 @@ public class NoteActivity /* extends BaseActivity */extends Activity
       ((ProgressDialog) dialog).setMessage(getString(R.string.loading));
     }
   }
-
+*/
   /**
    * Setup the EvernoteSession used to access the Evernote API.
    */
@@ -218,8 +230,9 @@ public class NoteActivity /* extends BaseActivity */extends Activity
   {
 
     // Retrieve persisted authentication information
-    mEvernoteSession = EvernoteSession.init(this, CONSUMER_KEY,
+    mEvernoteSession = EvernoteSession.init(this.getActivity().getApplicationContext(), CONSUMER_KEY,
         CONSUMER_SECRET, EVERNOTE_HOST, null);
+    //this.getActivity().getApplicationContext();
   }
 
   /**
@@ -255,10 +268,10 @@ public class NoteActivity /* extends BaseActivity */extends Activity
   {
     if (mEvernoteSession.isLoggedIn())
     {
-      mEvernoteSession.logOut(getApplicationContext());
+      mEvernoteSession.logOut(this.getActivity().getApplicationContext());
     } else
     {
-      mEvernoteSession.authenticate(this);
+      mEvernoteSession.authenticate(this.getActivity().getApplicationContext());
     }
     updateUi();
   }
@@ -295,7 +308,7 @@ public class NoteActivity /* extends BaseActivity */extends Activity
       }
       break;
     case CAMERA_PIC_REQUEST:
-      if (resultCode == RESULT_OK)
+      if (resultCode == Activity.RESULT_OK)
       {
         if (data != null)
         {
@@ -359,7 +372,7 @@ public class NoteActivity /* extends BaseActivity */extends Activity
           android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
       ContentValues values = new ContentValues();
 
-      mImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+      mImageUri = NoteActivity.this.getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
       if(mImageUri == null) {
           Log.e("image uri is null", "what?");
       }
@@ -410,7 +423,7 @@ public class NoteActivity /* extends BaseActivity */extends Activity
     @Override
     protected void onPreExecute()
     {
-      showDialog(DIALOG_PROGRESS);
+      //showDialog(DIALOG_PROGRESS);
     }
 
     @Override
@@ -478,20 +491,20 @@ public class NoteActivity /* extends BaseActivity */extends Activity
     @Override
     protected void onPostExecute(Note note)
     {
-      removeDialog(DIALOG_PROGRESS);
+      //removeDialog(DIALOG_PROGRESS);
 
       if (note == null)
       {
-        Toast.makeText(getApplicationContext(), R.string.err_creating_note,
+        Toast.makeText(NoteActivity.this.getActivity().getApplicationContext(), R.string.err_creating_note,
             Toast.LENGTH_LONG).show();
 
-        finish();
+        //finish();
         return;
       }
 
-      Toast.makeText(getApplicationContext(), R.string.msg_image_saved,
+      Toast.makeText(NoteActivity.this.getActivity().getApplicationContext(), R.string.msg_image_saved,
           Toast.LENGTH_LONG).show();
-      finish();
+      //finish();
     }
   }
 
@@ -525,7 +538,7 @@ public class NoteActivity /* extends BaseActivity */extends Activity
     @Override
     protected void onPreExecute()
     {
-      showDialog(DIALOG_PROGRESS);
+      //showDialog(DIALOG_PROGRESS);
     }
 
     /**
@@ -557,7 +570,7 @@ public class NoteActivity /* extends BaseActivity */extends Activity
       ImageData image = null;
       try
       {
-        cursor = getContentResolver().query(selectedImage, queryColumns, null,
+        cursor = NoteActivity.this.getActivity().getApplicationContext().getContentResolver().query(selectedImage, queryColumns, null,
             null, null);
 
         if (cursor != null && cursor.moveToFirst())
@@ -584,14 +597,14 @@ public class NoteActivity /* extends BaseActivity */extends Activity
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
           {
             Point size = new Point();
-            getWindowManager().getDefaultDisplay().getSize(size);
+            NoteActivity.this.getActivity().getWindowManager().getDefaultDisplay().getSize(size);
 
             x = size.x;
             y = size.y;
           } else
           {
-            x = getWindowManager().getDefaultDisplay().getWidth();
-            y = getWindowManager().getDefaultDisplay().getHeight();
+            x = NoteActivity.this.getActivity().getWindowManager().getDefaultDisplay().getWidth();
+            y = NoteActivity.this.getActivity().getWindowManager().getDefaultDisplay().getHeight();
           }
 
           dimen = x < y ? x : y;
@@ -676,11 +689,11 @@ public class NoteActivity /* extends BaseActivity */extends Activity
     @Override
     protected void onPostExecute(ImageData image)
     {
-      removeDialog(DIALOG_PROGRESS);
+      //removeDialog(DIALOG_PROGRESS);
 
       if (image == null)
       {
-        Toast.makeText(getApplicationContext(), R.string.err_image_selected,
+        Toast.makeText(NoteActivity.this.getActivity().getApplicationContext(), R.string.err_image_selected,
             Toast.LENGTH_SHORT).show();
         return;
       }
@@ -711,7 +724,7 @@ public class NoteActivity /* extends BaseActivity */extends Activity
     @Override
     protected void onPreExecute()
     {
-      showDialog(DIALOG_PROGRESS);
+      //showDialog(DIALOG_PROGRESS);
     }
 
     /**
@@ -747,7 +760,7 @@ public class NoteActivity /* extends BaseActivity */extends Activity
       return mImageData;
     }
   }
-
+/*
   @Override
   protected void onSaveInstanceState(Bundle outState)
   {
@@ -767,5 +780,5 @@ public class NoteActivity /* extends BaseActivity */extends Activity
       mImageUri = Uri.parse(savedInstanceState.getString("cameraImageUri"));
     }
   }
-
+*/
 }

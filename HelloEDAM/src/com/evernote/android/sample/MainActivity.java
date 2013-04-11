@@ -32,9 +32,9 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import java.util.ArrayList;
 
 import android.widget.ListView;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+//import android.view.Menu;
+//import android.view.MenuInflater;
+//import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView.OnItemClickListener;
@@ -44,7 +44,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
+//import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.Dialog;
@@ -87,6 +87,13 @@ import java.io.InputStream;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuInflater;
+
+
 /**
  * This simple Android app demonstrates how to integrate with the Evernote API
  * (aka EDAM).
@@ -95,21 +102,7 @@ import android.util.Log;
  * chooses an image from the device's image gallery. The image is then saved
  * directly to user's Evernote account as a new note.
  */
-public class MainActivity extends Activity {/*
-											 * BaseActivity {
-											 * 
-											 * /**
-											 * ******************************
-											 * ****
-											 * ******************************
-											 * ******** You MUST change the
-											 * following values to run this
-											 * sample application. *
-											 * ************
-											 * **********************
-											 * ************
-											 * ***************************
-											 */
+public class MainActivity extends SherlockActivity implements ActionBar.TabListener{
 
 	// Your Evernote API key. See http://dev.evernote.com/documentation/cloud/
 	// Please obfuscate your code to help keep these values secret.
@@ -178,6 +171,7 @@ public class MainActivity extends Activity {/*
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+	  setTheme(com.actionbarsherlock.R.style.Theme_Sherlock);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mainactivity);
 
@@ -196,7 +190,22 @@ public class MainActivity extends Activity {/*
 				.build();
 		// Initialize ImageLoader with configuration.
 		ImageLoader.getInstance().init(config);
-
+    
+		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+    
+        ActionBar.Tab tab = getSupportActionBar().newTab();
+        tab.setText("Itinerary");
+        tab.setTabListener(this);
+        getSupportActionBar().addTab(tab);
+        tab = getSupportActionBar().newTab();
+        tab.setText("Me");
+        tab.setTabListener(this);
+        getSupportActionBar().addTab(tab);
+        tab = getSupportActionBar().newTab();
+        tab.setText("Others");
+        tab.setTabListener(this);
+        getSupportActionBar().addTab(tab);
+    
 		setupSession();
 	}
 
@@ -389,5 +398,29 @@ public class MainActivity extends Activity {/*
 			});
 		}
 	}
+
+  @Override
+  public void onTabSelected(com.actionbarsherlock.app.ActionBar.Tab tab,
+      android.support.v4.app.FragmentTransaction ft)
+  {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void onTabUnselected(com.actionbarsherlock.app.ActionBar.Tab tab,
+      android.support.v4.app.FragmentTransaction ft)
+  {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void onTabReselected(com.actionbarsherlock.app.ActionBar.Tab tab,
+      android.support.v4.app.FragmentTransaction ft)
+  {
+    // TODO Auto-generated method stub
+    
+  }
 
 }

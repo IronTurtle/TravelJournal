@@ -213,6 +213,11 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
                 .getNote(mEvernoteSession.getAuthToken(),
                     snippetEntry.getGuid(), true, true, false, false)
                 .getContent()).toString();
+        System.out.println(mEvernoteSession
+            .createNoteStore()
+            .getNote(mEvernoteSession.getAuthToken(),
+                snippetEntry.getGuid(), true, true, false, false)
+            .getContent());
       } catch (Exception e)
       {
         e.printStackTrace();
