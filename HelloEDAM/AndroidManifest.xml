@@ -19,7 +19,7 @@
                 
         
         <activity
-            android:name="com.evernote.android.sample.MainActivity"
+            android:name="com.evernote.android.sample.MainFragment"
             android:label="@string/app_name" >
         </activity>
         <activity
@@ -27,7 +27,7 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.evernote.android.sample.NoteActivity"
+            android:name="com.evernote.android.sample.NoteFragment"
             android:label="@string/app_name" >
         </activity>
         <activity android:name="com.evernote.client.oauth.android.EvernoteOAuthActivity" />

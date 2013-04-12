@@ -75,7 +75,7 @@ import java.io.InputStream;
  * chooses an image from the device's image gallery. The image is then saved
  * directly to user's Evernote account as a new note.
  */
-public class NoteActivity /* extends BaseActivity extends Activity*/ extends SherlockFragment implements OnClickListener
+public class NoteFragment extends SherlockFragment implements OnClickListener
 {
 
   /**
@@ -149,7 +149,7 @@ public class NoteActivity /* extends BaseActivity extends Activity*/ extends She
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState)
   {
-    View view = inflater.inflate(R.layout.main, container, false);
+    View view = inflater.inflate(R.layout.fragment_note, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
     mBtnSelect = (Button) view.findViewById(R.id.select_button);
     mBtnSave = (Button) view.findViewById(R.id.save_button);
@@ -374,7 +374,7 @@ public class NoteActivity /* extends BaseActivity extends Activity*/ extends She
           android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
       ContentValues values = new ContentValues();
 
-      mImageUri = NoteActivity.this.getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+      mImageUri = NoteFragment.this.getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
       if(mImageUri == null) {
           Log.e("image uri is null", "what?");
       }
@@ -497,14 +497,14 @@ public class NoteActivity /* extends BaseActivity extends Activity*/ extends She
 
       if (note == null)
       {
-        Toast.makeText(NoteActivity.this.getActivity().getApplicationContext(), R.string.err_creating_note,
+        Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(), R.string.err_creating_note,
             Toast.LENGTH_LONG).show();
 
         //finish();
         return;
       }
 
-      Toast.makeText(NoteActivity.this.getActivity().getApplicationContext(), R.string.msg_image_saved,
+      Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(), R.string.msg_image_saved,
           Toast.LENGTH_LONG).show();
       //finish();
     }
@@ -572,7 +572,7 @@ public class NoteActivity /* extends BaseActivity extends Activity*/ extends She
       ImageData image = null;
       try
       {
-        cursor = NoteActivity.this.getActivity().getApplicationContext().getContentResolver().query(selectedImage, queryColumns, null,
+        cursor = NoteFragment.this.getActivity().getApplicationContext().getContentResolver().query(selectedImage, queryColumns, null,
             null, null);
 
         if (cursor != null && cursor.moveToFirst())
@@ -599,14 +599,14 @@ public class NoteActivity /* extends BaseActivity extends Activity*/ extends She
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
           {
             Point size = new Point();
-            NoteActivity.this.getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+            NoteFragment.this.getActivity().getWindowManager().getDefaultDisplay().getSize(size);
 
             x = size.x;
             y = size.y;
           } else
           {
-            x = NoteActivity.this.getActivity().getWindowManager().getDefaultDisplay().getWidth();
-            y = NoteActivity.this.getActivity().getWindowManager().getDefaultDisplay().getHeight();
+            x = NoteFragment.this.getActivity().getWindowManager().getDefaultDisplay().getWidth();
+            y = NoteFragment.this.getActivity().getWindowManager().getDefaultDisplay().getHeight();
           }
 
           dimen = x < y ? x : y;
@@ -695,7 +695,7 @@ public class NoteActivity /* extends BaseActivity extends Activity*/ extends She
 
       if (image == null)
       {
-        Toast.makeText(NoteActivity.this.getActivity().getApplicationContext(), R.string.err_image_selected,
+        Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(), R.string.err_image_selected,
             Toast.LENGTH_SHORT).show();
         return;
       }

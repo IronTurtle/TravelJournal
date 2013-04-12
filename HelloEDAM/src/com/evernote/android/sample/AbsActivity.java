@@ -39,11 +39,11 @@ public class AbsActivity extends SherlockFragmentActivity
 
 		mTabsAdapter.addTab(
 				bar.newTab().setText("Fragment 1"),
-				FragmentOne.class, null);
+				MainFragment.class, null);
 		mTabsAdapter.addTab(
 				bar.newTab()
 						.setText("Fragment 2"),
-				NoteActivity.class, null);
+				NoteFragment.class, null);
 
 	}
 

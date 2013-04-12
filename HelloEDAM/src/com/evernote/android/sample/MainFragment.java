@@ -36,6 +36,8 @@ import android.widget.ListView;
 //import android.view.MenuInflater;
 //import android.view.MenuItem;
 import android.view.View.OnClickListener;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView.OnItemClickListener;
 import android.view.View.OnClickListener;
@@ -89,6 +91,8 @@ import android.util.Log;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.MenuInflater;
@@ -102,7 +106,7 @@ import com.actionbarsherlock.view.MenuInflater;
  * chooses an image from the device's image gallery. The image is then saved
  * directly to user's Evernote account as a new note.
  */
-public class MainActivity extends SherlockActivity implements ActionBar.TabListener{
+public class MainFragment extends SherlockFragment implements ActionBar.TabListener{
 
 	// Your Evernote API key. See http://dev.evernote.com/documentation/cloud/
 	// Please obfuscate your code to help keep these values secret.
@@ -165,48 +169,46 @@ public class MainActivity extends SherlockActivity implements ActionBar.TabListe
 	ImageLoader imageLoader;
 	DisplayImageOptions options;
 
+	@Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState)
+  {
+    View view = inflater.inflate(R.layout.fragment_main, container, false);
+    mBtnAuth = (Button) view.findViewById(R.id.auth_button);
+    
+    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+        this.getActivity().getApplicationContext())
+        .threadPriority(Thread.NORM_PRIORITY - 2)
+        .denyCacheImageMultipleSizesInMemory().enableLogging() // Not
+                                    // necessary
+                                    // in
+                                    // common
+        .build();
+    // Initialize ImageLoader with configuration.
+    ImageLoader.getInstance().init(config);
+    
+
+    setupSession();
+    
+    return view;
+  }
+	
 	/**
 	 * Called when the activity is first created.
 	 */
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	  setTheme(com.actionbarsherlock.R.style.Theme_Sherlock);
+	  
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.mainactivity);
 
-		mBtnAuth = (Button) findViewById(R.id.auth_button);
+
+		
 		/*
 		 * mBtnAddNote = (Button) findViewById(R.id.menu_add_note);
 		 */
 
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				getApplicationContext())
-				.threadPriority(Thread.NORM_PRIORITY - 2)
-				.denyCacheImageMultipleSizesInMemory().enableLogging() // Not
-																		// necessary
-																		// in
-																		// common
-				.build();
-		// Initialize ImageLoader with configuration.
-		ImageLoader.getInstance().init(config);
-    
-		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-    
-        ActionBar.Tab tab = getSupportActionBar().newTab();
-        tab.setText("Itinerary");
-        tab.setTabListener(this);
-        getSupportActionBar().addTab(tab);
-        tab = getSupportActionBar().newTab();
-        tab.setText("Me");
-        tab.setTabListener(this);
-        getSupportActionBar().addTab(tab);
-        tab = getSupportActionBar().newTab();
-        tab.setText("Others");
-        tab.setTabListener(this);
-        getSupportActionBar().addTab(tab);
-    
-		setupSession();
+		
 	}
 
 	@Override
@@ -214,12 +216,12 @@ public class MainActivity extends SherlockActivity implements ActionBar.TabListe
 		super.onResume();
 		updateUi();
 	}
-
+/*
 	@Override
 	public Object onRetainNonConfigurationInstance() {
 		return mImageData;
 	}
-
+*/
 	/*
 	 * // using createDialog, could use Fragments instead
 	 * 
@@ -243,7 +245,7 @@ public class MainActivity extends SherlockActivity implements ActionBar.TabListe
 	private void setupSession() {
 
 		// Retrieve persisted authentication information
-		mEvernoteSession = EvernoteSession.init(this, CONSUMER_KEY,
+		mEvernoteSession = EvernoteSession.init(this.getActivity(), CONSUMER_KEY,
 				CONSUMER_SECRET, EVERNOTE_HOST, null);
 	}
 
@@ -253,11 +255,11 @@ public class MainActivity extends SherlockActivity implements ActionBar.TabListe
 	private void updateUi() {
 		if (mEvernoteSession.isLoggedIn()) {
 			// mBtnAuth.setText(R.string.label_log_out);
-			View b = findViewById(R.id.auth_button);
+			View b = this.getView().findViewById(R.id.auth_button);
 			b.setVisibility(View.GONE);
 			listViewCreate();
 		} else {
-			View b = findViewById(R.id.auth_button);
+			View b = this.getView().findViewById(R.id.auth_button);
 			b.setVisibility(View.VISIBLE);
 			// mBtnAuth.setText(R.string.label_log_in);
 		}
@@ -269,23 +271,23 @@ public class MainActivity extends SherlockActivity implements ActionBar.TabListe
 	 */
 	public void startAuth(View view) {
 		if (mEvernoteSession.isLoggedIn()) {
-			mEvernoteSession.logOut(getApplicationContext());
+			mEvernoteSession.logOut(this.getActivity().getApplicationContext());
 		} else {
-			mEvernoteSession.authenticate(this);
+			mEvernoteSession.authenticate(this.getActivity());
 		}
 		updateUi();
 	}
 
 	public void addNoteOnClick(View view) {
 
-		Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
+		Intent intent = new Intent(this.getActivity().getApplicationContext(), NoteFragment.class);
 
 		this.startActivityForResult(intent, 200);
 
 	}
 
 	public void goToItineraryOnClick(View view) {
-		Intent intent = new Intent(getApplicationContext(),
+		Intent intent = new Intent(this.getActivity().getApplicationContext(),
 				ItineraryActivity.class);
 
 		this.startActivityForResult(intent, 100);
@@ -318,15 +320,15 @@ public class MainActivity extends SherlockActivity implements ActionBar.TabListe
 	// @SuppressWarnings("deprecation")
 	// @Override
 	protected void onPostExecute(Note note) {
-		removeDialog(DIALOG_PROGRESS);
+		this.getActivity().removeDialog(DIALOG_PROGRESS);
 
 		if (note == null) {
-			Toast.makeText(getApplicationContext(), R.string.err_creating_note,
+			Toast.makeText(this.getActivity().getApplicationContext(), R.string.err_creating_note,
 					Toast.LENGTH_LONG).show();
 			return;
 		}
 
-		Toast.makeText(getApplicationContext(), R.string.msg_image_saved,
+		Toast.makeText(this.getActivity().getApplicationContext(), R.string.msg_image_saved,
 				Toast.LENGTH_LONG).show();
 	}
 
@@ -379,8 +381,8 @@ public class MainActivity extends SherlockActivity implements ActionBar.TabListe
 				System.out.println(note2.getTitle());
 			}
 
-			ListView listView = (ListView) findViewById(R.id.lview);
-			SnippetAdapter adapter = new SnippetAdapter(MainActivity.this,
+			ListView listView = (ListView) MainFragment.this.getView().findViewById(R.id.lview);
+			SnippetAdapter adapter = new SnippetAdapter(MainFragment.this.getActivity(),
 					R.layout.snippet, entries, mEvernoteSession);
 			listView.setAdapter(adapter);
 			listView.setScrollingCacheEnabled(false);
@@ -391,7 +393,7 @@ public class MainActivity extends SherlockActivity implements ActionBar.TabListe
 					// String item = "clicked3";
 					// Toast.makeText(getBaseContext(), item,
 					// Toast.LENGTH_LONG).show();
-					// Intent i = new Intent(getApplicationContext(),
+					// Intent i = new Intent(this.getActivity().getApplicationContext(),
 					// JournalEntry.class);
 					// startActivityForResult(i, 100);
 				}

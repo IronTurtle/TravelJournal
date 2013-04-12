@@ -101,7 +101,7 @@ public class BaseActivity extends FragmentActivity implements
 		int id = item.getItemId();
 		switch (id) {
 	    case R.id.menu_add_note:
-	    	Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
+	    	Intent intent = new Intent(getApplicationContext(), NoteFragment.class);
 	  	  	this.startActivityForResult(intent, 100);
 	  	  	break;
 	    }
