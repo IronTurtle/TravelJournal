@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
@@ -13,6 +14,10 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.ActionBar.Tab;
+//import com.actionbarsherlock.sample.styled.R;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 
 public class AbsActivity extends SherlockFragmentActivity
 {
@@ -21,18 +26,20 @@ public class AbsActivity extends SherlockFragmentActivity
 	TabsAdapter mTabsAdapter;
 	TextView tabCenter;
 	TextView tabText;
+	
+  private final Handler handler = new Handler();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-	  System.out.println("Launched");
+	 // System.out.println("Launched");
 		super.onCreate(savedInstanceState);
 
 		mViewPager = new ViewPager(this);
 		mViewPager.setId(R.id.pager);
 
 		setContentView(mViewPager);
-		ActionBar bar = getSupportActionBar();
+		final ActionBar bar = getSupportActionBar();
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		mTabsAdapter = new TabsAdapter(this, mViewPager);
@@ -46,6 +53,27 @@ public class AbsActivity extends SherlockFragmentActivity
 				NoteFragment.class, null);
 
 	}
+	
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+      getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+/*
+      // set up a listener for the refresh item
+      final MenuItem refresh = (MenuItem) menu.findItem(R.id.menu_refresh);
+      refresh.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+          // on selecting show progress spinner for 1s
+          public boolean onMenuItemClick(MenuItem item) {
+              // item.setActionView(R.layout.progress_action);
+              handler.postDelayed(new Runnable() {
+                  public void run() {
+                      refresh.setActionView(null);
+                  }
+              }, 1000);
+              return false;
+          }
+      });*/
+      return super.onCreateOptionsMenu(menu);
+  }
 
 	public static class TabsAdapter extends FragmentPagerAdapter implements
 			ActionBar.TabListener, ViewPager.OnPageChangeListener

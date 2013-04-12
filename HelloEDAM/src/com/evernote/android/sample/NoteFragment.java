@@ -164,17 +164,15 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     mBtnSave.setOnClickListener(this);
     btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
     entry.setOnKeyListener(new NoteEntryField());
-/*
-    if (getLastNonConfigurationInstance() != null)
-    {
-      mImageData = (ImageData) getLastNonConfigurationInstance();
-      mImageView.setImageBitmap(mImageData.imageBitmap);
-    }
-*/
+    /*
+     * if (getLastNonConfigurationInstance() != null) { mImageData = (ImageData)
+     * getLastNonConfigurationInstance();
+     * mImageView.setImageBitmap(mImageData.imageBitmap); }
+     */
     setupSession();
     return view;
   }
-  
+
   /**
    * Called when the activity is first created.
    */
@@ -183,7 +181,7 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    //setContentView(R.layout.main);
+    // setContentView(R.layout.main);
   }
 
   @Override
@@ -192,39 +190,24 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     super.onResume();
     updateUi();
   }
-/*
-  @Override
-  public Object onRetainNonConfigurationInstance()
-  {
-    return mImageData;
-  }
-*/
+
+  /*
+   * @Override public Object onRetainNonConfigurationInstance() { return
+   * mImageData; }
+   */
   // using createDialog, could use Fragments instead
   @SuppressWarnings("deprecation")
-  
- /* protected Dialog onCreateDialog(int id)
-  {
-    switch (id)
-    {
-    case DIALOG_PROGRESS:
-      return new ProgressDialog(NoteActivity.this);
-    }
-    return super.onCreateDialog(id);
-  }
-*/
   /*
-  @Override
-  protected void onPrepareDialog(int id, Dialog dialog)
-  {
-    switch (id)
-    {
-    case DIALOG_PROGRESS:
-      ((ProgressDialog) dialog).setIndeterminate(true);
-      dialog.setCancelable(false);
-      ((ProgressDialog) dialog).setMessage(getString(R.string.loading));
-    }
-  }
-*/
+   * protected Dialog onCreateDialog(int id) { switch (id) { case
+   * DIALOG_PROGRESS: return new ProgressDialog(NoteActivity.this); } return
+   * super.onCreateDialog(id); }
+   */
+  /*
+   * @Override protected void onPrepareDialog(int id, Dialog dialog) { switch
+   * (id) { case DIALOG_PROGRESS: ((ProgressDialog)
+   * dialog).setIndeterminate(true); dialog.setCancelable(false);
+   * ((ProgressDialog) dialog).setMessage(getString(R.string.loading)); } }
+   */
   /**
    * Setup the EvernoteSession used to access the Evernote API.
    */
@@ -232,9 +215,10 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
   {
 
     // Retrieve persisted authentication information
-    mEvernoteSession = EvernoteSession.init(this.getActivity().getApplicationContext(), CONSUMER_KEY,
-        CONSUMER_SECRET, EVERNOTE_HOST, null);
-    //this.getActivity().getApplicationContext();
+    mEvernoteSession = EvernoteSession.init(this.getActivity()
+        .getApplicationContext(), CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_HOST,
+        null);
+    // this.getActivity().getApplicationContext();
   }
 
   /**
@@ -374,12 +358,15 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
           android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
       ContentValues values = new ContentValues();
 
-      mImageUri = NoteFragment.this.getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-      if(mImageUri == null) {
-          Log.e("image uri is null", "what?");
-      }
-      else {
-          Log.e("oh nevermind", "image uri is NOT null");
+      mImageUri = NoteFragment.this.getActivity().getApplicationContext()
+          .getContentResolver()
+          .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+      if (mImageUri == null)
+      {
+        Log.e("image uri is null", "what?");
+      } else
+      {
+        Log.e("oh nevermind", "image uri is NOT null");
       }
       cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
       startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
@@ -425,7 +412,7 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     @Override
     protected void onPreExecute()
     {
-      //showDialog(DIALOG_PROGRESS);
+      // showDialog(DIALOG_PROGRESS);
     }
 
     @Override
@@ -493,39 +480,21 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     @Override
     protected void onPostExecute(Note note)
     {
-      //removeDialog(DIALOG_PROGRESS);
+      // removeDialog(DIALOG_PROGRESS);
 
       if (note == null)
       {
-        Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(), R.string.err_creating_note,
-            Toast.LENGTH_LONG).show();
+        Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(),
+            R.string.err_creating_note, Toast.LENGTH_LONG).show();
 
-        //finish();
+        // finish();
         return;
       }
 
-      Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(), R.string.msg_image_saved,
-          Toast.LENGTH_LONG).show();
-      //finish();
+      Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(),
+          R.string.msg_image_saved, Toast.LENGTH_LONG).show();
+      // finish();
     }
-  }
-
-  private Uri getImageUri()
-  {
-
-    File file1 = new File(Environment.getExternalStorageDirectory()
-        + "/Camerafolder");
-    if (!file1.exists())
-    {
-      file1.mkdirs();
-    }
-
-    File file = new File(Environment.getExternalStorageDirectory()
-        + "/Camerafolder/" + "img" + ".png");
-
-    Uri imgUri = Uri.fromFile(file);
-
-    return imgUri;
   }
 
   /**
@@ -540,7 +509,7 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     @Override
     protected void onPreExecute()
     {
-      //showDialog(DIALOG_PROGRESS);
+      // showDialog(DIALOG_PROGRESS);
     }
 
     /**
@@ -558,10 +527,9 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     @TargetApi(16)
     protected ImageData doInBackground(Intent... intents)
     {
-     /* if (intents == null || intents.length == 0)
-      {
-        return null;
-      }*/
+      /*
+       * if (intents == null || intents.length == 0) { return null; }
+       */
 
       Uri selectedImage = mImageUri;
       String[] queryColumns = { MediaStore.Images.Media._ID,
@@ -572,8 +540,9 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
       ImageData image = null;
       try
       {
-        cursor = NoteFragment.this.getActivity().getApplicationContext().getContentResolver().query(selectedImage, queryColumns, null,
-            null, null);
+        cursor = NoteFragment.this.getActivity().getApplicationContext()
+            .getContentResolver()
+            .query(selectedImage, queryColumns, null, null, null);
 
         if (cursor != null && cursor.moveToFirst())
         {
@@ -599,14 +568,17 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
           {
             Point size = new Point();
-            NoteFragment.this.getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+            NoteFragment.this.getActivity().getWindowManager()
+                .getDefaultDisplay().getSize(size);
 
             x = size.x;
             y = size.y;
           } else
           {
-            x = NoteFragment.this.getActivity().getWindowManager().getDefaultDisplay().getWidth();
-            y = NoteFragment.this.getActivity().getWindowManager().getDefaultDisplay().getHeight();
+            x = NoteFragment.this.getActivity().getWindowManager()
+                .getDefaultDisplay().getWidth();
+            y = NoteFragment.this.getActivity().getWindowManager()
+                .getDefaultDisplay().getHeight();
           }
 
           dimen = x < y ? x : y;
@@ -691,12 +663,12 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     @Override
     protected void onPostExecute(ImageData image)
     {
-      //removeDialog(DIALOG_PROGRESS);
+      // removeDialog(DIALOG_PROGRESS);
 
       if (image == null)
       {
-        Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(), R.string.err_image_selected,
-            Toast.LENGTH_SHORT).show();
+        Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(),
+            R.string.err_image_selected, Toast.LENGTH_SHORT).show();
         return;
       }
 
@@ -714,87 +686,29 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     }
   }
 
-  /**
-   * Called when control returns from the image gallery picker. Loads the image
-   * that the user selected.
+  /*
+   * @Override protected void onSaveInstanceState(Bundle outState) {
+   * super.onSaveInstanceState(outState); if (mImageUri != null) {
+   * outState.putString("cameraImageUri", mImageUri.toString()); } }
+   * 
+   * @Override protected void onRestoreInstanceState(Bundle savedInstanceState)
+   * { super.onRestoreInstanceState(savedInstanceState); if
+   * (savedInstanceState.containsKey("cameraImageUri")) { mImageUri =
+   * Uri.parse(savedInstanceState.getString("cameraImageUri")); } }
    */
-  private class Test extends AsyncTask<Intent, Void, ImageData>
-  {
-
-    // using showDialog, could use Fragments instead
-    @SuppressWarnings("deprecation")
-    @Override
-    protected void onPreExecute()
-    {
-      //showDialog(DIALOG_PROGRESS);
-    }
-
-    /**
-     * The callback from the gallery contains a pointer into a table. Look up
-     * the appropriate record and pull out the information that we need, in this
-     * case, the path to the file on disk, the file name and the MIME type.
-     * 
-     * @param intents
-     * @return
-     */
-    // using Display.getWidth and getHeight on older SDKs
-    @SuppressWarnings("deprecation")
-    @Override
-    // suppress lint check on Display.getSize(Point)
-    @TargetApi(16)
-    protected ImageData doInBackground(Intent... intents)
-    {
-      if (intents == null || intents.length == 0)
-      {
-        return null;
-      }
-
-      try
-      {
-
-      } catch (Exception e)
-      {
-        Log.e(TAG, "Error retrieving image");
-      } finally
-      {
-
-      }
-      return mImageData;
-    }
-  }
-/*
-  @Override
-  protected void onSaveInstanceState(Bundle outState)
-  {
-    super.onSaveInstanceState(outState);
-    if (mImageUri != null)
-    {
-      outState.putString("cameraImageUri", mImageUri.toString());
-    }
-  }
-
-  @Override
-  protected void onRestoreInstanceState(Bundle savedInstanceState)
-  {
-    super.onRestoreInstanceState(savedInstanceState);
-    if (savedInstanceState.containsKey("cameraImageUri"))
-    {
-      mImageUri = Uri.parse(savedInstanceState.getString("cameraImageUri"));
-    }
-  }
-*/
 
   @Override
   public void onClick(View v)
   {
-    switch (v.getId()) {
+    switch (v.getId())
+    {
     case R.id.save_button:
 
-        saveImage(this.getView());
+      saveImage(this.getView());
 
-        break;
+      break;
     }
     // TODO Auto-generated method stub
-    
+
   }
 }
