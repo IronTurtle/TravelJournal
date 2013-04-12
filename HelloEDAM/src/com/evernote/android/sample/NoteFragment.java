@@ -55,9 +55,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.evernote.client.android.EvernoteSession;
+import com.evernote.client.android.EvernoteUtil;
+import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.conn.mobile.FileData;
-import com.evernote.client.oauth.android.EvernoteSession;
-import com.evernote.client.oauth.android.EvernoteUtil;
+//import com.evernote.client.oauth.android.EvernoteSession;
+//import com.evernote.client.oauth.android.EvernoteUtil;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
@@ -102,7 +105,7 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
   // Change to HOST_PRODUCTION to use the Evernote production service
   // once your code is complete, or HOST_CHINA to use the Yinxiang Biji
   // (Evernote China) production service.
-  private static final String EVERNOTE_HOST = EvernoteSession.HOST_SANDBOX;
+  private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
 
   /**
    * ************************************************************************
@@ -215,10 +218,8 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
   {
 
     // Retrieve persisted authentication information
-    mEvernoteSession = EvernoteSession.init(this.getActivity()
-        .getApplicationContext(), CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_HOST,
-        null);
-    // this.getActivity().getApplicationContext();
+    mEvernoteSession = EvernoteSession.getInstance(this.getActivity(),
+        CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
   }
 
   /**
@@ -254,7 +255,14 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
   {
     if (mEvernoteSession.isLoggedIn())
     {
-      mEvernoteSession.logOut(this.getActivity().getApplicationContext());
+      try
+      {
+        mEvernoteSession.logOut(this.getActivity().getApplicationContext());
+      } catch (InvalidAuthenticationException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     } else
     {
       mEvernoteSession.authenticate(this.getActivity().getApplicationContext());
@@ -465,8 +473,8 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
         // will contain server-generated attributes such as the note's
         // unique ID (GUID), the Resource's GUID, and the creation and update
         // time.
-        createdNote = mEvernoteSession.createNoteStore().createNote(
-            mEvernoteSession.getAuthToken(), note);
+   /*     createdNote = mEvernoteSession.createNoteStore().createNote(
+            mEvernoteSession.getAuthToken(), note);*/
       } catch (Exception e)
       {
         Log.e(TAG, getString(R.string.err_creating_note), e);

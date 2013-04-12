@@ -70,9 +70,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.evernote.client.android.EvernoteSession;
+import com.evernote.client.android.InvalidAuthenticationException;
+//import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.conn.mobile.FileData;
-import com.evernote.client.oauth.android.EvernoteSession;
-import com.evernote.client.oauth.android.EvernoteUtil;
+//import com.evernote.client.oauth.android.EvernoteSession;
+//import com.evernote.client.oauth.android.EvernoteUtil;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
@@ -126,7 +130,7 @@ public class MainFragment extends SherlockFragment
   // Change to HOST_PRODUCTION to use the Evernote production service
   // once your code is complete, or HOST_CHINA to use the Yinxiang Biji
   // (Evernote China) production service.
-  private static final String EVERNOTE_HOST = EvernoteSession.HOST_SANDBOX;
+  private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
 
   /**
    * ************************************************************************
@@ -244,8 +248,8 @@ public class MainFragment extends SherlockFragment
   {
 
     // Retrieve persisted authentication information
-    mEvernoteSession = EvernoteSession.init(this.getActivity(), CONSUMER_KEY,
-        CONSUMER_SECRET, EVERNOTE_HOST, null);
+    mEvernoteSession = EvernoteSession.getInstance(this.getActivity(),
+        CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
   }
 
   /**
@@ -275,7 +279,14 @@ public class MainFragment extends SherlockFragment
   {
     if (mEvernoteSession.isLoggedIn())
     {
-      mEvernoteSession.logOut(this.getActivity().getApplicationContext());
+      try
+      {
+        mEvernoteSession.logOut(this.getActivity().getApplicationContext());
+      } catch (InvalidAuthenticationException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     } else
     {
       mEvernoteSession.authenticate(this.getActivity());
@@ -376,10 +387,11 @@ public class MainFragment extends SherlockFragment
       spec.setIncludeTitle(true);
       try
       {
-        NotesMetadataList notes = mEvernoteSession.createNoteStore()
-            .findNotesMetadata(mEvernoteSession.getAuthToken(), filter, 0,
-                pageSize, spec);
-        return notes;
+        /*
+         * NotesMetadataList notes = mEvernoteSession.createNoteStore()
+         * .findNotesMetadata(mEvernoteSession.getAuthToken(), filter, 0,
+         * pageSize, spec); return notes;
+         */
       } catch (Exception e)
       {
         e.printStackTrace();

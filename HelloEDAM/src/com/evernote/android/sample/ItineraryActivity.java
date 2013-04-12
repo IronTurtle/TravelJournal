@@ -26,6 +26,8 @@
 package com.evernote.android.sample;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import android.widget.ListView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,9 +65,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.evernote.client.android.AsyncBusinessNoteStoreClient;
+import com.evernote.client.android.EvernoteSession;
+import com.evernote.client.android.EvernoteSession.EvernoteService;
+import com.evernote.client.android.InvalidAuthenticationException;
+import com.evernote.client.android.OnClientCallback;
 import com.evernote.client.conn.mobile.FileData;
-import com.evernote.client.oauth.android.EvernoteSession;
-import com.evernote.client.oauth.android.EvernoteUtil;
+
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
@@ -79,19 +86,21 @@ import java.io.InputStream;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
 /**
- * This simple Android app demonstrates how to integrate with the
- * Evernote API (aka EDAM).
+ * This simple Android app demonstrates how to integrate with the Evernote API
+ * (aka EDAM).
  * <p/>
- * In this sample, the user authorizes access to their account using OAuth
- * and chooses an image from the device's image gallery. The image is then
- * saved directly to user's Evernote account as a new note.
+ * In this sample, the user authorizes access to their account using OAuth and
+ * chooses an image from the device's image gallery. The image is then saved
+ * directly to user's Evernote account as a new note.
  */
-public class ItineraryActivity extends Activity {
+public class ItineraryActivity extends Activity
+{
 
   /**
    * ************************************************************************
-   * You MUST change the following values to run this sample application.    *
+   * You MUST change the following values to run this sample application. *
    * *************************************************************************
    */
 
@@ -110,11 +119,11 @@ public class ItineraryActivity extends Activity {
   // Change to HOST_PRODUCTION to use the Evernote production service
   // once your code is complete, or HOST_CHINA to use the Yinxiang Biji
   // (Evernote China) production service.
-  private static final String EVERNOTE_HOST = EvernoteSession.HOST_SANDBOX;
+  private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
 
   /**
    * ************************************************************************
-   * The following values are simply part of the demo application.           *
+   * The following values are simply part of the demo application. *
    * *************************************************************************
    */
 
@@ -128,16 +137,17 @@ public class ItineraryActivity extends Activity {
    */
   @SuppressWarnings("deprecation")
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public void onCreate(Bundle savedInstanceState)
+  {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.itineraryactivity);
 
     setupSession();
   }
 
-
   @Override
-  public void onResume() {
+  public void onResume()
+  {
     super.onResume();
     updateUi();
   }
@@ -145,47 +155,65 @@ public class ItineraryActivity extends Activity {
   /**
    * Setup the EvernoteSession used to access the Evernote API.
    */
-  private void setupSession() {
+  private void setupSession()
+  {
 
     // Retrieve persisted authentication information
-    mEvernoteSession = EvernoteSession.init(this, CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_HOST, null);
+    mEvernoteSession = EvernoteSession.getInstance(this, CONSUMER_KEY,
+        CONSUMER_SECRET, EVERNOTE_SERVICE);
   }
 
   /**
    * Update the UI based on Evernote authentication state.
    */
-  private void updateUi() {
-    if (mEvernoteSession.isLoggedIn()) {
+  private void updateUi()
+  {
+    if (mEvernoteSession.isLoggedIn())
+    {
       listViewCreate();
-    } else {
+    } else
+    {
     }
   }
 
   /**
-   * Called when the user taps the "Log in to Evernote" button.
-   * Initiates the Evernote OAuth process, or logs out if the user is already
-   * logged in.
+   * Called when the user taps the "Log in to Evernote" button. Initiates the
+   * Evernote OAuth process, or logs out if the user is already logged in.
    */
-  public void startAuth(View view) {
-    if (mEvernoteSession.isLoggedIn()) {
-      mEvernoteSession.logOut(getApplicationContext());
-    } else {
+  public void startAuth(View view)
+  {
+    if (mEvernoteSession.isLoggedIn())
+    {
+      try
+      {
+        mEvernoteSession.logOut(getApplicationContext());
+      } catch (InvalidAuthenticationException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    } else
+    {
       mEvernoteSession.authenticate(this);
     }
     updateUi();
   }
 
   // using removeDialog, could use Fragments instead
-  //  @SuppressWarnings("deprecation")
-  //  @Override
-  protected void onPostExecute(Note note) {
+  // @SuppressWarnings("deprecation")
+  // @Override
+  protected void onPostExecute(Note note)
+  {
 
-    if (note == null) {
-      Toast.makeText(getApplicationContext(), R.string.err_creating_note, Toast.LENGTH_LONG).show();
+    if (note == null)
+    {
+      Toast.makeText(getApplicationContext(), R.string.err_creating_note,
+          Toast.LENGTH_LONG).show();
       return;
     }
 
-    Toast.makeText(getApplicationContext(), R.string.msg_image_saved, Toast.LENGTH_LONG).show();
+    Toast.makeText(getApplicationContext(), R.string.msg_image_saved,
+        Toast.LENGTH_LONG).show();
   }
 
   public void update()
@@ -206,21 +234,45 @@ public class ItineraryActivity extends Activity {
     // suppress lint check on Display.getSize(Point)
     @TargetApi(16)
     @Override
-    protected NotesMetadataList doInBackground(String... strings) 
+    protected NotesMetadataList doInBackground(String... strings)
     {
       int pageSize = 10;
       NoteFilter filter = new NoteFilter();
-    //  filter.setOrder(NoteSortOrder.UPDATED.getValue());
+      // filter.setOrder(NoteSortOrder.UPDATED.getValue());
 
       filter.setWords("tag:itinerary*");
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);
-      try{
-        NotesMetadataList notes = mEvernoteSession.createNoteStore().findNotesMetadata(mEvernoteSession.getAuthToken() , filter, 0, pageSize, spec);
+      try
+      {
+        final NotesMetadataList notes = null;
+        mEvernoteSession
+            .getClientFactory()
+            .createNoteStoreClient()
+            .findNotesMetadata(filter, 0, pageSize, spec,
+                new OnClientCallback<NotesMetadataList>()
+                {
+                  @Override
+                  public void onSuccess(NotesMetadataList data)
+                  {
+                    //removeDialog(DIALOG_PROGRESS);
+                    //Toast.makeText(getApplicationContext(),
+                    //   R.string.msg_image_saved, Toast.LENGTH_LONG).show();
+                    //notes = data;
+                  }
+
+                  @Override
+                  public void onException(Exception exception)
+                  {
+                    //Log.e(LOGTAG, "Error saving note", exception);
+                    //Toast.makeText(getApplicationContext(),
+                    //    R.string.error_saving_note, Toast.LENGTH_LONG).show();
+                    //removeDialog(DIALOG_PROGRESS);
+                  }
+                });
         return notes;
-      }
-      catch(Exception e)
+      } catch (Exception e)
       {
         e.printStackTrace();
       }
@@ -228,35 +280,37 @@ public class ItineraryActivity extends Activity {
     }
 
     @Override
-    protected void onPostExecute(NotesMetadataList notes) {
-//      entries.addAll(notes.getNotes());     
-    for(NoteMetadata note : notes.getNotes())
+    protected void onPostExecute(NotesMetadataList notes)
     {
-      entries.add(note.getTitle());
-    }
-      
-     // Log.e("log_tag ******",notes.getNotes().get(0).getTitle());
-     // Log.e("log_tag ******",entries.get(0).getTitle());
-     /* for (NoteMetadata note2 : notes.getNotes()) {
-        System.out.println(note2.getTitle());
-      }    
-*/
+      // entries.addAll(notes.getNotes());
+      for (NoteMetadata note : notes.getNotes())
+      {
+        entries.add(note.getTitle());
+      }
+
+      // Log.e("log_tag ******",notes.getNotes().get(0).getTitle());
+      // Log.e("log_tag ******",entries.get(0).getTitle());
+      /*
+       * for (NoteMetadata note2 : notes.getNotes()) {
+       * System.out.println(note2.getTitle()); }
+       */
       ListView listView = (ListView) findViewById(R.id.lview);
-      ArrayAdapter<String> adapter = new ArrayAdapter<String>(ItineraryActivity.this, android.R.layout.simple_list_item_activated_1, entries);
+      ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+          ItineraryActivity.this,
+          android.R.layout.simple_list_item_activated_1, entries);
       listView.setAdapter(adapter);
       listView.setScrollingCacheEnabled(false);
       listView.setOnItemClickListener(new OnItemClickListener()
-          {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-              long id)
-            {
-              //            Intent i = new Intent(getApplicationContext(), JournalEntry.class);
-              //            startActivityForResult(i, 100);
-            }
-          });
+      {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id)
+        {
+          // Intent i = new Intent(getApplicationContext(), JournalEntry.class);
+          // startActivityForResult(i, 100);
+        }
+      });
     }
   }
-
 
 }

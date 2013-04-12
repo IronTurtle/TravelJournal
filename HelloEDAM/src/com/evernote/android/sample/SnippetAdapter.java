@@ -28,8 +28,9 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.util.Log;
 
+import com.evernote.client.android.EvernoteSession;
 import com.evernote.edam.notestore.*;
-import com.evernote.client.oauth.android.EvernoteSession;
+//import com.evernote.client.oauth.android.EvernoteSession;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,7 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.evernote.client.oauth.android.EvernoteSession;
+//import com.evernote.client.oauth.android.EvernoteSession;
 import com.evernote.edam.notestore.*;
 import com.evernote.edam.type.*;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -87,7 +88,7 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
   int resource;
   String response;
   Context context;
-  private EvernoteSession mEvernoteSession;
+  private com.evernote.client.android.EvernoteSession mEvernoteSession;
   DisplayImageOptions options;
 
   // Initialize adapter
@@ -135,7 +136,7 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
     // imageLoader.displayImage("https://sandbox.evernote.com/shard/s1/thm/note/e669c090-d8b2-4324-9eae-56bd31c64af7.jpg?size=75",
     // snippetPic);
     imageLoader.displayImage(
-        "" + mEvernoteSession.getmAuthenticationResult().getWebApiUrlPrefix()
+        "" + mEvernoteSession.getAuthenticationResult().getWebApiUrlPrefix()
             + "thm/note/" + snippetEntry.getGuid() + "?auth="
             + mEvernoteSession.getAuthToken(), snippetPic, options);
 
@@ -204,10 +205,10 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
     {
       NoteMetadata snippetEntry = (NoteMetadata) param[0];
       snippetText = (TextView) param[1];
-      String output;
+      String output = null;
       try
       {
-        output = android.text.Html.fromHtml(
+       /* output = android.text.Html.fromHtml(
             mEvernoteSession
                 .createNoteStore()
                 .getNote(mEvernoteSession.getAuthToken(),
@@ -217,7 +218,7 @@ public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
             .createNoteStore()
             .getNote(mEvernoteSession.getAuthToken(),
                 snippetEntry.getGuid(), true, true, false, false)
-            .getContent());
+            .getContent());*/
       } catch (Exception e)
       {
         e.printStackTrace();
