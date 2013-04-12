@@ -47,6 +47,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -74,7 +75,7 @@ import java.io.InputStream;
  * chooses an image from the device's image gallery. The image is then saved
  * directly to user's Evernote account as a new note.
  */
-public class NoteActivity /* extends BaseActivity extends Activity*/ extends SherlockFragment
+public class NoteActivity /* extends BaseActivity extends Activity*/ extends SherlockFragment implements OnClickListener
 {
 
   /**
@@ -160,8 +161,9 @@ public class NoteActivity /* extends BaseActivity extends Activity*/ extends She
     btnTakePhoto = (Button) view.findViewById(R.id.camera_button);
     imgTakenPhoto = (ImageView) view.findViewById(R.id.note_image);
 
-    //btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
-    //entry.setOnKeyListener(new NoteEntryField());
+    mBtnSave.setOnClickListener(this);
+    btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
+    entry.setOnKeyListener(new NoteEntryField());
 /*
     if (getLastNonConfigurationInstance() != null)
     {
@@ -781,4 +783,18 @@ public class NoteActivity /* extends BaseActivity extends Activity*/ extends She
     }
   }
 */
+
+  @Override
+  public void onClick(View v)
+  {
+    switch (v.getId()) {
+    case R.id.save_button:
+
+        saveImage(this.getView());
+
+        break;
+    }
+    // TODO Auto-generated method stub
+    
+  }
 }

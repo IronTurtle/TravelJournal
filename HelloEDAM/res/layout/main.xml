@@ -29,7 +29,6 @@
             android:background="@color/primaryOrange"
             android:drawableLeft="@drawable/save"
             android:fadingEdge="horizontal"
-            android:onClick="saveImage"
             android:paddingLeft="25dp"
             android:textColor="@android:color/background_dark"
             android:textColorHint="@color/primaryOrange"
