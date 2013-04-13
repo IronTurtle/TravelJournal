@@ -26,7 +26,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
-            android:hint="SWSLO13"
             android:lines="1"
             android:scrollHorizontally="true"
             android:textColor="@color/primaryOrange"
@@ -40,7 +39,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
-            android:hint="Cal Poly"
             android:lines="1"
             android:scrollHorizontally="true"
             android:textAlignment="gravity"
@@ -51,7 +49,6 @@
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:ellipsize="end"
-            android:hint="Bryan went to the park"
             android:lines="2"
             android:scrollHorizontally="true"
             android:textColor="@android:color/black" />
@@ -61,7 +58,6 @@
             android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:hint="0/00/0000"
             android:lines="1"
             android:scrollHorizontally="true"
             android:visibility="gone" />

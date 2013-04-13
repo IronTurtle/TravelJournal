@@ -16,8 +16,6 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.ActionBar.Tab;
 //import com.actionbarsherlock.sample.styled.R;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 
 public class AbsActivity extends SherlockFragmentActivity
 {
@@ -27,6 +25,7 @@ public class AbsActivity extends SherlockFragmentActivity
 	TextView tabCenter;
 	TextView tabText;
 	
+  @SuppressWarnings("unused")
   private final Handler handler = new Handler();
 
 	@Override
@@ -45,11 +44,11 @@ public class AbsActivity extends SherlockFragmentActivity
 		mTabsAdapter = new TabsAdapter(this, mViewPager);
 
 		mTabsAdapter.addTab(
-				bar.newTab().setText("Fragment 1"),
-				MainFragment.class, null);
+				bar.newTab().setText("Me"),
+				SnippetFragment.class, null);
 		mTabsAdapter.addTab(
 				bar.newTab()
-						.setText("Fragment 2"),
+						.setText("Up"),
 				NoteFragment.class, null);
 
 	}

@@ -136,7 +136,6 @@
       android:layout_marginTop="20dp"
       android:layout_weight="1"
       android:background="@color/primaryOrange"
-      android:onClick="startAuth"
       android:text="@string/label_log_in" />
 
   <ListView

@@ -17,20 +17,12 @@
         android:theme="@style/Theme.Styled" >
       <!--  android:theme="@android:style/Theme.NoTitleBar" -->
                 
-        
-        <activity
-            android:name="com.evernote.android.sample.MainFragment"
-            android:label="@string/app_name" >
-        </activity>
+
         <activity
             android:name="com.evernote.android.sample.ItineraryActivity"
             android:label="@string/app_name" >
         </activity>
-        <activity
-            android:name="com.evernote.android.sample.NoteFragment"
-            android:label="@string/app_name" >
-        </activity>
-        <activity android:name="com.evernote.client.oauth.android.EvernoteOAuthActivity" />
+        <activity android:name="com.evernote.client.android.EvernoteOAuthActivity" />
         <activity
             android:name="com.evernote.android.sample.BaseActivity"
             android:label="@string/app_name" >

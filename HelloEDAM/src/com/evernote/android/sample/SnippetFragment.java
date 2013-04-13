@@ -32,38 +32,16 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import java.util.ArrayList;
 
 import android.widget.ListView;
-//import android.view.Menu;
-//import android.view.MenuInflater;
-//import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView.OnItemClickListener;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
-
 import android.annotation.TargetApi;
-//import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.Activity;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -73,33 +51,11 @@ import android.widget.Toast;
 
 import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.InvalidAuthenticationException;
-//import com.evernote.client.android.InvalidAuthenticationException;
-import com.evernote.client.conn.mobile.FileData;
-//import com.evernote.client.oauth.android.EvernoteSession;
-//import com.evernote.client.oauth.android.EvernoteUtil;
+import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.type.Note;
-import com.evernote.edam.type.Resource;
-import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.edam.notestore.*;
 import com.evernote.edam.type.*;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
-import android.os.AsyncTask;
-import android.util.Log;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuInflater;
+import com.evernote.thrift.transport.TTransportException;
 
 /**
  * This simple Android app demonstrates how to integrate with the Evernote API
@@ -109,7 +65,7 @@ import com.actionbarsherlock.view.MenuInflater;
  * chooses an image from the device's image gallery. The image is then saved
  * directly to user's Evernote account as a new note.
  */
-public class MainFragment extends SherlockFragment
+public class SnippetFragment extends ParentFragment implements OnClickListener
 {
 
   // Your Evernote API key. See http://dev.evernote.com/documentation/cloud/
@@ -140,9 +96,6 @@ public class MainFragment extends SherlockFragment
 
   // Activity result request codes
   private static final int SELECT_IMAGE = 1;
-
-  // Used to interact with the Evernote web service
-  private EvernoteSession mEvernoteSession;
 
   // UI elements that we update
   private Button mBtnAuth;
@@ -178,39 +131,16 @@ public class MainFragment extends SherlockFragment
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState)
   {
-    View view = inflater.inflate(R.layout.fragment_main, container, false);
+    View view = inflater.inflate(R.layout.fragment_snippet, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
-
+    mBtnAuth.setOnClickListener(this);
     ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this
         .getActivity().getApplicationContext())
         .threadPriority(Thread.NORM_PRIORITY - 2)
-        .denyCacheImageMultipleSizesInMemory().enableLogging() // Not
-        // necessary
-        // in
-        // common
-        .build();
-    // Initialize ImageLoader with configuration.
+        .denyCacheImageMultipleSizesInMemory()/*.enableLogging()*/.build();
     ImageLoader.getInstance().init(config);
 
-    setupSession();
-
     return view;
-  }
-
-  /**
-   * Called when the activity is first created.
-   */
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onCreate(Bundle savedInstanceState)
-  {
-
-    super.onCreate(savedInstanceState);
-
-    /*
-     * mBtnAddNote = (Button) findViewById(R.id.menu_add_note);
-     */
-
   }
 
   @Override
@@ -240,17 +170,6 @@ public class MainFragment extends SherlockFragment
    * dialog).setIndeterminate(true); dialog.setCancelable(false);
    * ((ProgressDialog) dialog).setMessage(getString(R.string.loading)); } }
    */
-
-  /**
-   * Setup the EvernoteSession used to access the Evernote API.
-   */
-  private void setupSession()
-  {
-
-    // Retrieve persisted authentication information
-    mEvernoteSession = EvernoteSession.getInstance(this.getActivity(),
-        CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
-  }
 
   /**
    * Update the UI based on Evernote authentication state.
@@ -353,84 +272,99 @@ public class MainFragment extends SherlockFragment
         R.string.msg_image_saved, Toast.LENGTH_LONG).show();
   }
 
-  public void update()
-  {
-    new EntryUpdater().execute("");
-
-    String item = "clicked1";
-    // Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
-  }
-
   public void listViewCreate()
   {
     String item = "clicked2";
     // Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
     entries = new ArrayList<NoteMetadata>();
-    update();
-  }
-
-  private class EntryUpdater extends AsyncTask<String, Void, NotesMetadataList>
-  {
-    // using Display.getWidth and getHeight on older SDKs
-    @SuppressWarnings("deprecation")
-    // suppress lint check on Display.getSize(Point)
-    @TargetApi(16)
-    @Override
-    protected NotesMetadataList doInBackground(String... strings)
+    // update();
+    if (mEvernoteSession.isLoggedIn())
     {
       int pageSize = 10;
+
       NoteFilter filter = new NoteFilter();
       filter.setOrder(NoteSortOrder.UPDATED.getValue());
       filter.setWords("-tag:itinerary*");
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);
+
       try
       {
-        /*
-         * NotesMetadataList notes = mEvernoteSession.createNoteStore()
-         * .findNotesMetadata(mEvernoteSession.getAuthToken(), filter, 0,
-         * pageSize, spec); return notes;
-         */
-      } catch (Exception e)
+        mEvernoteSession
+            .getClientFactory()
+            .createNoteStoreClient()
+            .findNotesMetadata(filter, 0, pageSize, spec,
+                new OnClientCallback<NotesMetadataList>()
+                {
+                  @Override
+                  public void onSuccess(NotesMetadataList notes)
+                  {
+                    // removeDialog(DIALOG_PROGRESS);
+                    // Toast.makeText(getApplicationContext(),
+                    // R.string.msg_image_saved, Toast.LENGTH_LONG).show();
+                    // notes = data;
+                    
+                    entries.addAll(notes.getNotes());
+                    Log.e("log_tag ******", notes.getNotes().get(0).getTitle());
+                    Log.e("log_tag ******", entries.get(0).getTitle());
+                    for (NoteMetadata note2 : notes.getNotes())
+                    {
+                      System.out.println(note2.getTitle());
+                    }
+
+                    ListView listView = (ListView) SnippetFragment.this.getView().findViewById(
+                        R.id.lview);
+                    SnippetAdapter adapter = new SnippetAdapter(
+                        SnippetFragment.this.getActivity(), R.layout.snippet, entries,
+                        mEvernoteSession);
+                    listView.setAdapter(adapter);
+                    listView.setScrollingCacheEnabled(false);
+                    listView.setOnItemClickListener(new OnItemClickListener()
+                    {
+                      @Override
+                      public void onItemClick(AdapterView<?> parent, View view, int position,
+                          long id)
+                      {
+                        // String item = "clicked3";
+                        // Toast.makeText(getBaseContext(), item,
+                        // Toast.LENGTH_LONG).show();
+                        // Intent i = new Intent(this.getActivity().getApplicationContext(),
+                        // JournalEntry.class);
+                        // startActivityForResult(i, 100);
+                      }
+                    });
+                    
+                  }
+
+                  @Override
+                  public void onException(Exception exception)
+                  {
+                    // Log.e(LOGTAG, "Error saving note", exception);
+                    // Toast.makeText(getApplicationContext(),
+                    // R.string.error_saving_note, Toast.LENGTH_LONG).show();
+                    // removeDialog(DIALOG_PROGRESS);
+                  }
+                });
+      } catch (TTransportException e)
       {
+        // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      return new NotesMetadataList();
     }
+  }
 
-    @Override
-    protected void onPostExecute(NotesMetadataList notes)
+  @Override
+  public void onClick(View v)
+  {
+    // TODO Auto-generated method stub
+    switch (v.getId())
     {
-      entries.addAll(notes.getNotes());
-      Log.e("log_tag ******", notes.getNotes().get(0).getTitle());
-      Log.e("log_tag ******", entries.get(0).getTitle());
-      for (NoteMetadata note2 : notes.getNotes())
-      {
-        System.out.println(note2.getTitle());
-      }
+    case R.id.auth_button:
 
-      ListView listView = (ListView) MainFragment.this.getView().findViewById(
-          R.id.lview);
-      SnippetAdapter adapter = new SnippetAdapter(
-          MainFragment.this.getActivity(), R.layout.snippet, entries,
-          mEvernoteSession);
-      listView.setAdapter(adapter);
-      listView.setScrollingCacheEnabled(false);
-      listView.setOnItemClickListener(new OnItemClickListener()
-      {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-            long id)
-        {
-          // String item = "clicked3";
-          // Toast.makeText(getBaseContext(), item,
-          // Toast.LENGTH_LONG).show();
-          // Intent i = new Intent(this.getActivity().getApplicationContext(),
-          // JournalEntry.class);
-          // startActivityForResult(i, 100);
-        }
-      });
+      startAuth(this.getView());
+
+      break;
     }
   }
 

@@ -27,9 +27,6 @@ package com.evernote.android.sample;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -40,9 +37,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -54,16 +49,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.EvernoteUtil;
-import com.evernote.client.android.InvalidAuthenticationException;
+import com.evernote.client.android.OnClientCallback;
 import com.evernote.client.conn.mobile.FileData;
-//import com.evernote.client.oauth.android.EvernoteSession;
-//import com.evernote.client.oauth.android.EvernoteUtil;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
+import com.evernote.thrift.transport.TTransportException;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -78,59 +70,27 @@ import java.io.InputStream;
  * chooses an image from the device's image gallery. The image is then saved
  * directly to user's Evernote account as a new note.
  */
-public class NoteFragment extends SherlockFragment implements OnClickListener
+public class NoteFragment extends ParentFragment implements OnClickListener
 {
 
-  /**
-   * ************************************************************************
-   * You MUST change the following values to run this sample application. *
-   * *************************************************************************
-   */
   Uri mImageUri;
-  // Your Evernote API key. See http://dev.evernote.com/documentation/cloud/
-  // Please obfuscate your code to help keep these values secret.
-  private static final String CONSUMER_KEY = "ironsuturtle";
-  private static final String CONSUMER_SECRET = "e0441c112aab58f6";
-
-  /**
-   * ************************************************************************
-   * Change these values as needed to use this code in your own application. *
-   * *************************************************************************
-   */
-
-  // Name of this application, for logging
-  private static final String TAG = "NoteActivity";
-
-  // Initial development is done on Evernote's testing service, the sandbox.
-  // Change to HOST_PRODUCTION to use the Evernote production service
-  // once your code is complete, or HOST_CHINA to use the Yinxiang Biji
-  // (Evernote China) production service.
-  private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
-
-  /**
-   * ************************************************************************
-   * The following values are simply part of the demo application. *
-   * *************************************************************************
-   */
 
   // Activity result request codes
   private static final int SELECT_IMAGE = 1;
 
-  // Used to interact with the Evernote web service
-  private EvernoteSession mEvernoteSession;
-
   // UI elements that we update
+  @SuppressWarnings("unused")
   private Button mBtnAuth;
   private Button mBtnSave;
+  @SuppressWarnings("unused")
   private Button mBtnSelect;
+  @SuppressWarnings("unused")
   private EditText mTextArea;
   private ImageView mImageView;
-  private final int DIALOG_PROGRESS = 101;
 
   Button btnTakePhoto;
-  ImageView imgTakenPhoto;
   private static final int CAMERA_PIC_REQUEST = 1313;
-  final String TAG1 = "MyCamera";
+  final String TAG = "MyCamera";
 
   // The path to and MIME type of the currently selected image from the gallery
   private class ImageData
@@ -142,9 +102,9 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
   }
 
   // Note fields
-  EditText title;
+  EditText mTitle;
   EditText location;
-  EditText entry;
+  EditText mEntry;
 
   private ImageData mImageData;
 
@@ -157,29 +117,26 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     mBtnSelect = (Button) view.findViewById(R.id.select_button);
     mBtnSave = (Button) view.findViewById(R.id.save_button);
     mImageView = (ImageView) view.findViewById(R.id.note_image);
-    title = (EditText) view.findViewById(R.id.note_title);
+    mTitle = (EditText) view.findViewById(R.id.note_title);
     location = (EditText) view.findViewById(R.id.note_location);
-    entry = (EditText) view.findViewById(R.id.note_entry);
+    mEntry = (EditText) view.findViewById(R.id.note_entry);
 
     btnTakePhoto = (Button) view.findViewById(R.id.camera_button);
-    imgTakenPhoto = (ImageView) view.findViewById(R.id.note_image);
 
     mBtnSave.setOnClickListener(this);
     btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
-    entry.setOnKeyListener(new NoteEntryField());
+    mEntry.setOnKeyListener(new NoteEntryField());
     /*
      * if (getLastNonConfigurationInstance() != null) { mImageData = (ImageData)
      * getLastNonConfigurationInstance();
      * mImageView.setImageBitmap(mImageData.imageBitmap); }
      */
-    setupSession();
     return view;
   }
 
   /**
    * Called when the activity is first created.
    */
-  @SuppressWarnings("deprecation")
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
@@ -191,84 +148,12 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
   public void onResume()
   {
     super.onResume();
-    updateUi();
   }
 
   /*
    * @Override public Object onRetainNonConfigurationInstance() { return
    * mImageData; }
    */
-  // using createDialog, could use Fragments instead
-  @SuppressWarnings("deprecation")
-  /*
-   * protected Dialog onCreateDialog(int id) { switch (id) { case
-   * DIALOG_PROGRESS: return new ProgressDialog(NoteActivity.this); } return
-   * super.onCreateDialog(id); }
-   */
-  /*
-   * @Override protected void onPrepareDialog(int id, Dialog dialog) { switch
-   * (id) { case DIALOG_PROGRESS: ((ProgressDialog)
-   * dialog).setIndeterminate(true); dialog.setCancelable(false);
-   * ((ProgressDialog) dialog).setMessage(getString(R.string.loading)); } }
-   */
-  /**
-   * Setup the EvernoteSession used to access the Evernote API.
-   */
-  private void setupSession()
-  {
-
-    // Retrieve persisted authentication information
-    mEvernoteSession = EvernoteSession.getInstance(this.getActivity(),
-        CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
-  }
-
-  /**
-   * Update the UI based on Evernote authentication state.
-   */
-  private void updateUi()
-  {
-    if (mEvernoteSession.isLoggedIn())
-    {
-      mBtnAuth.setText(R.string.label_log_out);
-      if ((mImageData != null && !TextUtils.isEmpty(mImageData.filePath))
-          || (entry.getText().length() > 0))
-      {
-        mBtnSave.setEnabled(true);
-      } else
-      {
-        mBtnSave.setEnabled(false);
-      }
-      mBtnSelect.setEnabled(true);
-    } else
-    {
-      mBtnAuth.setText(R.string.label_log_in);
-      mBtnSave.setEnabled(false);
-      mBtnSelect.setEnabled(false);
-    }
-  }
-
-  /**
-   * Called when the user taps the "Log in to Evernote" button. Initiates the
-   * Evernote OAuth process, or logs out if the user is already logged in.
-   */
-  public void startAuth(View view)
-  {
-    if (mEvernoteSession.isLoggedIn())
-    {
-      try
-      {
-        mEvernoteSession.logOut(this.getActivity().getApplicationContext());
-      } catch (InvalidAuthenticationException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    } else
-    {
-      mEvernoteSession.authenticate(this.getActivity().getApplicationContext());
-    }
-    updateUi();
-  }
 
   /***************************************************************************
    * The remaining code in this class simply demonstrates the use of the *
@@ -285,13 +170,6 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode)
     {
-    // Update UI when oauth activity returns result
-    case EvernoteSession.REQUEST_CODE_OAUTH:
-      if (resultCode == Activity.RESULT_OK)
-      {
-        updateUi();
-      }
-      break;
     // Grab image data when picker returns result
     case SELECT_IMAGE:
       if (resultCode == Activity.RESULT_OK)
@@ -345,7 +223,7 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     public boolean onKey(View v, int keyCode, KeyEvent event)
     {
       // TODO Auto-generated method stub
-      updateUi();
+      //updateUi();
       return false;
     }
   }
@@ -374,11 +252,74 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
         Log.e("image uri is null", "what?");
       } else
       {
+
         Log.e("oh nevermind", "image uri is NOT null");
       }
       cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
       startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
     }
+  }
+
+  /**
+   * Saves text field content as note to selected notebook, or default notebook
+   * if no notebook select
+   */
+  public void saveNote(View view)
+  {
+    Resource resource = new Resource();
+
+    ImageData imageData = mImageData;
+    String f = imageData.filePath;
+    InputStream in;
+    try
+    {
+      in = new BufferedInputStream(new FileInputStream(f));
+
+      FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
+      in.close();
+
+      resource.setData(data);
+      resource.setMime(imageData.mimeType);
+      ResourceAttributes attributes = new ResourceAttributes();
+      attributes.setFileName(imageData.fileName);
+      resource.setAttributes(attributes);
+    } catch (Exception e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    String title = mTitle.getText().toString();
+    String content = mEntry.getText().toString();
+
+    Note note = new Note();
+    note.setTitle(title);
+
+    // TODO: line breaks need to be converted to render in ENML
+    note.setContent(EvernoteUtil.NOTE_PREFIX + content
+        + EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
+
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .createNote(note, new OnClientCallback<Note>()
+          {
+            @Override
+            public void onSuccess(Note data)
+            {
+
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+
+            }
+          });
+    } catch (TTransportException exception)
+    {
+
+    }
+
   }
 
   /**
@@ -394,118 +335,6 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
   }
 
   /**
-   * Called when the user taps the "Save Image" button.
-   * <p/>
-   * You probably don't want to do this on your UI thread in the real world.
-   * <p/>
-   * Saves the currently selected image to the user's Evernote account using the
-   * Evernote web service API.
-   * <p/>
-   * Does nothing if the Evernote API wasn't successfully initialized when the
-   * activity started.
-   */
-  public void saveImage(View view)
-  {
-    if (mEvernoteSession.isLoggedIn() && mImageData != null
-        && mImageData.filePath != null)
-    {
-      new EvernoteNoteCreator().execute(mImageData);
-    }
-  }
-
-  private class EvernoteNoteCreator extends AsyncTask<ImageData, Void, Note>
-  {
-    // using showDialog, could use Fragments instead
-    @SuppressWarnings("deprecation")
-    @Override
-    protected void onPreExecute()
-    {
-      // showDialog(DIALOG_PROGRESS);
-    }
-
-    @Override
-    protected Note doInBackground(ImageData... imageDatas)
-    {
-      if (imageDatas == null || imageDatas.length == 0)
-      {
-        return null;
-      }
-      ImageData imageData = imageDatas[0];
-
-      Note createdNote = null;
-      String f = imageData.filePath;
-      try
-      {
-        // Hash the data in the image file. The hash is used to reference the
-        // file in the ENML note content.
-        InputStream in = new BufferedInputStream(new FileInputStream(f));
-        FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
-        in.close();
-
-        // Create a new Resource
-        Resource resource = new Resource();
-        resource.setData(data);
-        resource.setMime(imageData.mimeType);
-        ResourceAttributes attributes = new ResourceAttributes();
-        attributes.setFileName(imageData.fileName);
-        resource.setAttributes(attributes);
-
-        // Create a new Note
-        Note note = new Note();
-
-        String noteTitleString = "";
-        noteTitleString = title.getText().toString();// + " at " +
-                                                     // location.getText().toString();
-        note.setTitle(noteTitleString);
-
-        note.addToResources(resource);
-
-        // Set the note's ENML content. Learn about ENML at
-        // http://dev.evernote.com/documentation/cloud/chapters/ENML.php
-        String content = EvernoteUtil.NOTE_PREFIX + "<p>" + "Location: "
-            + location.getText().toString() + "\n" + entry.getText().toString()
-            + "</p>" + EvernoteUtil.createEnMediaTag(resource)
-            + EvernoteUtil.NOTE_SUFFIX;
-
-        note.setContent(content);
-
-        // Create the note on the server. The returned Note object
-        // will contain server-generated attributes such as the note's
-        // unique ID (GUID), the Resource's GUID, and the creation and update
-        // time.
-   /*     createdNote = mEvernoteSession.createNoteStore().createNote(
-            mEvernoteSession.getAuthToken(), note);*/
-      } catch (Exception e)
-      {
-        Log.e(TAG, getString(R.string.err_creating_note), e);
-      }
-
-      return createdNote;
-    }
-
-    // using removeDialog, could use Fragments instead
-    @SuppressWarnings("deprecation")
-    @Override
-    protected void onPostExecute(Note note)
-    {
-      // removeDialog(DIALOG_PROGRESS);
-
-      if (note == null)
-      {
-        Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(),
-            R.string.err_creating_note, Toast.LENGTH_LONG).show();
-
-        // finish();
-        return;
-      }
-
-      Toast.makeText(NoteFragment.this.getActivity().getApplicationContext(),
-          R.string.msg_image_saved, Toast.LENGTH_LONG).show();
-      // finish();
-    }
-  }
-
-  /**
    * Called when control returns from the image gallery picker. Loads the image
    * that the user selected.
    */
@@ -513,7 +342,6 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
   {
 
     // using showDialog, could use Fragments instead
-    @SuppressWarnings("deprecation")
     @Override
     protected void onPreExecute()
     {
@@ -666,8 +494,6 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
      * 
      * @param image
      */
-    // using removeDialog, could use Fragments instead
-    @SuppressWarnings("deprecation")
     @Override
     protected void onPostExecute(ImageData image)
     {
@@ -711,8 +537,8 @@ public class NoteFragment extends SherlockFragment implements OnClickListener
     switch (v.getId())
     {
     case R.id.save_button:
-
-      saveImage(this.getView());
+      System.out.println("Save pressed");
+      saveNote(this.getView());
 
       break;
     }
