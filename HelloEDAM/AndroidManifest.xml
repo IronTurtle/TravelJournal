@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.evernote.android.sample.AbsActivity"
+            android:name="com.evernote.android.sample.TabActivity"
             android:label="@string/title_activity_abs" >
         </activity>
     </application>

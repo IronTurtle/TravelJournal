@@ -103,7 +103,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
 
   // Note fields
   EditText mTitle;
-  EditText location;
+  EditText mLocation;
   EditText mEntry;
 
   private ImageData mImageData;
@@ -118,7 +118,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     mBtnSave = (Button) view.findViewById(R.id.save_button);
     mImageView = (ImageView) view.findViewById(R.id.note_image);
     mTitle = (EditText) view.findViewById(R.id.note_title);
-    location = (EditText) view.findViewById(R.id.note_location);
+    mLocation = (EditText) view.findViewById(R.id.note_location);
     mEntry = (EditText) view.findViewById(R.id.note_entry);
 
     btnTakePhoto = (Button) view.findViewById(R.id.camera_button);
@@ -223,7 +223,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     public boolean onKey(View v, int keyCode, KeyEvent event)
     {
       // TODO Auto-generated method stub
-      //updateUi();
+      // updateUi();
       return false;
     }
   }
@@ -283,6 +283,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
       ResourceAttributes attributes = new ResourceAttributes();
       attributes.setFileName(imageData.fileName);
       resource.setAttributes(attributes);
+      
     } catch (Exception e)
     {
       // TODO Auto-generated catch block
@@ -290,29 +291,36 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     }
     String title = mTitle.getText().toString();
     String content = mEntry.getText().toString();
+    String location = mLocation.getText().toString();
 
     Note note = new Note();
     note.setTitle(title);
-
-    // TODO: line breaks need to be converted to render in ENML
-    note.setContent(EvernoteUtil.NOTE_PREFIX + content
-        + EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
+    note.addToResources(resource);
+    note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" + "Location: " + location
+        + "\n" + content + "</p>" + EvernoteUtil.createEnMediaTag(resource)
+        + EvernoteUtil.NOTE_SUFFIX);
 
     try
     {
       mEvernoteSession.getClientFactory().createNoteStoreClient()
           .createNote(note, new OnClientCallback<Note>()
           {
+
             @Override
             public void onSuccess(Note data)
             {
-
+              NoteFragment.this.clearForm(NoteFragment.this.getView());
+              Toast.makeText(
+                  NoteFragment.this.getActivity().getApplicationContext(),
+                  R.string.msg_image_saved, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onException(Exception exception)
             {
-
+              Toast.makeText(
+                  NoteFragment.this.getActivity().getApplicationContext(),
+                  R.string.err_creating_note, Toast.LENGTH_LONG).show();
             }
           });
     } catch (TTransportException exception)
@@ -332,6 +340,14 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     Intent intent = new Intent(Intent.ACTION_PICK,
         MediaStore.Images.Media.INTERNAL_CONTENT_URI);
     startActivityForResult(intent, SELECT_IMAGE);
+  }
+
+  public void clearForm(View view)
+  {
+    mImageView.setImageResource(android.R.color.transparent);
+    mTitle.setText("");
+    mLocation.setText("");
+    mEntry.setText("");
   }
 
   /**

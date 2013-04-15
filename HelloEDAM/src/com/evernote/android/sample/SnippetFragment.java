@@ -30,6 +30,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.widget.ListView;
 import android.view.View.OnClickListener;
@@ -38,15 +39,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.evernote.client.android.EvernoteSession;
@@ -320,21 +325,23 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                         mEvernoteSession);
                     listView.setAdapter(adapter);
                     listView.setScrollingCacheEnabled(false);
-                    listView.setOnItemClickListener(new OnItemClickListener()
-                    {
+                 /*   listView.setOnItemClickListener(new OnItemClickListener()
+                    {                      
                       @Override
                       public void onItemClick(AdapterView<?> parent, View view, int position,
                           long id)
                       {
-                        // String item = "clicked3";
-                        // Toast.makeText(getBaseContext(), item,
-                        // Toast.LENGTH_LONG).show();
+                         String item = entries.get(position).getTitle();
+                         System.out.println("Clicked" + item);
+
+                         Toast.makeText(SnippetFragment.this.getActivity().getBaseContext(), item,
+                         Toast.LENGTH_LONG).show();
                         // Intent i = new Intent(this.getActivity().getApplicationContext(),
                         // JournalEntry.class);
                         // startActivityForResult(i, 100);
                       }
                     });
-                    
+                    */
                   }
 
                   @Override
@@ -367,5 +374,117 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
       break;
     }
   }
+  
+  public class SnippetAdapter extends ArrayAdapter<NoteMetadata>
+  {
+    protected ImageLoader imageLoader = ImageLoader.getInstance();
+
+    int resource;
+    String response;
+    Context context;
+    private EvernoteSession mEvernoteSession;
+    DisplayImageOptions options;
+
+    // Initialize adapter
+    public SnippetAdapter(Context context, int resource,
+        List<NoteMetadata> items, EvernoteSession mEvernoteSession)
+    {
+      super(context, resource, items);
+      this.resource = resource;
+      this.context = context;
+      this.mEvernoteSession = mEvernoteSession;
+
+      options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()
+          .showStubImage(R.drawable.traveljournal).build();
+
+    }
+
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
+      
+      RelativeLayout snippetView = (RelativeLayout) convertView;
+      // Get the current alert object
+      final NoteMetadata snippetEntry = getItem(position);
+
+      // Inflate the view
+      if (convertView == null)
+      {
+        LayoutInflater inflater = (LayoutInflater) context
+            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        snippetView = (RelativeLayout) inflater.inflate(R.layout.snippet, null);
+
+
+      } else
+      {
+        snippetView = (RelativeLayout) convertView;
+      }
+
+      snippetView.setOnClickListener(new OnClickListener()
+      {
+        @Override
+        public void onClick(View v)
+        {
+          String item = snippetEntry.getTitle();
+          System.out.println("Clicked" + item);
+
+          Toast.makeText(SnippetFragment.this.getActivity().getBaseContext(), item,
+          Toast.LENGTH_LONG).show();
+        }
+      });
+      
+      // Get the text boxes from the listitem.xml file
+      TextView snippetEvent = (TextView) snippetView
+          .findViewById(R.id.snippetEvent);
+      TextView snippetLocation = (TextView) snippetView
+          .findViewById(R.id.snippetLocation);
+      final TextView snippetText = (TextView) snippetView
+          .findViewById(R.id.snippetText);
+      ImageView snippetPic = (ImageView) snippetView
+          .findViewById(R.id.snippetPic);
+      snippetText.setText("");
+
+      imageLoader.displayImage(
+          "" + mEvernoteSession.getAuthenticationResult().getWebApiUrlPrefix()
+              + "thm/note/" + snippetEntry.getGuid() + "?auth="
+              + mEvernoteSession.getAuthToken(), snippetPic, options);
+
+      snippetEvent.setText(snippetEntry.getTitle().toUpperCase());
+      try
+      {
+        mEvernoteSession
+            .getClientFactory()
+            .createNoteStoreClient()
+            .getNote(snippetEntry.getGuid(), true, true, true, true,
+                new OnClientCallback<Note>()
+                {
+                  @Override
+                  public void onSuccess(Note note)
+                  {
+                    snippetText.setText(android.text.Html.fromHtml(note
+                        .getContent()));
+                    // removeDialog(DIALOG_PROGRESS);
+                    // Toast.makeText(getApplicationContext(),
+                    // R.string.msg_image_saved, Toast.LENGTH_LONG).show();
+                    // notes = data;
+                  }
+
+                  @Override
+                  public void onException(Exception exception)
+                  {
+                    
+                  }
+                });
+      } catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+
+      snippetLocation.setText("Evernote Hack");
+
+      return snippetView;
+    }
+  }
+  
+  
 
 }

@@ -25,17 +25,13 @@
  */
 package com.evernote.android.sample;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.evernote.client.android.EvernoteSession;
 
 /**
- * This is the parent activity that all sample activites extend from. This
+ * This is the parent activity that all sample activities extend from. This
  * creates the Evernote Session in onCreate and stores the CONSUMER_KEY and
  * CONSUMER_SECRET
  * 

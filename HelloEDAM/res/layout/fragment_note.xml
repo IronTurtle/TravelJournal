@@ -10,6 +10,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/darker_gray"
     android:fillViewport="true"
     android:orientation="vertical" >
 
@@ -96,7 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_weight="4"
-        android:background="@android:color/background_light"
+        android:background="@android:color/darker_gray"
         android:contentDescription="@string/img_desc"
         android:scaleType="centerInside" />
 
