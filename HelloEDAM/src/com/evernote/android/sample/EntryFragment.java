@@ -77,25 +77,27 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
 
     try
     {
-      mEvernoteSession
-          .getClientFactory()
-          .createNoteStoreClient()
-          .findNotesMetadata(filter, 0, pageSize, spec,
-              new OnClientCallback<NotesMetadataList>()
-              {
-                @Override
-                public void onSuccess(NotesMetadataList notes)
-                {
-                  displayNote(notes.getNotes().get(0).getGuid(), notes
-                      .getNotes().get(0).getTitle());
-                }
-
-                @Override
-                public void onException(Exception exception)
-                {
-
-                }
-              });
+    	if(mEvernoteSession.isLoggedIn()) {
+	      mEvernoteSession
+	          .getClientFactory()
+	          .createNoteStoreClient()
+	          .findNotesMetadata(filter, 0, pageSize, spec,
+	              new OnClientCallback<NotesMetadataList>()
+	              {
+	                @Override
+	                public void onSuccess(NotesMetadataList notes)
+	                {
+	                  displayNote(notes.getNotes().get(0).getGuid(), notes
+	                      .getNotes().get(0).getTitle());
+	                }
+	
+	                @Override
+	                public void onException(Exception exception)
+	                {
+	
+	                }
+	              });
+    	}
     } catch (TTransportException e)
     {
 
