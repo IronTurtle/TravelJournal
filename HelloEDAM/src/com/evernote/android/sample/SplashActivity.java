@@ -23,9 +23,8 @@ public class SplashActivity extends Activity {
 	               // do nothing
 	            } finally {
 	               finish();
-	               Intent i = new Intent();
-	               i.setClassName("com.evernote.android.sample",
-	                              "com.evernote.android.sample.AbsActivity");
+	               Intent i = new Intent(SplashActivity.this, TabActivity.class);
+	              
 	               startActivity(i);
 	            }
 	         }

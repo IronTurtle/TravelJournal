@@ -3,6 +3,7 @@ package com.evernote.android.sample;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -10,12 +11,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.ActionBar.Tab;
 //import com.actionbarsherlock.sample.styled.R;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class TabActivity extends SherlockFragmentActivity
 {
@@ -45,7 +48,7 @@ public class TabActivity extends SherlockFragmentActivity
 
     mTabsAdapter
         .addTab(bar.newTab().setText("Me"), SnippetFragment.class, null);
-    mTabsAdapter.addTab(bar.newTab().setText("Up"), EntryFragment.class, null);
+    mTabsAdapter.addTab(bar.newTab().setText("Up"), SnippetFragment.class, null);
 
   }
 
@@ -53,17 +56,26 @@ public class TabActivity extends SherlockFragmentActivity
   public boolean onCreateOptionsMenu(Menu menu)
   {
     getSupportMenuInflater().inflate(R.menu.main_menu, menu);
-    /*
-     * // set up a listener for the refresh item final MenuItem refresh =
-     * (MenuItem) menu.findItem(R.id.menu_refresh);
-     * refresh.setOnMenuItemClickListener(new OnMenuItemClickListener() { // on
-     * selecting show progress spinner for 1s public boolean
-     * onMenuItemClick(MenuItem item) { //
-     * item.setActionView(R.layout.progress_action); handler.postDelayed(new
-     * Runnable() { public void run() { refresh.setActionView(null); } }, 1000);
-     * return false; } });
-     */
+
     return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    // This uses the imported MenuItem from ActionBarSherlock
+    Toast.makeText(this, "Got click: " + item.toString(), Toast.LENGTH_SHORT)
+        .show();
+    switch (item.getItemId())
+    {
+    case R.id.menu_refresh:
+      startActivity(new Intent(this, EntryActivity.class));
+      break;
+    case R.id.menu_search:
+      startActivity(new Intent(this, NoteActivity.class));
+      break;
+    }
+    return true;
   }
 
   public static class TabsAdapter extends FragmentPagerAdapter implements
