@@ -8,6 +8,10 @@
 	<item android:id="@+id/menu_refresh" android:showAsAction="ifRoom"
 		android:title="refresh" />
 	
+	<!-- icon -->
+	<item android:id="@+id/create_entry" android:showAsAction="ifRoom"
+		android:title="create" />
+	
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

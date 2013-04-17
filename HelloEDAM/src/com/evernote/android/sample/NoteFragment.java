@@ -47,6 +47,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.evernote.client.android.EvernoteUtil;
@@ -103,7 +104,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
 
   // Note fields
   EditText mTitle;
-  EditText mLocation;
+  TextView mLocation;
   EditText mEntry;
 
   private ImageData mImageData;
@@ -118,11 +119,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     mBtnSave = (Button) view.findViewById(R.id.save_button);
     mImageView = (ImageView) view.findViewById(R.id.note_image);
     mTitle = (EditText) view.findViewById(R.id.note_title);
-    mLocation = (EditText) view.findViewById(R.id.note_location);
+    mLocation = (TextView) view.findViewById(R.id.note_location);
     mEntry = (EditText) view.findViewById(R.id.note_entry);
 
     btnTakePhoto = (Button) view.findViewById(R.id.camera_button);
 
+    mLocation.setOnClickListener(new btnFindPlace());
     mBtnSave.setOnClickListener(this);
     btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
     mEntry.setOnKeyListener(new NoteEntryField());
@@ -257,6 +259,16 @@ public class NoteFragment extends ParentFragment implements OnClickListener
       }
       cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
       startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+    }
+  }
+  
+  class btnFindPlace implements Button.OnClickListener
+  {
+    @Override
+    public void onClick(View v)
+    {
+      //Show Place Finder Fragment
+      
     }
   }
 

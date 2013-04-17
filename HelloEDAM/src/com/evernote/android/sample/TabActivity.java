@@ -1,5 +1,4 @@
 package com.evernote.android.sample;
-
 import java.util.ArrayList;
 
 import android.content.Context;
