@@ -91,6 +91,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
 
   Button btnTakePhoto;
   private static final int CAMERA_PIC_REQUEST = 1313;
+  private static final int LOCATION_REQUEST = 1034;
   final String TAG = "MyCamera";
 
   // The path to and MIME type of the currently selected image from the gallery
@@ -201,14 +202,28 @@ public class NoteFragment extends ParentFragment implements OnClickListener
         }
 
         new ImageSelector().execute(data);
-
-        /*
-         * if(resultCode == RESULT_OK) { new ImageSelector().execute(data);
-         * 
-         * 
-         * }
-         */
       }
+      break;
+    case LOCATION_REQUEST:
+    	if (resultCode == Activity.RESULT_OK)
+        {
+          if (data != null)
+          {
+            Log.e("Intent value:", data.toString());
+            this.mLocation.setText(data.getStringExtra("LOCATION_DATA"));
+          } else
+          {
+            Log.e("Intent is null", "yep it is.");
+            if (mImageUri == null)
+            {
+              Log.e("nullcheck on memberimageuri", "its null");
+            } else
+            {
+              Log.e("nullcheckon memberimage", mImageUri.toString());
+            }
+          }
+        }
+    	break;
     }
   }
 
@@ -267,9 +282,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     @Override
     public void onClick(View v)
     {
+    	
       //Show Place Finder Fragment
-      Toast.makeText(getActivity(), "Location Field clicked", Toast.LENGTH_LONG).show();
-      startActivity(new Intent(getActivity(), PlacesActivity.class));
+      Toast.makeText(getActivity(), "Location Field clicked", Toast.LENGTH_SHORT).show();
+      startActivityForResult(new Intent(getActivity(), PlacesActivity.class).putExtra("PREV_LOC_DATA", mLocation.getText().toString()), LOCATION_REQUEST);
     }
   }
 
