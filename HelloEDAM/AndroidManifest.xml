@@ -6,8 +6,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -49,6 +49,10 @@
         <activity
             android:name="com.evernote.android.sample.TabActivity"
             android:label="@string/title_activity_abs" >
+        </activity>
+        <activity
+            android:name="com.evernote.android.sample.PlacesActivity"
+            android:label="@string/title_activity_places" >
         </activity>
     </application>
 

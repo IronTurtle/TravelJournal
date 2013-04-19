@@ -93,7 +93,7 @@
         android:contentDescription="@string/img_desc"
         android:scaleType="centerInside" />
 
-    <TextView
+    <EditText
         android:id="@+id/note_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -103,10 +103,9 @@
         android:gravity="bottom|left"
         android:hint="@string/titlePlaceholder"
         android:inputType="text"
-        android:paddingLeft="15dp" >
-    </TextView>
+        android:paddingLeft="15dp" />
 
-    <EditText
+    <TextView
         android:id="@+id/note_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

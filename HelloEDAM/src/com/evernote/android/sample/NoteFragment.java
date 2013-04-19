@@ -268,7 +268,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     public void onClick(View v)
     {
       //Show Place Finder Fragment
-      
+      Toast.makeText(getActivity(), "Location Field clicked", Toast.LENGTH_LONG).show();
+      startActivity(new Intent(getActivity(), PlacesActivity.class));
     }
   }
 
