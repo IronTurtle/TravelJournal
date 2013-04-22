@@ -55,11 +55,11 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
         .showStubImage(R.drawable.traveljournal).build();
 
     getMetadata();
-    //Bundle bundle = this.getActivity().getIntent().getExtras();
+    Bundle bundle = this.getActivity().getIntent().getExtras();
 
-    //String guid = (String) bundle.get("guid");
-    //String title = (String) bundle.get("title");
-    //displayNote(guid, title);
+    String guid = (String) bundle.get("guid");
+    String title = (String) bundle.get("title");
+    displayNote(guid, title);
     
     return view;
   }
