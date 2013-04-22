@@ -303,13 +303,16 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 
 		Note note = new Note();
 		note.setTitle(title);
-		note.addToResources(resource);
+		System.out.println("Note Title: " + note.getTitle());
+
+		//note.addToResources(resource);
 		note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" + "Location: "
 				+ location + "\n" + content + "</p>"
-				+ EvernoteUtil.createEnMediaTag(resource)
+				//s+ EvernoteUtil.createEnMediaTag(resource)
 				+ EvernoteUtil.NOTE_SUFFIX);
 
 		try {
+			
 			mEvernoteSession.getClientFactory().createNoteStoreClient()
 					.createNote(note, new OnClientCallback<Note>() {
 

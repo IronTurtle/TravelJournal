@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 public class PlacesFragment extends ParentFragment{
 
+	int radiusRanges[] = {50, 100, 150, 200};
 	private double longitude;
 	private double latitude;
 	private LocationManager mlocManager;
@@ -159,17 +160,20 @@ public class PlacesFragment extends ParentFragment{
 
 				NearbySearchQuery query = new NearbySearchQuery(latitude, longitude);
 
-				query.setRadius(100);
+				int rrIndex = 0;
+				do {
+					query.setRadius(radiusRanges[rrIndex++]); //inc rrIndex as long as places results < 20
 
-				System.out.println("Query: " + query.toString());
-				PlacesResult result = googlePlaces.getPlaces(query);
-
-				placeList = (ArrayList<Place>) result.getPlaces();
-
-				for (int i = 0; i < placeList.size(); i++) {
-					System.out.println(placeList.get(i).getName());
-					System.out.println("\t" + placeList.get(i).getAddress());
-				}
+					System.out.println("Query: " + query.toString());
+					PlacesResult result = googlePlaces.getPlaces(query);
+	
+					placeList = (ArrayList<Place>) result.getPlaces();
+	
+					for (int i = 0; i < placeList.size(); i++) {
+						System.out.println(placeList.get(i).getName());
+						System.out.println("\t" + placeList.get(i).getAddress());
+					}
+				} while(placeList.size() < 15 && rrIndex < radiusRanges.length);
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
