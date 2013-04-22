@@ -54,7 +54,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
     options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()
         .showStubImage(R.drawable.traveljournal).build();
 
-    getMetadata();
+    //getMetadata();
     Bundle bundle = this.getActivity().getIntent().getExtras();
 
     String guid = (String) bundle.get("guid");
@@ -104,20 +104,24 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
     }
   }
 
-  public void displayNote(String guid, String title)
+  public void displayNote(final String guid, String title)
   {
 
     mTitle.setText(title.toUpperCase());
 
     try
     {
+    	
+    	System.out.println("Getting Note data");
       mEvernoteSession.getClientFactory().createNoteStoreClient()
-          .getNote(guid, true, true, true, true, new OnClientCallback<Note>()
+          .getNoteContent(guid, new OnClientCallback<String>()
           {
             @Override
-            public void onSuccess(Note note)
+            public void onSuccess(String note)
             {
-              String contents = note.getContent();
+            	System.out.println("Getting note content...");
+              String contents = note;
+              System.out.println("Got note content");
 
               mEntry.setText(android.text.Html.fromHtml(contents));
 
@@ -135,7 +139,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
                   mEvernoteSession
                       .getClientFactory()
                       .createNoteStoreClient()
-                      .getResourceByHash(note.getGuid(),
+                      .getResourceByHash(guid,
                           EvernoteUtil.hexToBytes(div.attr("hash")), false,
                           false, false, new OnClientCallback<Resource>()
                           {

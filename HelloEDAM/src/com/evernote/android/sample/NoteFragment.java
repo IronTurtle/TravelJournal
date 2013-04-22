@@ -38,6 +38,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -297,18 +298,21 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String title = mTitle.getText().toString();
-		String content = mEntry.getText().toString();
+		
+		Time now = new Time();
+		now.setToNow();
+		String title = now.toString();//mTitle.getText().toString();
+		String content = mTitle.getText().toString() + "\n"  + mEntry.getText().toString();
 		String location = mLocation.getText().toString();
 
 		Note note = new Note();
 		note.setTitle(title);
 		System.out.println("Note Title: " + note.getTitle());
 
-		//note.addToResources(resource);
+		note.addToResources(resource);
 		note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" + "Location: "
 				+ location + "\n" + content + "</p>"
-				//s+ EvernoteUtil.createEnMediaTag(resource)
+				+ EvernoteUtil.createEnMediaTag(resource)
 				+ EvernoteUtil.NOTE_SUFFIX);
 
 		try {
