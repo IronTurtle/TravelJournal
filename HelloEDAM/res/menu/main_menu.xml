@@ -1,21 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <!-- custom -->
+    
 	<item android:id="@+id/menu_search" android:showAsAction="ifRoom"
 		android:title="search"/>
-
-	<!-- icon -->
+	
+	<item android:id="@+id/menu_add_note" android:showAsAction="ifRoom"
+		android:title="create" />
+	
+	<!-- 
 	<item android:id="@+id/menu_refresh" android:showAsAction="ifRoom"
 		android:title="refresh" />
-	
-	<!-- icon -->
-	<item android:id="@+id/create_entry" android:showAsAction="ifRoom"
-		android:title="create" />
 	
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
-
+	-->
 </menu>

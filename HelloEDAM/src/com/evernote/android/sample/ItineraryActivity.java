@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.widget.ListView;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View.OnClickListener;
@@ -40,13 +39,26 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 
+import android.app.FragmentManager;
+import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.widget.TextView;
+
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.app.ActionBar.Tab;
+//import com.actionbarsherlock.sample.styled.R;
+import com.actionbarsherlock.view.Menu;
+
+
 import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -74,15 +86,9 @@ import com.evernote.client.android.OnClientCallback;
 import com.evernote.client.conn.mobile.FileData;
 
 import com.evernote.edam.type.Note;
-import com.evernote.edam.type.Resource;
-import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.edam.notestore.*;
 import com.evernote.edam.type.*;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -95,7 +101,7 @@ import android.util.Log;
  * chooses an image from the device's image gallery. The image is then saved
  * directly to user's Evernote account as a new note.
  */
-public class ItineraryActivity extends Activity
+public class ItineraryActivity extends SherlockFragmentActivity
 {
 
   /**
@@ -139,10 +145,21 @@ public class ItineraryActivity extends Activity
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
-    super.onCreate(savedInstanceState);
+    /*super.onCreate(savedInstanceState);
     setContentView(R.layout.itineraryactivity);
-
     setupSession();
+    */
+    super.onCreate(savedInstanceState);
+
+    setContentView(R.layout.itineraryactivity);
+    final ActionBar bar = getSupportActionBar();
+    bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+
+    ItineraryFragment mItineraryFragment = new ItineraryFragment();
+    FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+        .beginTransaction();
+    fragmentTransaction.add(R.id.fragment, mItineraryFragment);
+    fragmentTransaction.commit();
   }
 
   @Override

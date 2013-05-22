@@ -45,9 +45,9 @@ public class TabActivity extends SherlockFragmentActivity
 
     mTabsAdapter = new TabsAdapter(this, mViewPager);
 
-    mTabsAdapter
-        .addTab(bar.newTab().setText("Me"), SnippetFragment.class, null);
-    mTabsAdapter.addTab(bar.newTab().setText("Up"), SnippetFragment.class, null);
+    mTabsAdapter.addTab(bar.newTab().setText("Itinerary"), ItineraryFragment.class, null);
+    mTabsAdapter.addTab(bar.newTab().setText("Me"), SnippetFragment.class, null);
+    mTabsAdapter.addTab(bar.newTab().setText("Others"), NoteFragment.class, null);
 
   }
 
@@ -67,12 +67,13 @@ public class TabActivity extends SherlockFragmentActivity
         .show();
     switch (item.getItemId())
     {
-    case R.id.menu_refresh:
-      startActivity(new Intent(this, EntryActivity.class));
-      break;
-    case R.id.menu_search:
-      startActivity(new Intent(this, NoteActivity.class));
-      break;
+	    case R.id.menu_add_note:
+	    	startActivity(new Intent(this, NoteActivity.class));
+	    	break;
+	
+	  	case R.id.menu_search:
+	  		startActivity(new Intent(this, EntryActivity.class));
+	  		break;
     }
     return true;
   }
