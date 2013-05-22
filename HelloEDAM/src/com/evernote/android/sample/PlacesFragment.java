@@ -14,7 +14,12 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.support.v4.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -25,6 +30,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 public class PlacesFragment extends ParentFragment{
 
@@ -234,6 +246,9 @@ public class PlacesFragment extends ParentFragment{
 		public void onProviderDisabled(String provider) {
 			Toast.makeText(getActivity().getApplicationContext(), "Gps Disabled",
 					Toast.LENGTH_SHORT).show();
+			//create popup to ask if user wants to turn on GPS. If so, remind them to press back to go back to App.
+			GPSDialogFragment d = new GPSDialogFragment();
+			d.show(getFragmentManager(), "GPS");
 		}
 
 		@Override
@@ -246,6 +261,30 @@ public class PlacesFragment extends ParentFragment{
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 
 		}
+
+	}
+	
+
+
+public class GPSDialogFragment extends DialogFragment {
+	    @Override
+	    public Dialog onCreateDialog(Bundle savedInstanceState) {
+	        // Use the Builder class for convenient dialog construction
+	        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+	        builder.setMessage(R.string.gps_dialog)
+	               .setPositiveButton(R.string.gps_yes, new DialogInterface.OnClickListener() {
+	                   public void onClick(DialogInterface dialog, int id) {
+	                	   startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+	                   }
+	               })
+	               .setNegativeButton(R.string.gps_no, new DialogInterface.OnClickListener() {
+	                   public void onClick(DialogInterface dialog, int id) {
+	                       // User cancelled the dialog
+	                   }
+	               });
+	        // Create the AlertDialog object and return it
+	        return builder.create();
+	    }
 
 	}
 }
