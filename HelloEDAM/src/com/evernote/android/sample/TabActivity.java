@@ -47,7 +47,7 @@ public class TabActivity extends SherlockFragmentActivity
 
     mTabsAdapter.addTab(bar.newTab().setText("Itinerary"), ItineraryFragment.class, null);
     mTabsAdapter.addTab(bar.newTab().setText("Me"), SnippetFragment.class, null);
-    mTabsAdapter.addTab(bar.newTab().setText("Others"), NoteFragment.class, null);
+    mTabsAdapter.addTab(bar.newTab().setText("Others"), OtherFragment.class, null);
 
   }
 
@@ -72,7 +72,6 @@ public class TabActivity extends SherlockFragmentActivity
 	    	break;
 	
 	  	case R.id.menu_search:
-	  		startActivity(new Intent(this, EntryActivity.class));
 	  		break;
     }
     return true;

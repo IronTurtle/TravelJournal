@@ -82,6 +82,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	// Activity result request codes
 	private static final int SELECT_IMAGE = 1;
 
+	private static final int CAMERA_PIC_REQUEST = 1313;
+	private static final int LOCATION_REQUEST = 1034;
 	// UI elements that we update
 	@SuppressWarnings("unused")
 	private Button mBtnAuth;
@@ -93,8 +95,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	private ImageView mImageView;
 
 	Button btnTakePhoto;
-	private static final int CAMERA_PIC_REQUEST = 1313;
-	private static final int LOCATION_REQUEST = 1034;
 	final String TAG = "MyCamera";
 
 	// The path to and MIME type of the currently selected image from the
@@ -389,11 +389,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			public void onSuccess(Note data) {
 				NoteFragment.this.clearForm(NoteFragment.this
 						.getView());
-				Toast.makeText(
-						NoteFragment.this.getActivity()
-								.getApplicationContext(),
+				Toast.makeText(getActivity(),
 						R.string.msg_image_saved, Toast.LENGTH_LONG)
 						.show();
+				//ERROR: getActivity might have already "finished"...
+				//		so getting the activity gives NullPointer Error
 			}
 
 			@Override
@@ -401,9 +401,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 				NoteFragment.this.clearForm(NoteFragment.this
 						.getView());
 				exception.printStackTrace();
-				Toast.makeText(
-						NoteFragment.this.getActivity()
-								.getApplicationContext(),
+				Toast.makeText(getActivity(),
 						R.string.err_creating_note,
 						Toast.LENGTH_LONG).show();
 			}

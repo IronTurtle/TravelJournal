@@ -32,7 +32,6 @@ public class NoteActivity extends SherlockFragmentActivity
   TextView tabCenter;
   TextView tabxt;
 
-  private static final int CAMERA_PIC_REQUEST = 1313;
 
   @SuppressWarnings("unused")
   private final Handler handler = new Handler();

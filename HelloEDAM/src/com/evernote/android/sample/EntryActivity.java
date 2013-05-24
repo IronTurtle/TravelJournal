@@ -48,7 +48,7 @@ public class EntryActivity extends SherlockFragmentActivity
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+    getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
     /*
      * // set up a listener for the refresh item final MenuItem refresh =
      * (MenuItem) menu.findItem(R.id.menu_refresh);
