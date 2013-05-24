@@ -51,6 +51,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
 import com.evernote.client.conn.mobile.FileData;
@@ -115,24 +118,26 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_note, container, false);
 		mBtnAuth = (Button) view.findViewById(R.id.auth_button);
-		mBtnSelect = (Button) view.findViewById(R.id.select_button);
-		mBtnSave = (Button) view.findViewById(R.id.save_button);
+		//mBtnSelect = (Button) view.findViewById(R.id.select_button);
+		//mBtnSave = (Button) view.findViewById(R.id.save_button);
 		mImageView = (ImageView) view.findViewById(R.id.note_image);
 		mTitle = (EditText) view.findViewById(R.id.note_title);
 		mLocation = (TextView) view.findViewById(R.id.note_location);
 		mEntry = (EditText) view.findViewById(R.id.note_entry);
 
-		btnTakePhoto = (Button) view.findViewById(R.id.camera_button);
+		//btnTakePhoto = (Button) view.findViewById(R.id.camera_button);
 
 		mLocation.setOnClickListener(new btnFindPlace());
-		mBtnSave.setOnClickListener(this);
-		btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
+		//mBtnSave.setOnClickListener(this);
+		//btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
 		mEntry.setOnKeyListener(new NoteEntryField());
 		/*
 		 * if (getLastNonConfigurationInstance() != null) { mImageData =
 		 * (ImageData) getLastNonConfigurationInstance();
 		 * mImageView.setImageBitmap(mImageData.imageBitmap); }
 		 */
+		
+		setHasOptionsMenu(true);
 		return view;
 	}
 
@@ -149,6 +154,66 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	public void onResume() {
 		super.onResume();
 	}
+	
+	/*@Override
+	public void onCreateOptionsMenu(Menu menu,MenuInflater inflater)
+	{
+	    inflater.inflate(R.menu.create_note_menu, menu);
+	    super.onCreateOptionsMenu(menu,inflater);
+	}*/
+	
+	@Override
+	  public boolean onOptionsItemSelected(MenuItem item)
+	  {
+	    // This uses the imported MenuItem from ActionBarSherlock
+	    Toast.makeText(this.getActivity(), "Got click: " + item.toString(), Toast.LENGTH_SHORT)
+	        .show();
+	    switch (item.getItemId())
+	    {
+	    	case R.id.create_note_menu_save:
+		    	System.out.println("Save pressed");
+				Toast.makeText(getActivity(), "Save Button clicked",
+						Toast.LENGTH_SHORT).show();
+				saveNote(this.getView());
+				break;
+		    case R.id.create_note_menu_camera:
+		    	//startActivity(new Intent(this, NoteActivity.class));
+		    	
+		    	Intent cameraIntent = new Intent(
+						android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+				ContentValues values = new ContentValues();
+
+				mImageUri = getActivity().getApplicationContext()
+						.getContentResolver()
+						.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+								values);
+				if (mImageUri == null) {
+					Log.e("image uri is null", "what?");
+				} else {
+
+					Log.e("oh nevermind", "image uri is NOT null");
+				}
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+				startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+				
+		    	break;
+		
+		    case R.id.create_note_menu_select:
+		  		//startActivity(new Intent(this, EntryActivity.class));
+		    	
+		    	Intent intent = new Intent(Intent.ACTION_PICK,
+						MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+				startActivityForResult(intent, SELECT_IMAGE);
+		  		break;
+		  		
+		    case R.id.create_note_menu_trophy:
+		  		//startActivity(new Intent(this, EntryActivity.class));
+		    	Toast.makeText(getActivity(), "Trophy Button clicked",
+						Toast.LENGTH_SHORT).show();
+		  		break;
+	    }
+	    return true;
+	  }
 
 	/*
 	 * @Override public Object onRetainNonConfigurationInstance() { return
@@ -346,7 +411,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		} catch (TTransportException exception) {
 			exception.printStackTrace();
 		}
-
+		((NoteActivity) getActivity()).finish();
+		getFragmentManager().popBackStack();
 	}
 
 	/**
@@ -537,7 +603,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			}
 
 			if (mEvernoteSession.isLoggedIn()) {
-				mBtnSave.setEnabled(true);
+				//mBtnSave.setEnabled(true);
 			}
 
 			mImageData = image;
@@ -557,13 +623,15 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
+		/*switch (v.getId()) {
 		case R.id.save_button:
 			System.out.println("Save pressed");
+			Toast.makeText(getActivity(), "Save Button clicked",
+					Toast.LENGTH_SHORT).show();
 			saveNote(this.getView());
 
 			break;
-		}
+		}*/
 		// TODO Auto-generated method stub
 
 	}

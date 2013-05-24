@@ -3,20 +3,27 @@ package com.evernote.android.sample;
 import java.util.ArrayList;
 
 import android.app.FragmentManager;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.ActionBar.Tab;
 //import com.actionbarsherlock.sample.styled.R;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class NoteActivity extends SherlockFragmentActivity
 {
@@ -24,6 +31,8 @@ public class NoteActivity extends SherlockFragmentActivity
   ViewPager mViewPager;
   TextView tabCenter;
   TextView tabxt;
+
+  private static final int CAMERA_PIC_REQUEST = 1313;
 
   @SuppressWarnings("unused")
   private final Handler handler = new Handler();
@@ -48,7 +57,7 @@ public class NoteActivity extends SherlockFragmentActivity
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+    getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
     /*
      * // set up a listener for the refresh item final MenuItem refresh =
      * (MenuItem) menu.findItem(R.id.menu_refresh);
@@ -60,6 +69,34 @@ public class NoteActivity extends SherlockFragmentActivity
      * return false; } });
      */
     return super.onCreateOptionsMenu(menu);
+  }
+  
+  /*@Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    // This uses the imported MenuItem from ActionBarSherlock
+    Toast.makeText(this, "Got click: " + item.toString(), Toast.LENGTH_SHORT)
+        .show();
+    switch (item.getItemId())
+    {
+	    case R.id.create_note_menu_camera:
+	    	startActivity(new Intent(this, NoteActivity.class));
+			
+	    	break;
+	
+	    case R.id.create_note_menu_select:
+	  		startActivity(new Intent(this, EntryActivity.class));
+	  		break;
+	  		
+	    case R.id.create_note_menu_trophy:
+	  		startActivity(new Intent(this, EntryActivity.class));
+	  		break;
+    }
+    return true;
+  }*/
+  
+  public void finishNote() {
+	  finish();
   }
 
 }

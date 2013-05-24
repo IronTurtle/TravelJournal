@@ -55,7 +55,7 @@ public class TabActivity extends SherlockFragmentActivity
   public boolean onCreateOptionsMenu(Menu menu)
   {
     getSupportMenuInflater().inflate(R.menu.main_menu, menu);
-
+    
     return super.onCreateOptionsMenu(menu);
   }
 

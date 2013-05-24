@@ -6,7 +6,7 @@
     android:fillViewport="true"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <!-- <LinearLayout
         android:id="@+id/auth_button_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,13 +39,6 @@
             android:text="@string/label_log_in"
             android:visibility="invisible" />
 
-        <!--
-                <android.support.v7.widget.Space
-                android:id="@+id/space4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="10" />
-        -->
 
         <Button
             android:id="@+id/camera_button"
@@ -83,6 +76,7 @@
             android:onClick="giveAwardOnClick"
             android:paddingLeft="30dp" />
     </LinearLayout>
+    -->
 
     <ImageView
         android:id="@+id/note_image"
