@@ -22,6 +22,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,7 +38,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
   // Note fields
   ImageView mImageView;
   EditText mTitle;
-  EditText mLocation;
+  TextView mLocation;
   EditText mEntry;
 
   @Override
@@ -48,7 +49,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
 
     mImageView = (ImageView) view.findViewById(R.id.entry_image);
     mTitle = (EditText) view.findViewById(R.id.entry_title);
-    mLocation = (EditText) view.findViewById(R.id.entry_location);
+    mLocation = (TextView) view.findViewById(R.id.entry_location);
     mEntry = (EditText) view.findViewById(R.id.entry_entry);
 
     options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()

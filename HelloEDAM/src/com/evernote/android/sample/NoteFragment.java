@@ -394,23 +394,34 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 						.show();
 				//ERROR: getActivity might have already "finished"...
 				//		so getting the activity gives NullPointer Error
+				((NoteActivity) getActivity()).finish();
+				getFragmentManager().popBackStack();
 			}
-
+			
 			@Override
 			public void onException(Exception exception) {
 				NoteFragment.this.clearForm(NoteFragment.this
 						.getView());
+				if(exception instanceof java.lang.reflect.InvocationTargetException) {
+					Toast.makeText(getActivity(),
+							"Error: You may have reached Evernote usage limit.",
+							Toast.LENGTH_LONG).show();
+				}
 				exception.printStackTrace();
 				Toast.makeText(getActivity(),
 						R.string.err_creating_note,
 						Toast.LENGTH_LONG).show();
+				((NoteActivity) getActivity()).finish();
+				getFragmentManager().popBackStack();
 			}
 		});
 		} catch (TTransportException exception) {
 			exception.printStackTrace();
+			((NoteActivity) getActivity()).finish();
+			getFragmentManager().popBackStack();
 		}
-		((NoteActivity) getActivity()).finish();
-		getFragmentManager().popBackStack();
+		//((NoteActivity) getActivity()).finish();
+		//getFragmentManager().popBackStack();
 	}
 
 	/**
