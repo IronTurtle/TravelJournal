@@ -229,7 +229,7 @@ public class ItineraryActivity extends SherlockFragmentActivity
       return;
     }
 
-    Toast.makeText(getApplicationContext(), R.string.msg_image_saved,
+    Toast.makeText(getApplicationContext(), R.string.success_creating_note,
         Toast.LENGTH_LONG).show();
   }
 

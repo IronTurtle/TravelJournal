@@ -277,7 +277,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
     }
 
     Toast.makeText(this.getActivity().getApplicationContext(),
-        R.string.msg_image_saved, Toast.LENGTH_LONG).show();
+        R.string.success_creating_note, Toast.LENGTH_LONG).show();
   }
 
   public void listViewCreate()

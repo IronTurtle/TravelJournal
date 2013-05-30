@@ -3,7 +3,7 @@
 
     <string name="app_name">TravelJournal</string>
     <string name="err_creating_note">Error creating new Evernote note</string>
-    <string name="msg_image_saved">Note Saved to Evernote</string>
+    <string name="success_creating_note">Note Saved to Evernote</string>
     <string name="label_app_title">Travel Journal App</string>
     <string name="label_select_button">Select Image</string>
     <string name="label_message">No image selected</string>
@@ -48,5 +48,7 @@
     <string name="gps_dialog">GPS is currently disabled. Would you like to turn it on? Please press the back button to return to the app afterwards.</string>
     <string name="gps_yes">Yes</string>
     <string name="gps_no">No</string>
+    <string name="success_update_note">Note saved to Evernote</string>
+    <string name="err_update_note">Error saving Evernote note</string>
 
 </resources>

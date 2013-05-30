@@ -38,6 +38,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.ContactsContract.Contacts.Data;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -57,7 +58,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
 import com.evernote.client.conn.mobile.FileData;
+import com.evernote.edam.type.LazyMap;
 import com.evernote.edam.type.Note;
+import com.evernote.edam.type.NoteAttributes;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.thrift.transport.TTransportException;
@@ -337,6 +340,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		}
 	}
 
+	
+	
 	/**
 	 * Saves text field content as note to selected notebook, or default
 	 * notebook if no notebook select
@@ -358,7 +363,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			ResourceAttributes attributes = new ResourceAttributes();
 			attributes.setFileName(imageData.fileName);
 			resource.setAttributes(attributes);
-
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -374,9 +379,19 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		note.setTitle(title);
 		System.out.println("Note Title: " + note.getTitle());
 
+		//Trying to add locations to data resources
+		NoteAttributes attr = new NoteAttributes();
+		LazyMap map = new LazyMap();
+		
+		map.putToFullMap("LOCATION", location);
+		attr.setApplicationData(map);
+		note.setAttributes(attr);
+		
+		System.out.println(note.getAttributes().getApplicationData().toString());
+		
 		note.addToResources(resource);
-		note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" + "Location: "
-				+ location + "\n" + content + "</p>"
+		
+		note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>"
 				+ EvernoteUtil.createEnMediaTag(resource)
 				+ EvernoteUtil.NOTE_SUFFIX);
 
@@ -390,7 +405,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 				NoteFragment.this.clearForm(NoteFragment.this
 						.getView());
 				Toast.makeText(getActivity(),
-						R.string.msg_image_saved, Toast.LENGTH_LONG)
+						R.string.success_creating_note, Toast.LENGTH_LONG)
 						.show();
 				//ERROR: getActivity might have already "finished"...
 				//		so getting the activity gives NullPointer Error
