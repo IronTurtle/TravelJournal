@@ -1,0 +1,8 @@
+[submodule "evernote-sdk-android"]
+	path = evernote-sdk-android
+	url = git://github.com/evernote/evernote-sdk-android.git
+  ignore = dirty
+[submodule "ActionBarSherlock"]
+	path = ActionBarSherlock
+  url = git://github.com/JakeWharton/ActionBarSherlock.git
+  ignore = dirty
