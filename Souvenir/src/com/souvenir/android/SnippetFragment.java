@@ -208,8 +208,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
       try
       {
         mEvernoteSession.logOut(this.getActivity().getApplicationContext());
-      }
-      catch (InvalidAuthenticationException e)
+      } catch (InvalidAuthenticationException e)
       {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -226,7 +225,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
   {
 
     Intent intent = new Intent(this.getActivity().getApplicationContext(),
-        GenericActivity.class).putExtra("fragment", NoteFragment.class.getName());
+        NoteFragment.class);
 
     this.startActivityForResult(intent, 200);
 
@@ -294,7 +293,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
       NoteFilter filter = new NoteFilter();
       filter.setOrder(NoteSortOrder.UPDATED.getValue());
-      // filter.setWords("-tag:itinerary*");
+      //filter.setWords("-tag:itinerary*");
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);
@@ -326,6 +325,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                     listView.setAdapter(adapter);
                     listView.setScrollingCacheEnabled(false);
 
+
                     Log.e("log_tag ******", notes.getNotes().get(0).getTitle());
                     Log.e("log_tag ******", entries.get(0).getTitle());
                     for (NoteMetadata note2 : notes.getNotes())
@@ -350,10 +350,10 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                                     // contents.add(android.text.Html.fromHtml(note.getContent()).toString());
                                     entries2.add(position, note);
                                     adapter.notifyDataSetChanged();
-                                    // for (Note note2 : entries2)
-                                    // {
-                                    // System.out.println(note2.getTitle());
-                                    // }
+                                    for (Note note2 : entries2)
+                                    {
+                                      System.out.println(note2.getTitle());
+                                    }
                                     // snippetText.setText(android.text.Html.fromHtml(note
                                     // .getContent()));
                                     // removeDialog(DIALOG_PROGRESS);
@@ -371,8 +371,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
                                   }
                                 });
-                      }
-                      catch (Exception e)
+                      } catch (Exception e)
                       {
                         e.printStackTrace();
                       }
@@ -406,8 +405,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                     // removeDialog(DIALOG_PROGRESS);
                   }
                 });
-      }
-      catch (TTransportException e)
+      } catch (TTransportException e)
       {
         // TODO Auto-generated catch block
         e.printStackTrace();

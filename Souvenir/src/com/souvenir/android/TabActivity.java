@@ -72,7 +72,7 @@ public class TabActivity extends SherlockFragmentActivity
     switch (item.getItemId())
     {
     case R.id.menu_add_note:
-      startActivity(new Intent(this, GenericActivity.class));
+      startActivity(new Intent(this, NoteActivity.class));
       break;
 
     case R.id.menu_search:

@@ -25,6 +25,7 @@
  */
 package com.souvenir.android;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -69,6 +70,7 @@ public class ParentFragment extends SherlockFragment
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+    getActivity().setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
     // Set up the Evernote Singleton Session
     mEvernoteSession = EvernoteSession.getInstance(this.getActivity(),

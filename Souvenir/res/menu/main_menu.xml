@@ -2,9 +2,11 @@
 
     
 	<item android:id="@+id/menu_search" android:showAsAction="ifRoom"
+	    android:icon="@drawable/search"
 		android:title="search"/>
 	
 	<item android:id="@+id/menu_add_note" android:showAsAction="ifRoom"
+	    android:icon="@drawable/plus"
 		android:title="create" />
 	
 	<!-- 
