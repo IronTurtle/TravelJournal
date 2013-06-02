@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TravelJournal</string>
+    <string name="app_name">Souvenir</string>
+    <string name="app_name_traveljournal">TravelJournal</string>
     <string name="err_creating_note">Error creating new Evernote note</string>
     <string name="success_creating_note">Note Saved to Evernote</string>
-    <string name="label_app_title">Travel Journal App</string>
+    <string name="label_app_title">Souvenir App</string>
     <string name="label_select_button">Select Image</string>
     <string name="label_message">No image selected</string>
     <string name="label_save_button">Save</string>
@@ -37,14 +38,15 @@
     <string name="menu_search">Search</string>
 
     <color name="primaryOrange">#f3c21c</color>
+    <color name="primaryBlack">#000000</color>
 
-    <string name="app_name_banner">TRAVELJOURNAL</string>
+    <string name="app_name_banner">SOUVENIR</string>
     <string name="dialog_award_title">Give An Award:</string>
     <string name="dialog_award_message">Best of...</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_abs">AbsActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_places">PlacesActivity</string>
+    <string name="title_activity_places">Select A Place</string>
     <string name="gps_dialog">GPS is currently disabled. Would you like to turn it on? Please press the back button to return to the app afterwards.</string>
     <string name="gps_yes">Yes</string>
     <string name="gps_no">No</string>

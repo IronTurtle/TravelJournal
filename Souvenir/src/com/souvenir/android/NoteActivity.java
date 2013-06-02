@@ -58,6 +58,7 @@ public class NoteActivity extends SherlockFragmentActivity
   public boolean onCreateOptionsMenu(Menu menu)
   {
     getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
+    System.out.println("Action bar is showing: " + getSupportActionBar().isShowing());
     /*
      * // set up a listener for the refresh item final MenuItem refresh =
      * (MenuItem) menu.findItem(R.id.menu_refresh);

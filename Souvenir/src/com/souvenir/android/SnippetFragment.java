@@ -57,6 +57,7 @@ import android.widget.Toast;
 import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.android.OnClientCallback;
+import com.evernote.edam.type.LazyMap;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.notestore.*;
 import com.evernote.edam.type.*;
@@ -495,7 +496,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
       // Get the text boxes from the listitem.xml file
       TextView snippetEvent = (TextView) snippetView
           .findViewById(R.id.snippetEvent);
-      TextView snippetLocation = (TextView) snippetView
+      final TextView snippetLocation = (TextView) snippetView
           .findViewById(R.id.snippetLocation);
       final TextView snippetText = (TextView) snippetView
           .findViewById(R.id.snippetText);
@@ -508,8 +509,30 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
               + "thm/note/" + snippetEntry.getGuid() + "?auth="
               + mEvernoteSession.getAuthToken(), snippetPic, options);
 
+      
+	  try {
+		mEvernoteSession.getClientFactory().createNoteStoreClient()
+		  .getNoteApplicationData(snippetEntry.getGuid(), new OnClientCallback<LazyMap>()
+		  {
+		    public void onSuccess(LazyMap resources)
+		    {
+	
+		      System.out.println(resources.getFullMap().values());
+		      String location = resources.getFullMap().get("LOCATION");
+		      snippetLocation.setText(location);
+		    }
+		    
+		    @Override
+		    public void onException(Exception exception)
+		    {
+		      exception.printStackTrace();
+		    }
+		  });
+		} catch (TTransportException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
       snippetEvent.setText(snippetEntry.getTitle().toUpperCase());
-
       snippetText.setText(android.text.Html.fromHtml(snippetEntry.getContent())
           .toString());
 

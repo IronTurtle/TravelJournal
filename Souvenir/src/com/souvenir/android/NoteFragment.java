@@ -166,6 +166,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		 */
 		
 		setHasOptionsMenu(true);
+		
+		//open camera in background
 		GPSOperation g = new GPSOperation();
 		g.execute("");
 
@@ -175,8 +177,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mlocListener, null);
 		
 		
-		//Open Camera app first automatically
-		//openCamera();
 		//set title automatically
 		setDefaultTitle();
 		//set focus on entry field
@@ -622,11 +622,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 					// Decode bitmap with inSampleSize set
 					options.inJustDecodeBounds = false;
 
-					tempBitmap = BitmapFactory.decodeFile(image.filePath,
-							options);
-
+					//tempBitmap = BitmapFactory.decodeFile(image.filePath,options);
+					
+					//Scaling isn't changed...
+					tempBitmap = BitmapFactory.decodeFile(image.filePath);
+							
 					image.imageBitmap = Bitmap.createScaledBitmap(tempBitmap,
-							dimen, dimen, true);
+							y, x, true);
 					tempBitmap.recycle();
 
 				}
@@ -775,8 +777,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			l.execute("");
 			*/
 			
+			
 			//setText of coordinates to mLocation field
-
 			mLocation.setText(loc.getLatitude() + ", " + loc.getLongitude());
 			mTitle.setText(mTitle.getText().toString() + ", at " + mLocation.getText().toString());
 		}

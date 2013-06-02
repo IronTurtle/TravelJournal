@@ -50,11 +50,11 @@
         </activity>
         <activity
             android:name="com.souvenir.android.TabActivity"
-            android:label="@string/title_activity_abs" >
+            android:label="@string/app_name" >
         </activity>
                 <activity
             android:name="com.souvenir.android.GenericActivity"
-            android:label="@string/title_activity_abs" >
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name="com.souvenir.android.PlacesActivity"
