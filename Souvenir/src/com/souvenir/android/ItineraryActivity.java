@@ -21,25 +21,45 @@ import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.notestore.*;
 
+
+import android.app.ExpandableListActivity;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.Toast;
+
 public class ItineraryActivity extends SherlockFragmentActivity
 {
 
-  /**
-   * ************************************************************************
-   * You MUST change the following values to run this sample application. *
-   * *************************************************************************
-   */
+	 @Override
+	 public void onCreate(Bundle savedInstanceState) {
+	  super.onCreate(savedInstanceState);
+	  
+	  setContentView(R.layout.fragment_standard);
+	  final ActionBar bar = getSupportActionBar();
+	  bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+	
+	  ItineraryFragment mItineraryFragment = new ItineraryFragment();
+	  FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+	      .beginTransaction();
+	  fragmentTransaction.add(R.id.fragment, mItineraryFragment);
+	  fragmentTransaction.commit();
+	 }
+}
+
+/*public class ItineraryActivity extends SherlockFragmentActivity
+{
+
 
   // Your Evernote API key. See http://dev.evernote.com/documentation/cloud/
   // Please obfuscate your code to help keep these values secret.
   private static final String CONSUMER_KEY = "ironsuturtle";
   private static final String CONSUMER_SECRET = "e0441c112aab58f6";
 
-  /**
-   * ************************************************************************
-   * Change these values as needed to use this code in your own application. *
-   * *************************************************************************
-   */
+
 
   // Initial development is done on Evernote's testing service, the sandbox.
   // Change to HOST_PRODUCTION to use the Evernote production service
@@ -47,28 +67,23 @@ public class ItineraryActivity extends SherlockFragmentActivity
   // (Evernote China) production service.
   private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
 
-  /**
-   * ************************************************************************
-   * The following values are simply part of the demo application. *
-   * *************************************************************************
-   */
 
   ArrayList<String> entries;
 
   // Used to interact with the Evernote web service
   private EvernoteSession mEvernoteSession;
 
-  /**
+  *//**
    * Called when the activity is first created.
-   */
+   *//*
   @SuppressWarnings("deprecation")
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
-    /*
+    
      * super.onCreate(savedInstanceState);
      * setContentView(R.layout.itineraryactivity); setupSession();
-     */
+     
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.itineraryactivity);
@@ -89,9 +104,9 @@ public class ItineraryActivity extends SherlockFragmentActivity
     updateUi();
   }
 
-  /**
+  *//**
    * Setup the EvernoteSession used to access the Evernote API.
-   */
+   *//*
   private void setupSession()
   {
 
@@ -100,9 +115,9 @@ public class ItineraryActivity extends SherlockFragmentActivity
         CONSUMER_SECRET, EVERNOTE_SERVICE);
   }
 
-  /**
+  *//**
    * Update the UI based on Evernote authentication state.
-   */
+   *//*
   private void updateUi()
   {
     if (mEvernoteSession.isLoggedIn())
@@ -114,10 +129,10 @@ public class ItineraryActivity extends SherlockFragmentActivity
     }
   }
 
-  /**
+  *//**
    * Called when the user taps the "Log in to Evernote" button. Initiates the
    * Evernote OAuth process, or logs out if the user is already logged in.
-   */
+   *//*
   public void startAuth(View view)
   {
     if (mEvernoteSession.isLoggedIn())
@@ -231,10 +246,10 @@ public class ItineraryActivity extends SherlockFragmentActivity
 
       // Log.e("log_tag ******",notes.getNotes().get(0).getTitle());
       // Log.e("log_tag ******",entries.get(0).getTitle());
-      /*
+      
        * for (NoteMetadata note2 : notes.getNotes()) {
        * System.out.println(note2.getTitle()); }
-       */
+       
       ListView listView = (ListView) findViewById(R.id.lview);
       ArrayAdapter<String> adapter = new ArrayAdapter<String>(
           ItineraryActivity.this,
@@ -254,4 +269,4 @@ public class ItineraryActivity extends SherlockFragmentActivity
     }
   }
 
-}
+}*/

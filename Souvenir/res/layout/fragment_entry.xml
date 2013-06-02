@@ -13,22 +13,21 @@
 
         <ImageView
             android:id="@+id/entry_image"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_width="fill_parent"
+            android:layout_height="250dp"
             android:contentDescription="@string/img_desc"
             android:scaleType="centerInside" />
 
         <EditText
             android:id="@+id/entry_title"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:drawableTop="@color/primaryOrange"
             android:ellipsize="end"
             android:ems="10"
             android:gravity="bottom|left"
             android:hint="@string/titlePlaceholder"
             android:inputType="text"
-            android:lines="1"
             android:paddingLeft="15dp"
             android:scrollHorizontally="true"
             android:textColor="@color/primaryOrange"
@@ -40,9 +39,10 @@
         <TextView
             android:id="@+id/entry_location"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="50dp"
             android:ems="10"
             android:gravity="bottom|left"
+            android:paddingLeft="15dp"
             android:hint="@string/locationPlaceholder"
             android:inputType="textPostalAddress" />
 
@@ -50,10 +50,9 @@
             android:id="@+id/entry_entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:gravity="bottom|left"
             android:hint="@string/entryPlaceholder"
-            android:inputType="textMultiLine|textNoSuggestions"
+            android:inputType="textMultiLine"
             android:textColor="@android:color/black" />
     </LinearLayout>
 

@@ -8,67 +8,90 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ItineraryFragment extends ParentFragment implements
-    OnClickListener
+public class ItineraryFragment extends ParentFragment 
 {
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState)
-  {
-    View view = inflater.inflate(R.layout.fragment_itinerary, container, false);
-
-    /*
-     * if (getLastNonConfigurationInstance() != null) { mImageData = (ImageData)
-     * getLastNonConfigurationInstance();
-     * mImageView.setImageBitmap(mImageData.imageBitmap); }
-     */
-    return view;
-  }
-
-  /**
-   * Called when the activity is first created.
-   */
-  @Override
-  public void onCreate(Bundle savedInstanceState)
-  {
-    super.onCreate(savedInstanceState);
-    // setContentView(R.layout.main);
-  }
-
-  @Override
-  public void onResume()
-  {
-    super.onResume();
-  }
-
-  /*
-   * @Override public Object onRetainNonConfigurationInstance() { return
-   * mImageData; }
-   */
-
-  /**
-   * Called when the control returns from an activity that we launched.
-   */
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data)
-  {
-    super.onActivityResult(requestCode, resultCode, data);
-    switch (requestCode)
-    {
-    }
-  }
-
-  @Override
-  public void onClick(View v)
-  {
-    // TODO Auto-generated method stub
-
-  }
+	 @Override
+	 public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	 View v = inflater.inflate(R.layout.fragment_itinerary, null);
+	 ExpandableListView elv = (ExpandableListView) v.findViewById(R.id.itinerary_list);
+	 elv.setAdapter(new SavedTabsListAdapter());
+	 return v;
+	 }
+	  
+	 public class SavedTabsListAdapter extends BaseExpandableListAdapter {
+	  
+	 private String[] groups = { "Tokyo, Japan", "Seoul, S.Korea", "Bangkok, Thailand" };
+	  
+	 private String[][] children = {
+	 { "Shinjuku", "Shibuya", "Harajuku", "Akihabara", "Odaiba", "Roppongi", "Asakusa" },
+	 { "Itaewan", "Somgakji", "Noryangjin", "Gangnam", "Gyeongbokgung", "Hongdae" },
+	 { "Nana", "Siam", "Wisgar", "Lub'd" }
+	 };
+	  
+	 @Override
+	 public int getGroupCount() {
+	 return groups.length;
+	 }
+	  
+	 @Override
+	 public int getChildrenCount(int i) {
+	 return children[i].length;
+	 }
+	  
+	 @Override
+	 public Object getGroup(int i) {
+	 return groups[i];
+	 }
+	  
+	 @Override
+	 public Object getChild(int i, int i1) {
+	 return children[i][i1];
+	 }
+	  
+	 @Override
+	 public long getGroupId(int i) {
+	 return i;
+	 }
+	  
+	 @Override
+	 public long getChildId(int i, int i1) {
+	 return i1;
+	 }
+	  
+	 @Override
+	 public boolean hasStableIds() {
+	 return true;
+	 }
+	  
+	 @Override
+	 public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
+	 TextView textView = new TextView(ItineraryFragment.this.getActivity());
+	 textView.setTextSize(30);
+	 textView.setText("    " + getGroup(i).toString());
+	 return textView;
+	 }
+	  
+	 @Override
+	 public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
+	 TextView textView = new TextView(ItineraryFragment.this.getActivity());
+	 textView.setTextSize(30);
+	 textView.setText("\t" + getChild(i, i1).toString());
+	 return textView;
+	 }
+	  
+	 @Override
+	 public boolean isChildSelectable(int i, int i1) {
+	 return true;
+	 }
+	  
+	 }
 
 }

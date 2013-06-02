@@ -14,7 +14,7 @@
 	    <ImageView
 	        android:id="@+id/note_image"
 	        android:layout_width="fill_parent"
-	        android:layout_height="200dp"
+	        android:layout_height="250dp"
 	        android:background="@android:color/darker_gray"
 	        android:contentDescription="@string/img_desc"
 	        android:scaleType="centerInside" />
@@ -28,6 +28,7 @@
 	        android:gravity="bottom|left"
 	        android:hint="@string/titlePlaceholder"
 	        android:inputType="text"
+	        android:scrollHorizontally="true"
 	        android:paddingLeft="15dp" />
 	
 	    <TextView
@@ -36,6 +37,7 @@
 	        android:layout_height="50dp"
 	        android:ems="10"
 	        android:gravity="bottom|left"
+	        android:paddingLeft="15dp"
 	        android:hint="@string/locationPlaceholder"
 	        android:inputType="textPostalAddress"
 	        android:textColor="@android:color/primary_text_dark" />

@@ -52,5 +52,6 @@
     <string name="gps_no">No</string>
     <string name="success_update_note">Note saved to Evernote</string>
     <string name="err_update_note">Error saving Evernote note</string>
+    <string name="title_activity_itinerary_adapter">ItineraryAdapter</string>
 
 </resources>
