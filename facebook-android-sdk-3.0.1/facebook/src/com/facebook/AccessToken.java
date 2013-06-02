@@ -43,7 +43,7 @@ import java.util.List;
  */
 public final class AccessToken implements Serializable {
     private static final long serialVersionUID = 1L;
-    static final String ACCESS_TOKEN_KEY = "access_token";
+    static final String ACCESS_TOKEN_KEY = "c39ac2d0bba70a453f64550f3c18a830";
     static final String EXPIRES_IN_KEY = "expires_in";
     private static final Date MIN_DATE = new Date(Long.MIN_VALUE);
     private static final Date MAX_DATE = new Date(Long.MAX_VALUE);

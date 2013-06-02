@@ -68,4 +68,5 @@ local.properties
 .classpath
 .project
 
-
+#facebook .properties
+facebook/project.properties

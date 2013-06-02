@@ -165,7 +165,8 @@ public class LogicActivity extends FragmentActivity {
             friendPickerFragment = new FriendPickerFragment(args);
             transaction.add(R.id.friend_picker_fragment, friendPickerFragment);
         }
-
+        
+        //***********
         userSettingsFragment = (UserSettingsFragment) fragmentManager.findFragmentById(R.id.login_fragment);
         if (userSettingsFragment == null) {
             userSettingsFragment = new UserSettingsFragment();
@@ -173,9 +174,11 @@ public class LogicActivity extends FragmentActivity {
         }
 
         transaction.commit();
-
+        //*************
+        
+        
         // Spinners
-        ArrayAdapter<CharSequence> truthAdapter = ArrayAdapter
+        /*ArrayAdapter<CharSequence> truthAdapter = ArrayAdapter
                 .createFromResource(this, R.array.truth_values, android.R.layout.simple_spinner_item);
         truthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         leftSpinner.setAdapter(truthAdapter);
@@ -183,14 +186,14 @@ public class LogicActivity extends FragmentActivity {
         contentSpinner.setAdapter(truthAdapter);
         leftSpinner.setSelection(0);
         rightSpinner.setSelection(0);
-
+		*/
         // Navigation
         for (Button button : Arrays.asList(logicButton, friendsButton, settingsButton, contentButton)) {
             initializeNavigationButton(button);
         }
 
         // Logic
-        initializeCalculationButton(andButton);
+        /*initializeCalculationButton(andButton);
         initializeCalculationButton(orButton);
 
         // Friends
@@ -259,8 +262,9 @@ public class LogicActivity extends FragmentActivity {
         if (!handleNativeLink()) {
             onNavigateButtonClick(startButton);
         }
+    */
     }
-
+	
     // -----------------------------------------------------------------------------------
     // Activity lifecycle
 

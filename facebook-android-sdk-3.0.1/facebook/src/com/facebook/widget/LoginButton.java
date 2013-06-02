@@ -53,7 +53,7 @@ import java.util.List;
 public class LoginButton extends Button {
 
     private static final String TAG = LoginButton.class.getName();
-    private String applicationId = null;
+    private String applicationId = "270734266406209"; //is this secure?? -k
     private SessionTracker sessionTracker;
     private GraphUser user = null;
     private Session userInfoSession = null; // the Session used to fetch the current user info

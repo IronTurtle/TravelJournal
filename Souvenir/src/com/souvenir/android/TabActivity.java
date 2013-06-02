@@ -76,6 +76,10 @@ public class TabActivity extends SherlockFragmentActivity
 
     case R.id.menu_search:
       break;
+      
+    case R.id.facebook_login:
+    	startActivity(new Intent(this, OtherActivity.class));
+    	break;
     }
     return true;
   }
