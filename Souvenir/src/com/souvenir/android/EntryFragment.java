@@ -1,6 +1,9 @@
 package com.souvenir.android;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import com.actionbarsherlock.view.MenuItem;
@@ -15,11 +18,22 @@ import com.evernote.edam.type.NoteAttributes;
 import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Resource;
 import com.evernote.thrift.transport.TTransportException;
+import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.internal.Logger;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +43,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -51,6 +67,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
   }
 
   protected ImageLoader imageLoader = ImageLoader.getInstance();
+  private final int FACEBOOK_SHARE = 6135;
   DisplayImageOptions options;
 
   // Note fields
@@ -60,6 +77,8 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
   TextView mLocation;
   EditText mEntry;
 
+  private SessionState state = SessionState.OPENED_TOKEN_UPDATED;
+  
   Note note = new Note();
   Resource resource = new Resource();
 
@@ -85,7 +104,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
     note.setGuid(guid);
     String title = (String) bundle.get("title");
     displayNote(guid, title);
-
+    
     return view;
   }
 
@@ -96,11 +115,15 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
     //Toast.makeText(this.getActivity(), "Got click: " + item.toString(),Toast.LENGTH_SHORT).show();
     switch (item.getItemId())
     {
-    case R.id.create_note_menu_save:
-      System.out.println("Save pressed");
-      //Toast.makeText(getActivity(), "Save Button clicked", Toast.LENGTH_SHORT).show();
-      updateNote(this.getView());
-      break;
+    case R.id.viewedit_note_menu_save:
+	      System.out.println("Save pressed");
+	      //Toast.makeText(getActivity(), "Save Button clicked", Toast.LENGTH_SHORT).show();
+	      updateNote(this.getView());
+	      break;
+    case R.id.viewedit_note_menu_fbshare:
+    	System.out.println("FACEBOOK SHARING");
+    	getActivity().startActivityForResult(new Intent(getActivity(), ShareActivity.class), FACEBOOK_SHARE);
+    	break;
     /*
      * case R.id.create_note_menu_camera: //startActivity(new Intent(this,
      * NoteActivity.class));
@@ -133,6 +156,32 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
     }
     return true;
   }
+  
+  @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			// Grab image data when picker returns result
+			case FACEBOOK_SHARE:
+			if (resultCode == Activity.RESULT_OK) {
+				((EntryActivity)getActivity()).finish();
+				getFragmentManager().popBackStack();
+				
+			}
+			break;
+		}
+		
+	}
+  
+  
+  private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
+	    for (String string : subset) {
+	        if (!superset.contains(string)) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
 
   public void getMetadata()
   {
@@ -241,15 +290,6 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
                             {
                               resource = data;
                               System.out.println(data.toString());
-                              // TODO: hard-coded for now...
-                              // mImageData.mimeType = data.getMime();
-                              // TODO: may be wrong
-                              /*
-                               * mImageData.filePath = "" + mEvernoteSession
-                               * .getAuthenticationResult()
-                               * .getWebApiUrlPrefix() + "res/" + data.getGuid()
-                               * + "?auth=" + mEvernoteSession .getAuthToken();
-                               */
                               imageLoader.displayImage(
                                   ""
                                       + mEvernoteSession
@@ -299,28 +339,9 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
     }
   }
 
-  // TODO: NOT WORKING YET...
+  
   public void updateNote(View view)
   {
-
-    // Resource resource = new Resource();
-
-    /*
-     * ImageData imageData = mImageData; String f = imageData.filePath;
-     * InputStream in; try { in = new BufferedInputStream(new
-     * FileInputStream(f));
-     * 
-     * FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
-     * in.close();
-     * 
-     * resource.setData(data); resource.setMime(imageData.mimeType);
-     * ResourceAttributes attributes = new ResourceAttributes();
-     * attributes.setFileName(imageData.fileName);
-     * resource.setAttributes(attributes);
-     * 
-     * } catch (Exception e) { e.printStackTrace(); }
-     */
-
     try
     {
       note.setTitle(mTitle.getText().toString());

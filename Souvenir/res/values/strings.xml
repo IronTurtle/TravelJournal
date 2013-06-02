@@ -55,5 +55,7 @@
     <string name="title_activity_itinerary_adapter">ItineraryAdapter</string>
     <string name="itinerary_add_item">Add an Itinerary Item</string>
     <string name="title_activity_other">OtherActivity</string>
+    <string name="fb_login">Facebook Login for Souvenir</string>
+    <string name="title_activity_share">ShareActivity</string>
 
 </resources>

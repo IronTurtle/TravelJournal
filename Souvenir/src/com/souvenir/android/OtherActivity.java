@@ -1,5 +1,7 @@
 package com.souvenir.android;
 
+import java.util.Arrays;
+
 import com.facebook.widget.UserSettingsFragment;
 
 import android.os.Bundle;
@@ -37,15 +39,19 @@ public class OtherActivity extends SherlockFragmentActivity {
         if (userSettingsFragment == null) {
             userSettingsFragment = new UserSettingsFragment();
             transaction.add(R.id.login_fragment, userSettingsFragment);
+            userSettingsFragment.setReadPermissions(Arrays.asList("publish_actions"));
         }
-
+        
         transaction.commit();
+        
 	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
+		//getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
 	    return super.onCreateOptionsMenu(menu);
 	}
 

@@ -66,8 +66,7 @@ public class TabActivity extends SherlockFragmentActivity
   public boolean onOptionsItemSelected(MenuItem item)
   {
     // This uses the imported MenuItem from ActionBarSherlock
-    Toast.makeText(this, "Got click: " + item.toString(), Toast.LENGTH_SHORT)
-        .show();
+    //Toast.makeText(this, "Got click: " + item.toString(), Toast.LENGTH_SHORT).show();
     switch (item.getItemId())
     {
     case R.id.menu_add_note:

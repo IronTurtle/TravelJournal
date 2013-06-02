@@ -1,5 +1,8 @@
 package com.souvenir.android;
 
+import java.util.Arrays;
+import java.util.List;
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -14,6 +17,7 @@ public class EntryActivity extends SherlockFragmentActivity
   ViewPager mViewPager;
   TextView tabCenter;
   TextView tabxt;
+
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -33,7 +37,7 @@ public class EntryActivity extends SherlockFragmentActivity
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
+    getSupportMenuInflater().inflate(R.menu.viewedit_note_menu, menu);
     return super.onCreateOptionsMenu(menu);
   }
 
