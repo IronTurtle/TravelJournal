@@ -122,7 +122,21 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
 	      break;
     case R.id.viewedit_note_menu_fbshare:
     	System.out.println("FACEBOOK SHARING");
+    	/*
     	getActivity().startActivityForResult(new Intent(getActivity(), ShareActivity.class), FACEBOOK_SHARE);
+    	
+    	getActivity().startActivityForResult(new Intent(getActivity(),
+				ShareActivity.class).putExtra("TITLE", mTitle.getText().toString()), FACEBOOK_SHARE);
+    	getActivity().startActivityForResult(new Intent(getActivity(),
+    			ShareActivity.class).putExtra("LOCATION", mLocation.getText().toString()), FACEBOOK_SHARE);
+    	getActivity().startActivityForResult(new Intent(getActivity(),	
+    			ShareActivity.class).putExtra("ENTRY", mEntry.getText().toString()), FACEBOOK_SHARE);
+    	*/
+    	
+    	String[] noteContent = {mTitle.getText().toString(), mLocation.getText().toString(), mEntry.getText().toString()};
+    	getActivity().startActivityForResult(new Intent(getActivity(),	
+    			ShareActivity.class).putExtra("NOTE", noteContent), FACEBOOK_SHARE);
+    	
     	break;
     /*
      * case R.id.create_note_menu_camera: //startActivity(new Intent(this,
