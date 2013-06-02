@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.view.View;
@@ -48,6 +50,13 @@ public class ItineraryActivity extends SherlockFragmentActivity
 	  fragmentTransaction.add(R.id.fragment, mItineraryFragment);
 	  fragmentTransaction.commit();
 	 }
+	 
+	 @Override
+	 public boolean onCreateOptionsMenu(Menu menu)
+	  {
+	    getSupportMenuInflater().inflate(R.menu.itinerary_menu, menu);
+	    return super.onCreateOptionsMenu(menu);
+	  }
 }
 
 /*public class ItineraryActivity extends SherlockFragmentActivity

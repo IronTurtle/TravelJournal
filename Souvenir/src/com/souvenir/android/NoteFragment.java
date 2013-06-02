@@ -168,8 +168,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		setHasOptionsMenu(true);
 		
 		//open camera in background
-		GPSOperation g = new GPSOperation();
-		g.execute("");
+		CameraOperation c = new CameraOperation();
+		c.execute("");
 
 		mlocManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
@@ -183,6 +183,27 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		mEntry.requestFocus();
 		
 		return view;
+	}
+	
+	private void setDefaultTitle()
+	{
+		Time now = new Time();
+		now.setToNow();
+		String title = "Photo taken on " + getDateTime();
+		if(getActivity().getIntent().hasExtra("ITINERARY_SELECT")) {
+			mTitle.setText(title + ", at " 
+				+ getActivity().getIntent().getStringExtra("ITINERARY_SELECT"));
+		}
+		else {
+			mTitle.setText(title);
+		}
+	}
+	
+	private String getDateTime()
+	{
+		Calendar cal = Calendar.getInstance();
+		return cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR)
+				+ ", " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE);
 	}
 	
 	private void openCamera() {
@@ -220,14 +241,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	public void onResume() {
 		super.onResume();
 	}
-	
-	/*@Override
-	public void onCreateOptionsMenu(Menu menu,MenuInflater inflater)
-	{
-	    inflater.inflate(R.menu.create_note_menu, menu);
-	    super.onCreateOptionsMenu(menu,inflater);
-	}*/
-	
+
 	@Override
 	  public boolean onOptionsItemSelected(MenuItem item)
 	  {
@@ -337,20 +351,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		}
 	}
 
-	private void setDefaultTitle()
-	{
-		Time now = new Time();
-		now.setToNow();
-		String title = "Photo taken on " + getDateTime();
-		mTitle.setText(title);
-	}
 	
-	private String getDateTime()
-	{
-		Calendar cal = Calendar.getInstance();
-		return cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR)
-				+ ", " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE);
-	}
 	
 	/**
 	 * Button to capture image for note
@@ -479,9 +480,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 				Toast.makeText(getActivity(),
 						R.string.success_creating_note, Toast.LENGTH_LONG)
 						.show();
-				//ERROR: getActivity might have already "finished"...
-				//		so getting the activity gives NullPointer Error
-				((NoteActivity) getActivity()).finish();
+				
+				
+				((NoteActivity) getActivity()).finishNote(getActivity().getIntent().getStringExtra("ITINERARY_DATA"));
 				getFragmentManager().popBackStack();
 			}
 			
@@ -491,7 +492,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 						.getView());
 				if(exception instanceof java.lang.reflect.InvocationTargetException) {
 					Toast.makeText(getActivity(),
-							"Error: You may have reached Evernote usage limit.",
+							//You may have reached Evernote usage limit.
+							"Error: CHECK LOGCAT!!",
 							Toast.LENGTH_LONG).show();
 				}
 				exception.printStackTrace();
@@ -708,7 +710,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		}
 	}
 	
-	private class GPSOperation extends AsyncTask<String, Void, String> {
+	private class CameraOperation extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
@@ -767,7 +769,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			String Text = "My current location is: " + "Latitude = "
 					+ loc.getLatitude() + " Longitude = " + loc.getLongitude();
 
-			//Toast.makeText(getActivity().getApplicationContext(), Text, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity().getApplicationContext(), Text, Toast.LENGTH_SHORT).show();
 			/*LongOperation l = new LongOperation();
 			
 			l.execute("");
@@ -776,7 +778,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			
 			//setText of coordinates to mLocation field
 			mLocation.setText(loc.getLatitude() + ", " + loc.getLongitude());
-			mTitle.setText(mTitle.getText().toString() + ", at " + mLocation.getText().toString());
+			if(!getActivity().getIntent().hasExtra("ITINERARY_SELECT")) {
+				mTitle.setText(mTitle.getText().toString() + ", at " + mLocation.getText().toString());
+			}
 		}
 
 		@Override
@@ -824,6 +828,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	    }
 
 	}
+	
+	
 	
 	@Override
 	public void onClick(View v) {

@@ -2,6 +2,7 @@ package com.souvenir.android;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.ContentValues;
 import android.content.Context;
@@ -58,7 +59,7 @@ public class NoteActivity extends SherlockFragmentActivity
   public boolean onCreateOptionsMenu(Menu menu)
   {
     getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
-    System.out.println("Action bar is showing: " + getSupportActionBar().isShowing());
+    //System.out.println("Action bar is showing: " + getSupportActionBar().isShowing());
     /*
      * // set up a listener for the refresh item final MenuItem refresh =
      * (MenuItem) menu.findItem(R.id.menu_refresh);
@@ -73,7 +74,15 @@ public class NoteActivity extends SherlockFragmentActivity
   }
   
   
-  public void finishNote() {
+  public void finishNote(String data) {
+	  
+	  if(data != null) {
+	    String id_data = data;
+
+	    Intent resultIntent = new Intent();
+	    resultIntent.putExtra("ITINERARY_SELECT", id_data);
+	    setResult(Activity.RESULT_OK, resultIntent);
+	  }
 	  finish();
   }
 

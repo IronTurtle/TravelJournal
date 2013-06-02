@@ -91,10 +91,14 @@ public class PlacesFragment extends ParentFragment{
 	}
 
 	public void getNearbyPlaces() {
-		latitude = Double.valueOf(selected.getText().toString().split(",")[0]);
-		longitude = Double.valueOf(selected.getText().toString().split(",")[1]);
-		LongOperation l = new LongOperation();
-		l.execute("");
+		try{
+			latitude = Double.valueOf(selected.getText().toString().split(",")[0]);
+			longitude = Double.valueOf(selected.getText().toString().split(",")[1]);
+			LongOperation l = new LongOperation();
+			l.execute("");
+		} catch(Exception e) {
+			mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mlocListener, null);
+		}
 	}
 	
 	/*@Override

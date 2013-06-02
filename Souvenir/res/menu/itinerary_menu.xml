@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/itinerary_menu_add" android:showAsAction="ifRoom"
+	    android:icon="@drawable/plus2"
+		android:title="search"/>
+	
+	<item android:id="@+id/itinerary_menu_search" android:showAsAction="ifRoom"
+	    android:icon="@drawable/search"
+		android:title="create" />
+
+</menu>

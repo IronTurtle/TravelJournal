@@ -53,5 +53,6 @@
     <string name="success_update_note">Note saved to Evernote</string>
     <string name="err_update_note">Error saving Evernote note</string>
     <string name="title_activity_itinerary_adapter">ItineraryAdapter</string>
+    <string name="itinerary_add_item">Add an Itinerary Item</string>
 
 </resources>
