@@ -115,7 +115,7 @@ public class ItineraryFragment extends ParentFragment
 	 public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
 	 final TextView textView = new TextView(ItineraryFragment.this.getActivity());
 	 textView.setTextSize(30);
-	 textView.setText("\t" + getChild(i, i1).toString());
+	 textView.setText(getChild(i, i1).toString());
 	 
 	 textView.setOnClickListener(new OnClickListener(){
 		 @Override

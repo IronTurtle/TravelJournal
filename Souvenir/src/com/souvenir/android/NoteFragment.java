@@ -450,7 +450,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		Note note = new Note();
 		//note.setTitle(title);
 		note.setTitle(mTitle.getText().toString());
-		//System.out.println("Note Title: " + note.getTitle());
+		System.out.println("Note Title: " + note.getTitle());
 
 		//Trying to add locations to data resources
 		NoteAttributes attr = new NoteAttributes();
