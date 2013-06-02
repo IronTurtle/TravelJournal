@@ -72,29 +72,6 @@ public class NoteActivity extends SherlockFragmentActivity
     return super.onCreateOptionsMenu(menu);
   }
   
-  /*@Override
-  public boolean onOptionsItemSelected(MenuItem item)
-  {
-    // This uses the imported MenuItem from ActionBarSherlock
-    Toast.makeText(this, "Got click: " + item.toString(), Toast.LENGTH_SHORT)
-        .show();
-    switch (item.getItemId())
-    {
-	    case R.id.create_note_menu_camera:
-	    	startActivity(new Intent(this, NoteActivity.class));
-			
-	    	break;
-	
-	    case R.id.create_note_menu_select:
-	  		startActivity(new Intent(this, EntryActivity.class));
-	  		break;
-	  		
-	    case R.id.create_note_menu_trophy:
-	  		startActivity(new Intent(this, EntryActivity.class));
-	  		break;
-    }
-    return true;
-  }*/
   
   public void finishNote() {
 	  finish();

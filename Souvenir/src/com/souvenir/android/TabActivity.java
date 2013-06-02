@@ -46,10 +46,10 @@ public class TabActivity extends SherlockFragmentActivity
 
     mTabsAdapter = new TabsAdapter(this, mViewPager);
 
-    mTabsAdapter.addTab(bar.newTab().setIcon(R.drawable.list), ItineraryFragment.class, null);
+    mTabsAdapter.addTab(bar.newTab().setText("Itinerary").setIcon(R.drawable.list), ItineraryFragment.class, null);
     mTabsAdapter
-        .addTab(bar.newTab().setIcon(R.drawable.me), SnippetFragment.class, null);
-    mTabsAdapter.addTab(bar.newTab().setIcon(R.drawable.them), OtherFragment.class,
+        .addTab(bar.newTab().setText("Me").setIcon(R.drawable.me), SnippetFragment.class, null);
+    mTabsAdapter.addTab(bar.newTab().setText("Others").setIcon(R.drawable.them), OtherFragment.class,
         null);
     mViewPager.setCurrentItem(1);
   }

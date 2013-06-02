@@ -232,14 +232,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	  public boolean onOptionsItemSelected(MenuItem item)
 	  {
 	    // This uses the imported MenuItem from ActionBarSherlock
-	    Toast.makeText(this.getActivity(), "Got click: " + item.toString(), Toast.LENGTH_SHORT)
-	        .show();
+	    //Toast.makeText(this.getActivity(), "Got click: " + item.toString(), Toast.LENGTH_SHORT).show();
 	    switch (item.getItemId())
 	    {
 	    	case R.id.create_note_menu_save:
 		    	System.out.println("Save pressed");
-				Toast.makeText(getActivity(), "Save Button clicked",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), "Saving to Evernote",Toast.LENGTH_SHORT).show();
 				saveNote(this.getView());
 				break;
 		    case R.id.create_note_menu_camera:
@@ -274,8 +272,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		  		
 		    case R.id.create_note_menu_trophy:
 		  		//startActivity(new Intent(this, EntryActivity.class));
-		    	Toast.makeText(getActivity(), "Trophy Button clicked",
-						Toast.LENGTH_SHORT).show();
+		    	Toast.makeText(getActivity(), "Trophy Button clicked",Toast.LENGTH_SHORT).show();
 		  		break;
 	    }
 	    return true;
@@ -312,7 +309,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 				if (data != null) {
 					Log.e("Intent value:", data.toString());
 					mImageUri = data.getData();
-					System.out.println("CAMERA DATA:" + data.getDataString());
+					//System.out.println("CAMERA DATA:" + data.getDataString());
 				} else {
 					Log.e("Intent is null", "yep it is.");
 					if (mImageUri == null) {
@@ -407,8 +404,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		public void onClick(View v) {
 
 			// Show Place Finder Fragment
-			Toast.makeText(getActivity(), "Location Field clicked",
-					Toast.LENGTH_SHORT).show();
+			//Toast.makeText(getActivity(), "Location Field clicked",Toast.LENGTH_SHORT).show();
 			startActivityForResult(new Intent(getActivity(),
 					PlacesActivity.class).putExtra("PREV_LOC_DATA", mLocation
 					.getText().toString()), LOCATION_REQUEST);
@@ -453,7 +449,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		Note note = new Note();
 		//note.setTitle(title);
 		note.setTitle(mTitle.getText().toString());
-		System.out.println("Note Title: " + note.getTitle());
+		//System.out.println("Note Title: " + note.getTitle());
 
 		//Trying to add locations to data resources
 		NoteAttributes attr = new NoteAttributes();
@@ -463,7 +459,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		attr.setApplicationData(map);
 		note.setAttributes(attr);
 		
-		System.out.println(note.getAttributes().getApplicationData().toString());
+		//System.out.println(note.getAttributes().getApplicationData().toString());
 		
 		note.addToResources(resource);
 		

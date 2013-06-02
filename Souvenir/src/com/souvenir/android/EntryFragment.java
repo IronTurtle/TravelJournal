@@ -93,14 +93,12 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
   public boolean onOptionsItemSelected(MenuItem item)
   {
     // This uses the imported MenuItem from ActionBarSherlock
-    Toast.makeText(this.getActivity(), "Got click: " + item.toString(),
-        Toast.LENGTH_SHORT).show();
+    //Toast.makeText(this.getActivity(), "Got click: " + item.toString(),Toast.LENGTH_SHORT).show();
     switch (item.getItemId())
     {
     case R.id.create_note_menu_save:
       System.out.println("Save pressed");
-      Toast.makeText(getActivity(), "Save Button clicked", Toast.LENGTH_SHORT)
-          .show();
+      //Toast.makeText(getActivity(), "Save Button clicked", Toast.LENGTH_SHORT).show();
       updateNote(this.getView());
       break;
     /*

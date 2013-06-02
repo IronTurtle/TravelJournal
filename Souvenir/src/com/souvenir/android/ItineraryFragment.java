@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ItineraryFragment extends ParentFragment 
 {
@@ -22,13 +23,13 @@ public class ItineraryFragment extends ParentFragment
 	 public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	 View v = inflater.inflate(R.layout.fragment_itinerary, null);
 	 ExpandableListView elv = (ExpandableListView) v.findViewById(R.id.itinerary_list);
-	 elv.setAdapter(new SavedTabsListAdapter());
+	 elv.setAdapter(new ItineraryTripsListAdapter());
 	 return v;
 	 }
 	  
-	 public class SavedTabsListAdapter extends BaseExpandableListAdapter {
+	 public class ItineraryTripsListAdapter extends BaseExpandableListAdapter {
 	  
-	 private String[] groups = { "Tokyo, Japan", "Seoul, S.Korea", "Bangkok, Thailand" };
+	 private String[] groups = { "Tokyo, Japan", "Seoul, S. Korea", "Bangkok, Thailand" };
 	  
 	 private String[][] children = {
 	 { "Shinjuku", "Shibuya", "Harajuku", "Akihabara", "Odaiba", "Roppongi", "Asakusa" },
@@ -63,6 +64,7 @@ public class ItineraryFragment extends ParentFragment
 	  
 	 @Override
 	 public long getChildId(int i, int i1) {
+		 System.out.println("Child: " + children[i][i1]);
 	 return i1;
 	 }
 	  
@@ -84,6 +86,8 @@ public class ItineraryFragment extends ParentFragment
 	 TextView textView = new TextView(ItineraryFragment.this.getActivity());
 	 textView.setTextSize(30);
 	 textView.setText("\t" + getChild(i, i1).toString());
+	 
+	 
 	 return textView;
 	 }
 	  

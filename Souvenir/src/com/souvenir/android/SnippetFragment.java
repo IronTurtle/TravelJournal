@@ -283,7 +283,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
   public void listViewCreate()
   {
-    String item = "clicked2";
     // Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
     entries = new ArrayList<NoteMetadata>();
 
@@ -298,7 +297,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);
-      System.out.println("searching");
+      //System.out.println("searching");
 
       try
       {
@@ -329,10 +328,10 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
                     Log.e("log_tag ******", notes.getNotes().get(0).getTitle());
                     Log.e("log_tag ******", entries.get(0).getTitle());
-                    for (NoteMetadata note2 : notes.getNotes())
+                    /*for (NoteMetadata note2 : notes.getNotes())
                     {
                       System.out.println(note2.getTitle());
-                    }
+                    }*/
                     for (int i = 0; i < entries.size(); i++)
                     {
                       NoteMetadata snippetEntry = entries.get(i);
@@ -351,10 +350,10 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                                     // contents.add(android.text.Html.fromHtml(note.getContent()).toString());
                                     entries2.add(position, note);
                                     adapter.notifyDataSetChanged();
-                                    for (Note note2 : entries2)
+                                    /*for (Note note2 : entries2)
                                     {
                                       System.out.println(note2.getTitle());
-                                    }
+                                    }*/
                                     // snippetText.setText(android.text.Html.fromHtml(note
                                     // .getContent()));
                                     // removeDialog(DIALOG_PROGRESS);
@@ -479,10 +478,9 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
         public void onClick(View v)
         {
           String item = snippetEntry.getTitle();
-          System.out.println("Clicked" + item);
+          //System.out.println("Clicked" + item);
 
-          Toast.makeText(SnippetFragment.this.getActivity().getBaseContext(),
-              item, Toast.LENGTH_LONG).show();
+          //Toast.makeText(SnippetFragment.this.getActivity().getBaseContext(),item, Toast.LENGTH_LONG).show();
 
           Intent intent = new Intent(SnippetFragment.this.getActivity(),
               EntryActivity.class).putExtra("title", item).putExtra("guid",
@@ -517,7 +515,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 		    public void onSuccess(LazyMap resources)
 		    {
 	
-		      System.out.println(resources.getFullMap().values());
+		      //System.out.println(resources.getFullMap().values());
 		      String location = resources.getFullMap().get("LOCATION");
 		      snippetLocation.setText(location);
 		    }

@@ -248,10 +248,10 @@ public class PlacesFragment extends ParentFragment{
 			latitude = loc.getLatitude();
 			longitude = loc.getLongitude();
 
-			String Text = "My current location is: " + "Latitude = "
+			String text = "My current location is: " + "Latitude = "
 					+ loc.getLatitude() + " Longitude = " + loc.getLongitude();
 
-			//Toast.makeText(getActivity().getApplicationContext(), Text, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 			LongOperation l = new LongOperation();
 			
 			l.execute("");
