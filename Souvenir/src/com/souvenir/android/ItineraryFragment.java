@@ -39,8 +39,9 @@ import android.widget.Toast;
 
 public class ItineraryFragment extends ParentFragment 
 {
-	private ArrayList<String> tripsList = new ArrayList<String>();
-	private ArrayList<ArrayList<String>> tripPlansList = new ArrayList<ArrayList<String>>();
+	private ArrayList<String> tripsList;
+	private ArrayList<ArrayList<String>> tripPlansList;
+	private boolean refresh;
 	
 	private final int ITINERARY_REQUEST = 1714;
 
@@ -49,14 +50,24 @@ public class ItineraryFragment extends ParentFragment
 	 View v = inflater.inflate(R.layout.fragment_itinerary, null);
 	 setHasOptionsMenu(true);
 	 
-	 getItinerary();
+	 refresh = getArguments().getBoolean("REFRESH", false);
+	 
+	 getItinerary(refresh);
 	 
 	 
 	 return v;
 	 }
 	 
-	private void getItinerary() {
+	private void getItinerary(boolean refresh) {
+		//checks if itinerary needs to be refreshed
+		if(!refresh){
+			return;
+		}
+		tripsList = new ArrayList<String>();
+		tripPlansList = new ArrayList<ArrayList<String>>();
 		
+		//set refresh to false
+		refresh = false;
 		int pageSize = 1;
 		 
 		NoteFilter filter = new NoteFilter();
