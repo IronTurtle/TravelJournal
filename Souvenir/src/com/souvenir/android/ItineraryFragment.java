@@ -52,8 +52,10 @@ public class ItineraryFragment extends ParentFragment
 	 
 	 refresh = getArguments().getBoolean("REFRESH", false);
 	 
-	 getItinerary(refresh);
-	 
+	 if (mEvernoteSession.isLoggedIn())
+     {
+		 getItinerary(refresh);
+     }
 	 
 	 return v;
 	 }
