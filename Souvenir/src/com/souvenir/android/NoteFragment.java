@@ -155,9 +155,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		//set title automatically
 		setDefaultTitle();
 		//set focus on entry field and show soft keyboard
-		mEntry.requestFocus();
-		getActivity().getWindow().
-			setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 		return view;
 	}
 	
@@ -325,6 +322,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			}
 			break;
 		}
+
+		mEntry.requestFocus();
+		getActivity().getWindow().
+			setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 	}
 
 	

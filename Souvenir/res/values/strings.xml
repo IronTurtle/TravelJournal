@@ -57,5 +57,6 @@
     <string name="title_activity_other">OtherActivity</string>
     <string name="fb_login">Facebook Login for Souvenir</string>
     <string name="title_activity_share">ShareActivity</string>
+    <string name="fb_share">Facebook Sharing for Souvenir</string>
 
 </resources>

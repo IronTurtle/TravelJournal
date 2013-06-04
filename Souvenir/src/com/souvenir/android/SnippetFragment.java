@@ -57,6 +57,7 @@ import com.evernote.edam.notestore.*;
 import com.evernote.edam.type.*;
 import com.evernote.thrift.transport.TTransportException;
 
+
 /**
  * This simple Android app demonstrates how to integrate with the Evernote API
  * (aka EDAM).
@@ -67,6 +68,8 @@ import com.evernote.thrift.transport.TTransportException;
  */
 public class SnippetFragment extends ParentFragment implements OnClickListener
 {
+	private static final int SNIPPET_PAGE_SIZE = 3;
+	
   // UI elements that we update
   private Button mBtnAuth;
 
@@ -234,7 +237,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
     // update();
     if (mEvernoteSession.isLoggedIn())
     {
-      int pageSize = 1;
+      int pageSize = SNIPPET_PAGE_SIZE;
 
       NoteFilter filter = new NoteFilter();
       filter.setOrder(NoteSortOrder.UPDATED.getValue());

@@ -41,7 +41,6 @@ public class ItineraryFragment extends ParentFragment
 {
 	private ArrayList<String> tripsList = new ArrayList<String>();
 	private ArrayList<ArrayList<String>> tripPlansList = new ArrayList<ArrayList<String>>();
-	private HashMap<String, String> tripMap = new HashMap<String, String>();
 	
 	private final int ITINERARY_REQUEST = 1714;
 
@@ -71,85 +70,9 @@ public class ItineraryFragment extends ParentFragment
 				.findNotesMetadata(filter, 0, pageSize, spec, new OnClientCallback<NotesMetadataList>() {
 				@Override
 				public void onSuccess(NotesMetadataList notes) {
-
-					List<NoteMetadata> notesList = notes.getNotes();
-					
-					for(int i = 0; i < notesList.size(); i++) {
-						System.out.println(notesList.get(i).getTitle());
-						Toast.makeText(getActivity().getApplicationContext(), notesList.get(i).getTitle(), Toast.LENGTH_SHORT).show();
-					}
 					
 					NoteMetadata itineraryNote = notes.getNotes().get(0);
 					getItineraryData(itineraryNote);
-					
-					
-					/*ListView listView = (ListView) SnippetFragment.this
-							.getView().findViewById(R.id.lview);
-					entries.addAll(notes.getNotes());
-					entries2 = new ArrayList<Note>(entries
-							.size());
-					final SnippetAdapter adapter = new SnippetAdapter(
-							SnippetFragment.this.getActivity(),
-							R.layout.snippet, entries2,
-							mEvernoteSession);
-					listView.setAdapter(adapter);
-					listView.setScrollingCacheEnabled(false);
-
-					// Log.e("log_tag ******",
-					// notes.getNotes().get(0).getTitle());
-					// Log.e("log_tag ******",
-					// entries.get(0).getTitle());
-					for (int i = 0; i < entries.size(); i++) {
-						NoteMetadata snippetEntry = entries
-								.get(i);
-						final int position = i;
-						try {
-							mEvernoteSession
-									.getClientFactory()
-									.createNoteStoreClient()
-									.getNote(
-											snippetEntry
-													.getGuid(),
-											true,
-											true,
-											true,
-											true,
-											new OnClientCallback<Note>() {
-												@Override
-												public void onSuccess(
-														Note note) {
-													// contents.add(android.text.Html.fromHtml(note.getContent()).toString());
-													entries2.add(
-															position,
-															note);
-													adapter.notifyDataSetChanged();
-													// snippetText.setText(android.text.Html.fromHtml(note
-													// .getContent()));
-													// removeDialog(DIALOG_PROGRESS);
-													// System.out.println(""
-													// +
-													// position
-													// +
-													// snippetText.getText());
-													// Toast.makeText(SnippetFragment.this.getActivity(),
-													// snippetText.getText(),
-													// Toast.LENGTH_LONG).show();
-													// notes =
-													// data;
-												}
-
-												@Override
-												public void onException(
-														Exception exception) {
-
-												}
-											});
-						
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					*/
 				}
 
 				@Override
@@ -174,7 +97,6 @@ public class ItineraryFragment extends ParentFragment
 				public void onSuccess(String data) {
 					String content = android.text.Html.fromHtml(data).toString();
 
-					//Toast.makeText(getActivity().getApplicationContext(), content, Toast.LENGTH_LONG).show();
 					System.out.println("Content: " + content);
 					String[] trips = content.split("\n");
 					int j = 0;
@@ -183,7 +105,6 @@ public class ItineraryFragment extends ParentFragment
 						if(trip.length() == 0){
 							continue;
 						}
-						//System.out.println("Trip:" + trip);
 						//add new trip to list
 						tripsList.add(trip.split(":")[0]);
 						//add new list of plans for trip
@@ -192,8 +113,7 @@ public class ItineraryFragment extends ParentFragment
 						String[] plans = (trip.split(":")[1]).split(",");
 						//Toast.makeText(getActivity().getApplicationContext(), "Trip:" + tripsList, Toast.LENGTH_LONG).show();
 						for(String plan : plans) {
-							//Toast.makeText(getActivity().getApplicationContext(), "Plan:" + plan, Toast.LENGTH_LONG).show();
-							//System.out.println("Plan:" + plan);
+							//add trip plan to list
 							(tripPlansList.get(j)).add(plan);
 						}
 
@@ -278,7 +198,7 @@ public class ItineraryFragment extends ParentFragment
 	 public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
 	 TextView textView = new TextView(ItineraryFragment.this.getActivity());
 	 textView.setTextSize(30);
-	 System.out.println("Group:" + getGroup(i).toString());
+	 //System.out.println("Trip(group):" + getGroup(i).toString());
 	 textView.setText("    " + getGroup(i).toString());
 	 return textView;
 	 }
@@ -287,6 +207,7 @@ public class ItineraryFragment extends ParentFragment
 	 public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
 	 final TextView textView = new TextView(ItineraryFragment.this.getActivity());
 	 textView.setTextSize(30);
+	 //System.out.println("Trip Plan(child):" + getGroup(i).toString());
 	 textView.setText(getChild(i, i1).toString());
 	 
 	 textView.setOnClickListener(new OnClickListener(){
@@ -332,16 +253,5 @@ public class ItineraryFragment extends ParentFragment
 		{
 			//remove itinerary item if we want this feature.
 		}
-		
-		/*class btnCreateItineraryNote implements Button.OnClickListener {
-			@Override
-			public void onClick(View v) {
-				
-				// Show Place Finder Fragment
-				//Toast.makeText(getActivity(), "Location Field clicked",Toast.LENGTH_SHORT).show();
-				startActivityForResult(new Intent(getActivity(),
-						NoteActivity.class).putExtra("ITINERARY_SELECT", selectedChild), ITINERARY_REQUEST);
-			}
-		}*/
 
 }
