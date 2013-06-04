@@ -1,7 +1,22 @@
 package com.souvenir.android;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.actionbarsherlock.view.MenuItem;
+import com.evernote.client.android.AsyncNoteStoreClient;
+import com.evernote.client.android.OnClientCallback;
+import com.evernote.edam.notestore.NoteFilter;
+import com.evernote.edam.notestore.NoteMetadata;
+import com.evernote.edam.notestore.NoteStore;
+import com.evernote.edam.notestore.NotesMetadataList;
+import com.evernote.edam.notestore.NotesMetadataResultSpec;
+import com.evernote.edam.type.Note;
+import com.evernote.edam.type.NoteSortOrder;
+import com.evernote.thrift.transport.TTransportException;
 import com.souvenir.android.NoteFragment.btnFindPlace;
+import com.souvenir.android.SnippetFragment.SnippetAdapter;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -18,25 +33,177 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class ItineraryFragment extends ParentFragment 
 {
-	private String selectedChild;
+	private ArrayList<String> trips = new ArrayList<String>();
+	private ArrayList<String> trip_plans = new ArrayList<String>();
+	private HashMap<String, String> tripMap = new HashMap<String, String>();
+	
 	private final int ITINERARY_REQUEST = 1714;
 
 	 @Override
 	 public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	 View v = inflater.inflate(R.layout.fragment_itinerary, null);
-	 ExpandableListView elv = (ExpandableListView) v.findViewById(R.id.itinerary_list);
-	 elv.setAdapter(new ItineraryTripsListAdapter());
-	 
 	 setHasOptionsMenu(true);
+	 
+	 /*ExpandableListView elv = (ExpandableListView) v.findViewById(R.id.itinerary_list);
+	 elv.setAdapter(new ItineraryTripsListAdapter());
+	 */
+	 getItinerary();
 	 
 	 return v;
 	 }
 	 
+	private void getItinerary() {
+		
+		int pageSize = 10;
+		 
+		NoteFilter filter = new NoteFilter();
+		filter.setWords("tag:app_itinerary");
+		 
+		NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
+		spec.setIncludeTitle(true);
+		 
+		try {
+			mEvernoteSession.getClientFactory().createNoteStoreClient()
+				.findNotesMetadata(filter, 0, pageSize, spec, new OnClientCallback<NotesMetadataList>() {
+				@Override
+				public void onSuccess(NotesMetadataList notes) {
+
+					List<NoteMetadata> notesList = notes.getNotes();
+					
+					for(int i = 0; i < notesList.size(); i++) {
+						System.out.println(notesList.get(i).getTitle());
+						Toast.makeText(getActivity().getApplicationContext(), notesList.get(i).getTitle(), Toast.LENGTH_SHORT).show();
+					}
+					
+					NoteMetadata itineraryNote = notes.getNotes().get(0);
+					getItineraryData(itineraryNote);
+					
+					
+					/*ListView listView = (ListView) SnippetFragment.this
+							.getView().findViewById(R.id.lview);
+					entries.addAll(notes.getNotes());
+					entries2 = new ArrayList<Note>(entries
+							.size());
+					final SnippetAdapter adapter = new SnippetAdapter(
+							SnippetFragment.this.getActivity(),
+							R.layout.snippet, entries2,
+							mEvernoteSession);
+					listView.setAdapter(adapter);
+					listView.setScrollingCacheEnabled(false);
+
+					// Log.e("log_tag ******",
+					// notes.getNotes().get(0).getTitle());
+					// Log.e("log_tag ******",
+					// entries.get(0).getTitle());
+					for (int i = 0; i < entries.size(); i++) {
+						NoteMetadata snippetEntry = entries
+								.get(i);
+						final int position = i;
+						try {
+							mEvernoteSession
+									.getClientFactory()
+									.createNoteStoreClient()
+									.getNote(
+											snippetEntry
+													.getGuid(),
+											true,
+											true,
+											true,
+											true,
+											new OnClientCallback<Note>() {
+												@Override
+												public void onSuccess(
+														Note note) {
+													// contents.add(android.text.Html.fromHtml(note.getContent()).toString());
+													entries2.add(
+															position,
+															note);
+													adapter.notifyDataSetChanged();
+													// snippetText.setText(android.text.Html.fromHtml(note
+													// .getContent()));
+													// removeDialog(DIALOG_PROGRESS);
+													// System.out.println(""
+													// +
+													// position
+													// +
+													// snippetText.getText());
+													// Toast.makeText(SnippetFragment.this.getActivity(),
+													// snippetText.getText(),
+													// Toast.LENGTH_LONG).show();
+													// notes =
+													// data;
+												}
+
+												@Override
+												public void onException(
+														Exception exception) {
+
+												}
+											});
+						
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					*/
+				}
+
+				@Override
+				public void onException(Exception exception) {
+				}
+							});
+		} catch (TTransportException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void getItineraryData(NoteMetadata note)
+	{
+		String guid = note.getGuid();
+		
+		try {
+			mEvernoteSession.getClientFactory().createNoteStoreClient()
+			  .getNoteContent(guid, new OnClientCallback<String>()
+			  {
+
+				@Override
+				public void onSuccess(String data) {
+					String content = android.text.Html.fromHtml(data).toString();
+
+					//Toast.makeText(getActivity().getApplicationContext(), content, Toast.LENGTH_LONG).show();
+					System.out.println("Content: " + content);
+					String[] trips = content.split("\n");
+					for(String trip : trips) {
+						if(trip.length() == 0){
+							continue;
+						}
+						System.out.println("Trip:" + trip);
+						String[] plans = (trip.split(":")[1]).split(",");
+						//Toast.makeText(getActivity().getApplicationContext(), "Trip:" + trip, Toast.LENGTH_LONG).show();
+						for(String plan : plans) {
+							//Toast.makeText(getActivity().getApplicationContext(), "Plan:" + plan, Toast.LENGTH_LONG).show();
+							System.out.println("Plan:" + plan);
+						}
+					}
+				}
+
+				@Override
+				public void onException(Exception exception) {
+					exception.printStackTrace();
+					
+				}
+			  });
+		} catch (TTransportException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	 
 	 @Override
 	  public boolean onOptionsItemSelected(MenuItem item)
@@ -51,7 +218,7 @@ public class ItineraryFragment extends ParentFragment
 				break;
 				
 	    	case R.id.itinerary_menu_search:
-	    		System.out.println("Add to Itinerary button pressed");
+	    		System.out.println("Searach to Itinerary button pressed");
 		    	Toast.makeText(getActivity().getApplicationContext(), "Search Itinerary button pressed", Toast.LENGTH_SHORT).show();
 				break;
 	    }

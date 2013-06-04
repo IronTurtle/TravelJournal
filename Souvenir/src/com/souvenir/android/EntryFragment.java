@@ -1,9 +1,6 @@
 package com.souvenir.android;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 
 import com.actionbarsherlock.view.MenuItem;
@@ -18,14 +15,6 @@ import com.evernote.edam.type.NoteAttributes;
 import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Resource;
 import com.evernote.thrift.transport.TTransportException;
-import com.facebook.FacebookRequestError;
-import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.RequestAsyncTask;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.internal.Logger;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -33,7 +22,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,8 +31,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -76,8 +62,6 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
   EditText mTitle;
   TextView mLocation;
   EditText mEntry;
-
-  private SessionState state = SessionState.OPENED_TOKEN_UPDATED;
   
   Note note = new Note();
   Resource resource = new Resource();
@@ -186,16 +170,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
 		}
 		
 	}
-  
-  
-  private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
-	    for (String string : subset) {
-	        if (!superset.contains(string)) {
-	            return false;
-	        }
-	    }
-	    return true;
-	}
+
 
   public void getMetadata()
   {
@@ -203,7 +178,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
 
     NoteFilter filter = new NoteFilter();
     filter.setOrder(NoteSortOrder.UPDATED.getValue());
-    filter.setWords("-tag:itinerary*");
+    filter.setWords("-tag:app_itinerary*");
 
     NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
     spec.setIncludeTitle(true);

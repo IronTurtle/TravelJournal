@@ -30,9 +30,10 @@ public class OtherActivity extends SherlockFragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		//TODO: Currently fb activity & fragment. Refactor name later
 		setContentView(R.layout.fblogin_fragment_activity);
 		
-		// Fragments
+		// Facebook fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 		userSettingsFragment = (UserSettingsFragment) fragmentManager.findFragmentById(R.id.login_fragment);
@@ -46,8 +47,6 @@ public class OtherActivity extends SherlockFragmentActivity {
         
 	}
 	
-	
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

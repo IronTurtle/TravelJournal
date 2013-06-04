@@ -42,17 +42,6 @@ public class ShareFragment extends ParentFragment implements OnClickListener
 		System.out.println("Share Button Clicked...");
 		publishStory();  
 		
-		
-		/*shareButton = (Button) view.findViewById(R.id.fb_publish);
-		
-		shareButton.setOnClickListener(new View.OnClickListener() {
-		    @Override
-		    public void onClick(View v) {
-		    	System.out.println("Share Button Clicked...");
-		        publishStory();        
-		    }
-		});*/
-		
 		if (savedInstanceState != null) {
 		    pendingPublishReauthorization = 
 		        savedInstanceState.getBoolean(PENDING_PUBLISH_KEY, false);
@@ -62,7 +51,7 @@ public class ShareFragment extends ParentFragment implements OnClickListener
 
 	}
 	
-	
+	//unused
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 	    if (state.isOpened()) {
 	    	shareButton.setVisibility(View.VISIBLE);
@@ -97,9 +86,8 @@ public class ShareFragment extends ParentFragment implements OnClickListener
 	        postParams.putString("name", "Souvenir @ Evernote Hackathon: " + title);
 	        postParams.putString("caption", loc);
 	        postParams.putString("description", entry);
-	        postParams.putString("link", "https://twitter.com/SuTurtle");
-	        postParams.putString("picture", 
-"http://icons.iconarchive.com/icons/iconshock/high-detail-social/256/evernote-icon.png");	        
+	        postParams.putString("link", "https://www.hackerleague.org/hackathons/honda-and-evernote-hackathon/hacks/souvenir");
+	        postParams.putString("picture", "http://oi40.tinypic.com/mlpooo.jpg");	        
 	        System.out.println("***BUNDLED UP!!");
 	        
 	        Request.Callback callback= new Request.Callback() {

@@ -45,7 +45,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.ContactsContract.Contacts.Data;
 import android.support.v4.app.DialogFragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -54,15 +53,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
@@ -78,23 +75,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
-import org.gmarz.googleplaces.GooglePlaces;
-import org.gmarz.googleplaces.PlacesResult;
-import org.gmarz.googleplaces.models.Place;
-import org.gmarz.googleplaces.query.NearbySearchQuery;
-
-/**
- * This simple Android app demonstrates how to integrate with the Evernote API
- * (aka EDAM).
- * <p/>
- * In this sample, the user authorizes access to their account using OAuth and
- * chooses an image from the device's image gallery. The image is then saved
- * directly to user's Evernote account as a new note.
- */
 public class NoteFragment extends ParentFragment implements OnClickListener {
 
 	Uri mImageUri;
@@ -107,7 +89,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	// UI elements that we update
 	@SuppressWarnings("unused")
 	private Button mBtnAuth;
-	private Button mBtnSave;
 	@SuppressWarnings("unused")
 	private Button mBtnSelect;
 	@SuppressWarnings("unused")
@@ -146,18 +127,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_note, container, false);
 		mBtnAuth = (Button) view.findViewById(R.id.auth_button);
-		//mBtnSelect = (Button) view.findViewById(R.id.select_button);
-		//mBtnSave = (Button) view.findViewById(R.id.save_button);
 		mImageView = (ImageView) view.findViewById(R.id.note_image);
 		mTitle = (EditText) view.findViewById(R.id.note_title);
 		mLocation = (TextView) view.findViewById(R.id.note_location);
 		mEntry = (EditText) view.findViewById(R.id.note_entry);
 
-		//btnTakePhoto = (Button) view.findViewById(R.id.camera_button);
 
 		mLocation.setOnClickListener(new btnFindPlace());
-		//mBtnSave.setOnClickListener(this);
-		//btnTakePhoto.setOnClickListener(new btnTakePhotoClicker());
 		mEntry.setOnKeyListener(new NoteEntryField());
 		/*
 		 * if (getLastNonConfigurationInstance() != null) { mImageData =
@@ -171,17 +147,17 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		CameraOperation c = new CameraOperation();
 		c.execute("");
 
+		//setup locationManager for GPS request
 		mlocManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
 		mlocListener = new AppLocationListener();
 		mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mlocListener, null);
 		
-		
 		//set title automatically
 		setDefaultTitle();
-		//set focus on entry field
+		//set focus on entry field and show soft keyboard
 		mEntry.requestFocus();
-		
+		getActivity().getWindow().
+			setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 		return view;
 	}
 	
@@ -363,7 +339,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 
 		@Override
 		public boolean onKey(View v, int keyCode, KeyEvent event) {
-			// TODO Auto-generated method stub
 			// updateUi();
 			return false;
 		}
@@ -378,7 +353,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	class btnTakePhotoClicker implements Button.OnClickListener {
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 			Intent cameraIntent = new Intent(
 					android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 			ContentValues values = new ContentValues();
@@ -437,14 +411,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			resource.setAttributes(attributes);
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		/*Time now = new Time();
 		now.setToNow();
 		String title = now.toString();//mTitle.getText().toString();*/
-		String content = /*mTitle.getText().toString() + "\n"  +*/ mEntry.getText().toString();
+		String content = mEntry.getText().toString();
 		String location = mLocation.getText().toString();
 
 		Note note = new Note();
@@ -726,7 +699,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 				mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mlocListener, null);
 				*/
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -770,11 +742,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 					+ loc.getLatitude() + " Longitude = " + loc.getLongitude();
 
 			Toast.makeText(getActivity().getApplicationContext(), Text, Toast.LENGTH_SHORT).show();
-			/*LongOperation l = new LongOperation();
-			
-			l.execute("");
-			*/
-			
 			
 			//setText of coordinates to mLocation field
 			mLocation.setText(loc.getLatitude() + ", " + loc.getLongitude());
@@ -804,10 +771,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		}
 
 	}
-	
 
-
-	public class GPSDialogFragment extends DialogFragment {
+	public static class GPSDialogFragment extends DialogFragment {
 	    @Override
 	    public Dialog onCreateDialog(Bundle savedInstanceState) {
 	        // Use the Builder class for convenient dialog construction
@@ -833,16 +798,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	
 	@Override
 	public void onClick(View v) {
-		/*switch (v.getId()) {
-		case R.id.save_button:
-			System.out.println("Save pressed");
-			Toast.makeText(getActivity(), "Save Button clicked",
-					Toast.LENGTH_SHORT).show();
-			saveNote(this.getView());
-
-			break;
-		}*/
-		// TODO Auto-generated method stub
-
+		
 	}
 }

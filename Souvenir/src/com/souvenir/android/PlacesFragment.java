@@ -58,6 +58,8 @@ public class PlacesFragment extends ParentFragment{
 		View view = inflater.inflate(R.layout.fragment_places, container, false);
 
 		selected = (EditText) view.findViewById(R.id.selectedPlace);
+		
+		//TODO: Should not use try-catch, but if hasExtra, if not, getSingleUpdate
 		try {
 			System.out.println(getActivity().getIntent().hasExtra("PREV_LOC_DATA"));
 			//if(getActivity().getIntent().hasExtra("PREV_LOC_DATA")) {
@@ -75,38 +77,84 @@ public class PlacesFragment extends ParentFragment{
 			e.printStackTrace();
 		}
 		
-		
-		//setContentView(R.layout.activity_places);
-		/* Use the LocationManager class to obtain GPS locations */
-		
+		//set up location service and listener for Google Places API
 		mlocManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
 		mlocListener = new AppLocationListener();
-		mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mlocListener, null);
-		/*mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
-				mlocListener);*/
-		
+
+		//get nearby places from gps
 		getNearbyPlaces();
 		return view;
 	}
 
 	public void getNearbyPlaces() {
+		
+		
+		//TODO: don't use try-catch, instead, check if hasExtra
 		try{
+			//use long and lat from coords obtained in create note
 			latitude = Double.valueOf(selected.getText().toString().split(",")[0]);
 			longitude = Double.valueOf(selected.getText().toString().split(",")[1]);
+			//query results from Google Places API
 			LongOperation l = new LongOperation();
 			l.execute("");
 		} catch(Exception e) {
+			//long and lat not obtained earlier, request coords
 			mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mlocListener, null);
+		}
+
+		
+	}
+
+	private class LongOperation extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			try {
+				GooglePlaces googlePlaces = new GooglePlaces(
+						"AIzaSyDR0BCaO8el9549_l6QuAHOpp6BBxwRbE8");
+
+				System.out.println("(lat,long) = (" + latitude + ", " + longitude + ")");
+				
+				if(latitude != 0 && longitude != 0) {
+					NearbySearchQuery query = new NearbySearchQuery(latitude, longitude);
+	
+					query.setRadius(150); //inc rrIndex as long as places results < 20
+	
+					System.out.println("Query: " + query.toString());
+					PlacesResult result = googlePlaces.getPlaces(query);
+	
+					placeList = (ArrayList<Place>) result.getPlaces();
+	
+					for (int i = 0; i < placeList.size(); i++) {
+						System.out.println(placeList.get(i).getName());
+						System.out.println("\t" + placeList.get(i).getAddress());
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			ListView listView = (ListView) getView().findViewById(R.id.placeListView);
+			PlaceAdapter adapter = new PlaceAdapter(getActivity(),
+					R.layout.place_snippet, placeList);
+			listView.setAdapter(adapter);
+			listView.setScrollingCacheEnabled(false);
+		}
+
+		@Override
+		protected void onPreExecute() {
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values) {
 		}
 	}
 	
-	/*@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.layout.activity_places, menu);
-		return true;
-	}*/
 
 	private class PlaceAdapter extends ArrayAdapter<Place> {
 		int resource;
@@ -181,68 +229,6 @@ public class PlacesFragment extends ParentFragment{
 
 	}
 
-	private class LongOperation extends AsyncTask<String, Void, String> {
-
-		@Override
-		protected String doInBackground(String... params) {
-			try {
-				GooglePlaces googlePlaces = new GooglePlaces(
-						"AIzaSyDR0BCaO8el9549_l6QuAHOpp6BBxwRbE8");
-
-				NearbySearchQuery query = new NearbySearchQuery(latitude, longitude);
-
-				query.setRadius(150); //inc rrIndex as long as places results < 20
-
-				System.out.println("Query: " + query.toString());
-				PlacesResult result = googlePlaces.getPlaces(query);
-
-				placeList = (ArrayList<Place>) result.getPlaces();
-
-				for (int i = 0; i < placeList.size(); i++) {
-					System.out.println(placeList.get(i).getName());
-					System.out.println("\t" + placeList.get(i).getAddress());
-				}
-				/*int rrIndex = 0;
-				do {
-					query.setRadius(radiusRanges[rrIndex++]); //inc rrIndex as long as places results < 20
-
-					System.out.println("Query: " + query.toString());
-					PlacesResult result = googlePlaces.getPlaces(query);
-	
-					placeList = (ArrayList<Place>) result.getPlaces();
-	
-					for (int i = 0; i < placeList.size(); i++) {
-						System.out.println(placeList.get(i).getName());
-						System.out.println("\t" + placeList.get(i).getAddress());
-					}
-				} while(placeList.size() < 15 && rrIndex < radiusRanges.length);
-				*/
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			ListView listView = (ListView) getView().findViewById(R.id.placeListView);
-			PlaceAdapter adapter = new PlaceAdapter(getActivity(),
-					R.layout.place_snippet, placeList);
-			listView.setAdapter(adapter);
-			listView.setScrollingCacheEnabled(false);
-		}
-
-		@Override
-		protected void onPreExecute() {
-		}
-
-		@Override
-		protected void onProgressUpdate(Void... values) {
-		}
-	}
-
 	/* Class My Location Listener */
 	public class AppLocationListener implements LocationListener {
 
@@ -252,12 +238,12 @@ public class PlacesFragment extends ParentFragment{
 			latitude = loc.getLatitude();
 			longitude = loc.getLongitude();
 
-			String text = "My current location is: " + "Latitude = "
+			String text = "Current location is: " + "Latitude = "
 					+ loc.getLatitude() + " Longitude = " + loc.getLongitude();
 
-			//Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+			//query results from Google Places API
 			LongOperation l = new LongOperation();
-			
 			l.execute("");
 		}
 
@@ -285,7 +271,7 @@ public class PlacesFragment extends ParentFragment{
 	
 
 
-public class GPSDialogFragment extends DialogFragment {
+public static class GPSDialogFragment extends DialogFragment {
 	    @Override
 	    public Dialog onCreateDialog(Bundle savedInstanceState) {
 	        // Use the Builder class for convenient dialog construction

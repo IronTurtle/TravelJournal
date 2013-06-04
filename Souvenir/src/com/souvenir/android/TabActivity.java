@@ -34,7 +34,6 @@ public class TabActivity extends SherlockFragmentActivity
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
-    // System.out.println("Launched");
     super.onCreate(savedInstanceState);
 
     mViewPager = new ViewPager(this);
@@ -44,13 +43,24 @@ public class TabActivity extends SherlockFragmentActivity
     final ActionBar bar = getSupportActionBar();
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
+    //create TabAdapter for ActionbarSherlock
     mTabsAdapter = new TabsAdapter(this, mViewPager);
 
+    //init tabs
     mTabsAdapter.addTab(bar.newTab().setText("Itinerary").setIcon(R.drawable.list), ItineraryFragment.class, null);
-    mTabsAdapter
-        .addTab(bar.newTab().setText("Me").setIcon(R.drawable.me), SnippetFragment.class, null);
+    mTabsAdapter.addTab(bar.newTab().setText("Me").setIcon(R.drawable.me), SnippetFragment.class, null);
     mTabsAdapter.addTab(bar.newTab().setText("Others").setIcon(R.drawable.them), OtherFragment.class,null);
+    
+    //set to show "Me" tab as default
     mViewPager.setCurrentItem(1);
+  }
+  
+  @Override
+  public void onResume()
+  {
+	  super.onResume();
+	//set to show "Me" tab as default
+	  mViewPager.setCurrentItem(1);
   }
 
   @Override

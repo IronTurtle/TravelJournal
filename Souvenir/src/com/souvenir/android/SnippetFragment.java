@@ -36,19 +36,13 @@ import android.widget.ListView;
 import android.view.View.OnClickListener;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -73,64 +67,16 @@ import com.evernote.thrift.transport.TTransportException;
  */
 public class SnippetFragment extends ParentFragment implements OnClickListener
 {
-
-  // Your Evernote API key. See http://dev.evernote.com/documentation/cloud/
-  // Please obfuscate your code to help keep these values secret.
-  private static final String CONSUMER_KEY = "ironsuturtle";
-  private static final String CONSUMER_SECRET = "e0441c112aab58f6";
-
-  /**
-   * ************************************************************************
-   * Change these values as needed to use this code in your own application. *
-   * *************************************************************************
-   */
-
-  // Name of this application, for logging
-  private static final String TAG = "HelloEDAM";
-
-  // Initial development is done on Evernote's testing service, the sandbox.
-  // Change to HOST_PRODUCTION to use the Evernote production service
-  // once your code is complete, or HOST_CHINA to use the Yinxiang Biji
-  // (Evernote China) production service.
-  private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
-
-  /**
-   * ************************************************************************
-   * The following values are simply part of the demo application. *
-   * *************************************************************************
-   */
-
-  // Activity result request codes
-  private static final int SELECT_IMAGE = 1;
-
   // UI elements that we update
   private Button mBtnAuth;
-  private Button mBtnSave;
-  private Button mBtnSelect;
-  private Button mBtnAddNote;
-  private EditText mTextArea;
-  private ImageView mImageView;
-  private final int DIALOG_PROGRESS = 101;
 
   Button btnTakePhoto;
   ImageView imgTakenPhoto;
-  private static final int CAMERA_PIC_REQUEST = 1313;
   final String TAG1 = "MyCamera";
 
   public ArrayList<NoteMetadata> entries;
   public ArrayList<Note> entries2;
 
-  // The path to and MIME type of the currently selected image from the
-  // gallery
-  private class ImageData
-  {
-    public Bitmap imageBitmap;
-    public String filePath;
-    public String mimeType;
-    public String fileName;
-  }
-
-  private ImageData mImageData;
   ImageLoader imageLoader;
   DisplayImageOptions options;
 
@@ -211,7 +157,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
         mEvernoteSession.logOut(this.getActivity().getApplicationContext());
       } catch (InvalidAuthenticationException e)
       {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
@@ -268,7 +213,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
   // @Override
   protected void onPostExecute(Note note)
   {
-    this.getActivity().removeDialog(DIALOG_PROGRESS);
+    this.getActivity();
 
     if (note == null)
     {
@@ -289,11 +234,11 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
     // update();
     if (mEvernoteSession.isLoggedIn())
     {
-      int pageSize = 10;
+      int pageSize = 1;
 
       NoteFilter filter = new NoteFilter();
       filter.setOrder(NoteSortOrder.UPDATED.getValue());
-      //filter.setWords("-tag:itinerary*");
+      filter.setWords("-tag:app_itinerary");
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);
@@ -310,10 +255,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                   @Override
                   public void onSuccess(NotesMetadataList notes)
                   {
-                    // removeDialog(DIALOG_PROGRESS);
-                    // Toast.makeText(getApplicationContext(),
-                    // R.string.msg_image_saved, Toast.LENGTH_LONG).show();
-                    // notes = data;
 
                     ListView listView = (ListView) SnippetFragment.this
                         .getView().findViewById(R.id.lview);
@@ -326,12 +267,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                     listView.setScrollingCacheEnabled(false);
 
 
-                    Log.e("log_tag ******", notes.getNotes().get(0).getTitle());
-                    Log.e("log_tag ******", entries.get(0).getTitle());
-                    /*for (NoteMetadata note2 : notes.getNotes())
-                    {
-                      System.out.println(note2.getTitle());
-                    }*/
+                    //Log.e("log_tag ******", notes.getNotes().get(0).getTitle());
+                    //Log.e("log_tag ******", entries.get(0).getTitle());
                     for (int i = 0; i < entries.size(); i++)
                     {
                       NoteMetadata snippetEntry = entries.get(i);
@@ -350,10 +287,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                                     // contents.add(android.text.Html.fromHtml(note.getContent()).toString());
                                     entries2.add(position, note);
                                     adapter.notifyDataSetChanged();
-                                    /*for (Note note2 : entries2)
-                                    {
-                                      System.out.println(note2.getTitle());
-                                    }*/
                                     // snippetText.setText(android.text.Html.fromHtml(note
                                     // .getContent()));
                                     // removeDialog(DIALOG_PROGRESS);
@@ -407,7 +340,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                 });
       } catch (TTransportException e)
       {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
@@ -416,7 +348,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
   @Override
   public void onClick(View v)
   {
-    // TODO Auto-generated method stub
     switch (v.getId())
     {
     case R.id.auth_button:
@@ -527,7 +458,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 		    }
 		  });
 		} catch (TTransportException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
       snippetEvent.setText(snippetEntry.getTitle().toUpperCase());
