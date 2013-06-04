@@ -39,8 +39,8 @@ import android.widget.Toast;
 
 public class ItineraryFragment extends ParentFragment 
 {
-	private ArrayList<String> trips = new ArrayList<String>();
-	private ArrayList<String> trip_plans = new ArrayList<String>();
+	private ArrayList<String> tripsList = new ArrayList<String>();
+	private ArrayList<ArrayList<String>> tripPlansList = new ArrayList<ArrayList<String>>();
 	private HashMap<String, String> tripMap = new HashMap<String, String>();
 	
 	private final int ITINERARY_REQUEST = 1714;
@@ -50,17 +50,15 @@ public class ItineraryFragment extends ParentFragment
 	 View v = inflater.inflate(R.layout.fragment_itinerary, null);
 	 setHasOptionsMenu(true);
 	 
-	 /*ExpandableListView elv = (ExpandableListView) v.findViewById(R.id.itinerary_list);
-	 elv.setAdapter(new ItineraryTripsListAdapter());
-	 */
 	 getItinerary();
+	 
 	 
 	 return v;
 	 }
 	 
 	private void getItinerary() {
 		
-		int pageSize = 10;
+		int pageSize = 1;
 		 
 		NoteFilter filter = new NoteFilter();
 		filter.setWords("tag:app_itinerary");
@@ -179,18 +177,32 @@ public class ItineraryFragment extends ParentFragment
 					//Toast.makeText(getActivity().getApplicationContext(), content, Toast.LENGTH_LONG).show();
 					System.out.println("Content: " + content);
 					String[] trips = content.split("\n");
-					for(String trip : trips) {
+					int j = 0;
+					for(int i = 0; i < trips.length;i++) {
+						String trip = trips[i];
 						if(trip.length() == 0){
 							continue;
 						}
-						System.out.println("Trip:" + trip);
+						//System.out.println("Trip:" + trip);
+						//add new trip to list
+						tripsList.add(trip.split(":")[0]);
+						//add new list of plans for trip
+						tripPlansList.add(new ArrayList<String>());
+						
 						String[] plans = (trip.split(":")[1]).split(",");
-						//Toast.makeText(getActivity().getApplicationContext(), "Trip:" + trip, Toast.LENGTH_LONG).show();
+						//Toast.makeText(getActivity().getApplicationContext(), "Trip:" + tripsList, Toast.LENGTH_LONG).show();
 						for(String plan : plans) {
 							//Toast.makeText(getActivity().getApplicationContext(), "Plan:" + plan, Toast.LENGTH_LONG).show();
-							System.out.println("Plan:" + plan);
+							//System.out.println("Plan:" + plan);
+							(tripPlansList.get(j)).add(plan);
 						}
+
+						j++;
 					}
+					
+
+					 ExpandableListView elv = (ExpandableListView) getActivity().findViewById(R.id.itinerary_list);
+					 elv.setAdapter(new ItineraryTripsListAdapter());
 				}
 
 				@Override
@@ -226,33 +238,25 @@ public class ItineraryFragment extends ParentFragment
 	  }
 	 
 	 public class ItineraryTripsListAdapter extends BaseExpandableListAdapter {
-	  
-	 private String[] groups = { "Tokyo, Japan", "Seoul, S. Korea", "Bangkok, Thailand" };
-	  
-	 private String[][] children = {
-	 { "Shinjuku", "Shibuya", "Harajuku", "Akihabara", "Odaiba", "Roppongi", "Asakusa" },
-	 { "Itaewan", "Somgakji", "Noryangjin", "Gangnam", "Gyeongbokgung", "Hongdae" },
-	 { "Nana", "Siam", "Wisgar", "Lub'd" }
-	 };
-	  
+	 
 	 @Override
 	 public int getGroupCount() {
-	 return groups.length;
+	 return tripsList.size();
 	 }
 	  
 	 @Override
 	 public int getChildrenCount(int i) {
-	 return children[i].length;
+	 return (tripPlansList.get(i)).size();
 	 }
 	  
 	 @Override
 	 public Object getGroup(int i) {
-	 return groups[i];
+	 return tripsList.get(i);
 	 }
 	  
 	 @Override
 	 public Object getChild(int i, int i1) {
-	 return children[i][i1];
+	 return (tripPlansList.get(i)).get(i1);
 	 }
 	  
 	 @Override
@@ -274,6 +278,7 @@ public class ItineraryFragment extends ParentFragment
 	 public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
 	 TextView textView = new TextView(ItineraryFragment.this.getActivity());
 	 textView.setTextSize(30);
+	 System.out.println("Group:" + getGroup(i).toString());
 	 textView.setText("    " + getGroup(i).toString());
 	 return textView;
 	 }
@@ -328,7 +333,7 @@ public class ItineraryFragment extends ParentFragment
 			//remove itinerary item if we want this feature.
 		}
 		
-	 /*class btnCreateItineraryNote implements Button.OnClickListener {
+		/*class btnCreateItineraryNote implements Button.OnClickListener {
 			@Override
 			public void onClick(View v) {
 				
