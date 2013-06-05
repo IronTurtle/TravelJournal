@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.AsyncNoteStoreClient;
+import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.notestore.NoteFilter;
 import com.evernote.edam.notestore.NoteMetadata;
@@ -51,7 +52,7 @@ public class ItineraryFragment extends ParentFragment
 	 setHasOptionsMenu(true);
 	 
 	 refresh = getArguments().getBoolean("REFRESH", false);
-	 
+
 	 if (mEvernoteSession.isLoggedIn())
      {
 		 getItinerary(refresh);
@@ -267,4 +268,27 @@ public class ItineraryFragment extends ParentFragment
 			//remove itinerary item if we want this feature.
 		}
 
+		
+	/**
+	   * Called when the user taps the "Log in to Evernote" button. Initiates the
+	   * Evernote OAuth process, or logs out if the user is already logged in.
+	   */
+	  public void startAuth(View view)
+	  {
+	    if (mEvernoteSession.isLoggedIn())
+	    {
+	      try
+	      {
+	        mEvernoteSession.logOut(this.getActivity().getApplicationContext());
+	      } catch (InvalidAuthenticationException e)
+	      {
+	        e.printStackTrace();
+	      }
+	    }
+	    else
+	    {
+	      mEvernoteSession.authenticate(this.getActivity());
+	    }
+	    getItinerary(true);
+	  }
 }

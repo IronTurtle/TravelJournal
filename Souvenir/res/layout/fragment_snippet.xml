@@ -5,11 +5,10 @@
     android:background="@android:color/darker_gray"
     android:orientation="vertical" >
 
-
-  <Button
+  	<Button
       android:id="@+id/auth_button"
       style="@color/primaryOrange"
-      android:layout_width="wrap_content"
+      android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="20dp"
       android:background="@color/primaryOrange"

@@ -53,7 +53,7 @@ public class TabActivity extends SherlockFragmentActivity
     
     mTabsAdapter.addTab(bar.newTab().setText("Me").setIcon(R.drawable.me), SnippetFragment.class, null);
     
-    mTabsAdapter.addTab(bar.newTab().setText("Others").setIcon(R.drawable.them), OtherFragment.class,null);
+   // mTabsAdapter.addTab(bar.newTab().setText("Others").setIcon(R.drawable.them), OtherFragment.class,null);
     
     //set to show "Me" tab as default
     mViewPager.setCurrentItem(1);

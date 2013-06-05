@@ -12,7 +12,7 @@
     <string name="err_image_selected">Error Select Image</string>
     <string name="err_retrieving_resource">Error retrieving resource</string>
     <string name="msg_retrieved_resource">Retrieved resource from server</string>
-    <string name="label_log_in">Log In</string>
+    <string name="label_log_in">Log Into Evernote</string>
     <string name="label_log_out">Log Out</string>
     <string name="loading">Loading...</string>
     <string name="label_camera_button">Take Photo</string>
@@ -58,5 +58,6 @@
     <string name="fb_login">Facebook Login for Souvenir</string>
     <string name="title_activity_share">ShareActivity</string>
     <string name="fb_share">Facebook Sharing for Souvenir</string>
+    <string name="login_needed">You are not logged into Evernote. Please Log In.</string>
 
 </resources>

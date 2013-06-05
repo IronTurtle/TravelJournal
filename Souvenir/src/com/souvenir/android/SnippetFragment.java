@@ -68,7 +68,7 @@ import com.evernote.thrift.transport.TTransportException;
  */
 public class SnippetFragment extends ParentFragment implements OnClickListener
 {
-	private static final int SNIPPET_PAGE_SIZE = 3;
+	private static final int SNIPPET_PAGE_SIZE = 5;
 	
   // UI elements that we update
   private Button mBtnAuth;

@@ -27,6 +27,7 @@ package com.souvenir.android;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.View;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.evernote.client.android.EvernoteSession;
@@ -76,5 +77,12 @@ public class ParentFragment extends SherlockFragment
     mEvernoteSession = EvernoteSession.getInstance(this.getActivity(),
         CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
   }
+
+public void onClick(View v) {
+	// TODO Auto-generated method stub
+	
+}
+
+	
 
 }
