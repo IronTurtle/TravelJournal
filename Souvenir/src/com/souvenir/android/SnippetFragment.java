@@ -443,7 +443,28 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
       
 	  try {
-		mEvernoteSession.getClientFactory().createNoteStoreClient()
+		  mEvernoteSession.getClientFactory().createNoteStoreClient()
+			.getNote(snippetEntry.getGuid(), true, true, true, true, new OnClientCallback<Note>()
+			          {
+	            public void onSuccess(Note note)
+	            {
+	            	String location = note.getAttributes().getPlaceName();
+	            	if(location == null) {
+	            		location = String.valueOf((note.getAttributes().getLatitude())
+	            						+ String.valueOf(note.getAttributes().getLongitude()));
+	            	}
+
+	            	snippetLocation.setText(location);
+          		System.out.println("LOCATION: " + location);
+	            }
+
+	            @Override
+	            public void onException(Exception exception)
+	            {
+	              exception.printStackTrace();
+	            }
+	          });
+		/*mEvernoteSession.getClientFactory().createNoteStoreClient()
 		  .getNoteApplicationData(snippetEntry.getGuid(), new OnClientCallback<LazyMap>()
 		  {
 		    public void onSuccess(LazyMap resources)
@@ -451,6 +472,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 	
 		      //System.out.println(resources.getFullMap().values());
 		      String location = resources.getFullMap().get("LOCATION");
+		      
 		      snippetLocation.setText(location);
 		    }
 		    
@@ -459,7 +481,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 		    {
 		      exception.printStackTrace();
 		    }
-		  });
+		  });*/
 		} catch (TTransportException e) {
 			e.printStackTrace();
 		}
@@ -472,6 +494,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
       return snippetView;
     }
-  }
+   }
 
 }

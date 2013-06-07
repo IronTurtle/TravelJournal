@@ -102,6 +102,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	private double latitude;
 	private LocationManager mlocManager;
 	private LocationListener mlocListener;
+	private boolean selectedPlace = false;
 	
 	Button btnTakePhoto;
 	final String TAG = "MyCamera";
@@ -316,6 +317,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 					Log.e("Intent value:", data.toString());
 					this.mLocation
 							.setText(data.getStringExtra("LOCATION_DATA"));
+					selectedPlace = true;
 				} else {
 					Log.e("Intent is null", "yep it is.");
 				}
@@ -431,7 +433,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		LazyMap map = new LazyMap();
 		
 		map.putToFullMap("LOCATION", location);
-		attr.setApplicationData(map);
+		attr.setLongitude(longitude);
+		attr.setLatitude(latitude);
+		if(selectedPlace) {
+			attr.setPlaceName(location);
+		}
 		note.setAttributes(attr);
 		
 		//System.out.println(note.getAttributes().getApplicationData().toString());
@@ -747,7 +753,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 			//setText of coordinates to mLocation field
 			mLocation.setText(loc.getLatitude() + ", " + loc.getLongitude());
 			if(!getActivity().getIntent().hasExtra("ITINERARY_SELECT")) {
-				mTitle.setText(mTitle.getText().toString() + ", at " + mLocation.getText().toString());
+				mTitle.setText(mTitle.getText().toString() + ", at " 
+						+ loc.getLatitude() + ", " + loc.getLongitude());
 			}
 		}
 

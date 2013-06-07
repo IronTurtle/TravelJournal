@@ -1,7 +1,7 @@
-TravelJournal
+Souvenir
 =============
 
-Evernote Cal Poly SLO Hackathon 2013.  
+Previously named TravelJournal, Souvenir will be entering Evernote's DevCup 2013.  
 
 git submodule update --init
 make sure libraries using 4.2.2

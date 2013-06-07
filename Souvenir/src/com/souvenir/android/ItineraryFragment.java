@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.AsyncNoteStoreClient;
+import com.evernote.client.android.AuthenticationResult;
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.notestore.NoteFilter;
@@ -42,7 +43,7 @@ public class ItineraryFragment extends ParentFragment
 {
 	private ArrayList<String> tripsList;
 	private ArrayList<ArrayList<String>> tripPlansList;
-	private boolean refresh;
+	private boolean refresh = true;
 	
 	private final int ITINERARY_REQUEST = 1714;
 
@@ -51,16 +52,26 @@ public class ItineraryFragment extends ParentFragment
 	 View v = inflater.inflate(R.layout.fragment_itinerary, null);
 	 setHasOptionsMenu(true);
 	 
-	 refresh = getArguments().getBoolean("REFRESH", false);
-
-	 if (mEvernoteSession.isLoggedIn())
+	 /*if(getArguments().containsKey("REFRESH")) {
+		 refresh = getArguments().getBoolean("REFRESH");
+	 }*/
+	 
+	 getItinerary(refresh);
+	 
+	 /*if (mEvernoteSession.isLoggedIn())
      {
+		 //Toast.makeText(getActivity().getApplicationContext(), "Logged IN, Itinerary refresh", Toast.LENGTH_SHORT).show();
 		 getItinerary(refresh);
      }
+	 else {
+		 //Toast.makeText(getActivity().getApplicationContext(), "Logged OUT, Itinerary refresh", Toast.LENGTH_SHORT).show();
+		 
+	 }*/
 	 
 	 return v;
 	 }
 	 
+
 	private void getItinerary(boolean refresh) {
 		//checks if itinerary needs to be refreshed
 		if(!refresh){
@@ -70,7 +81,7 @@ public class ItineraryFragment extends ParentFragment
 		tripPlansList = new ArrayList<ArrayList<String>>();
 		
 		//set refresh to false
-		refresh = false;
+		//refresh = false;
 		int pageSize = 1;
 		 
 		NoteFilter filter = new NoteFilter();

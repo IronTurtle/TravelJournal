@@ -47,9 +47,7 @@ public class TabActivity extends SherlockFragmentActivity
     mTabsAdapter = new TabsAdapter(this, mViewPager);
 
     //init tabs
-    Bundle tab1Bundle = new Bundle();
-	tab1Bundle.putBoolean("REFRESH", true);
-    mTabsAdapter.addTab(bar.newTab().setText("Itinerary").setIcon(R.drawable.list), ItineraryFragment.class, tab1Bundle);
+    mTabsAdapter.addTab(bar.newTab().setText("Itinerary").setIcon(R.drawable.list), ItineraryFragment.class, null);
     
     mTabsAdapter.addTab(bar.newTab().setText("Me").setIcon(R.drawable.me), SnippetFragment.class, null);
     

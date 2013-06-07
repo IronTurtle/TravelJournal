@@ -220,8 +220,29 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
     mTitle.setText(title.toUpperCase(Locale.US));
     try
     {
+    	mEvernoteSession.getClientFactory().createNoteStoreClient()
+    			.getNote(guid, true, true, true, true, new OnClientCallback<Note>()
+    			          {
+    	            public void onSuccess(Note note)
+    	            {
+    	            	String location = note.getAttributes().getPlaceName();
+    	            	if(location == null) {
+    	            		location = String.valueOf((note.getAttributes().getLatitude())
+    	            						+ String.valueOf(note.getAttributes().getLongitude()));
+    	            	}
+
+	            		mLocation.setText(location);
+	            		System.out.println("LOCATION: " + location);
+    	            }
+
+    	            @Override
+    	            public void onException(Exception exception)
+    	            {
+    	              exception.printStackTrace();
+    	            }
+    	          });
       // Set location to correct field
-      mEvernoteSession.getClientFactory().createNoteStoreClient()
+      /*mEvernoteSession.getClientFactory().createNoteStoreClient()
           .getNoteApplicationData(guid, new OnClientCallback<LazyMap>()
           {
             public void onSuccess(LazyMap resources)
@@ -239,7 +260,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
               exception.printStackTrace();
             }
           });
-
+	*/
       System.out.println("Getting Note data");
       mEvernoteSession.getClientFactory().createNoteStoreClient()
           .getNoteContent(guid, new OnClientCallback<String>()

@@ -23,7 +23,7 @@ public class ItineraryActivity extends SherlockFragmentActivity
 	  ItineraryFragment mItineraryFragment = new ItineraryFragment();
 	  FragmentTransaction fragmentTransaction = getSupportFragmentManager()
 	      .beginTransaction();
-	  fragmentTransaction.add(R.id.fragment, mItineraryFragment);
+	  fragmentTransaction.replace(R.id.fragment, mItineraryFragment);
 	  fragmentTransaction.commit();
 	 
 	 }
