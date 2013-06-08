@@ -90,11 +90,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
     View view = inflater.inflate(R.layout.fragment_snippet, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
     mBtnAuth.setOnClickListener(this);
-    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this
-        .getActivity().getApplicationContext())
-        .threadPriority(Thread.NORM_PRIORITY - 2)
-        .denyCacheImageMultipleSizesInMemory()/* .enableLogging() */.build();
-    ImageLoader.getInstance().init(config);
+
 
     return view;
   }
