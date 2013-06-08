@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fillViewport="true"
-    android:background="@android:color/darker_gray" >
+    android:background="@android:color/white"
+    android:fillViewport="true" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,12 +11,32 @@
         android:background="@android:color/white"
         android:orientation="vertical" >
 
+<!--         <TextView -->
+<!--             android:id="@+id/outfitNameText" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:text="TEST" -->
+<!--             android:textSize="30sp" /> -->
+
         <ImageView
             android:id="@+id/entry_image"
             android:layout_width="fill_parent"
-            android:layout_height="250dp"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/img_desc"
-            android:scaleType="centerInside" />
+            android:scaleType="centerCrop" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"
+            android:background="@android:color/black" />
+
+<!--         <TextView -->
+<!--             android:id="@+id/outfitNasmeText" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:text="TEST" -->
+<!--             android:textSize="30sp" /> -->
 
         <EditText
             android:id="@+id/entry_title"
@@ -42,9 +62,9 @@
             android:layout_height="50dp"
             android:ems="10"
             android:gravity="bottom|left"
-            android:paddingLeft="15dp"
             android:hint="@string/locationPlaceholder"
-            android:inputType="textPostalAddress" />
+            android:inputType="textPostalAddress"
+            android:paddingLeft="15dp" />
 
         <EditText
             android:id="@+id/entry_entry"

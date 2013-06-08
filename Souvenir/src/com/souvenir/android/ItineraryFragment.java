@@ -39,267 +39,316 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ItineraryFragment extends ParentFragment 
+public class ItineraryFragment extends ParentFragment
 {
-	private ArrayList<String> tripsList;
-	private ArrayList<ArrayList<String>> tripPlansList;
-	private boolean refresh = true;
-	
-	private final int ITINERARY_REQUEST = 1714;
+  private ArrayList<String> tripsList;
+  private ArrayList<ArrayList<String>> tripPlansList;
+  private boolean refresh = true;
 
-	 @Override
-	 public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-	 View v = inflater.inflate(R.layout.fragment_itinerary, null);
-	 setHasOptionsMenu(true);
-	 
-	 /*if(getArguments().containsKey("REFRESH")) {
-		 refresh = getArguments().getBoolean("REFRESH");
-	 }*/
-	 
-	 getItinerary(refresh);
-	 
-	 /*if (mEvernoteSession.isLoggedIn())
-     {
-		 //Toast.makeText(getActivity().getApplicationContext(), "Logged IN, Itinerary refresh", Toast.LENGTH_SHORT).show();
-		 getItinerary(refresh);
-     }
-	 else {
-		 //Toast.makeText(getActivity().getApplicationContext(), "Logged OUT, Itinerary refresh", Toast.LENGTH_SHORT).show();
-		 
-	 }*/
-	 
-	 return v;
-	 }
-	 
+  private final int ITINERARY_REQUEST = 1714;
 
-	private void getItinerary(boolean refresh) {
-		//checks if itinerary needs to be refreshed
-		if(!refresh){
-			return;
-		}
-		tripsList = new ArrayList<String>();
-		tripPlansList = new ArrayList<ArrayList<String>>();
-		
-		//set refresh to false
-		//refresh = false;
-		int pageSize = 1;
-		 
-		NoteFilter filter = new NoteFilter();
-		filter.setWords("tag:app_itinerary");
-		 
-		NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
-		spec.setIncludeTitle(true);
-		 
-		try {
-			mEvernoteSession.getClientFactory().createNoteStoreClient()
-				.findNotesMetadata(filter, 0, pageSize, spec, new OnClientCallback<NotesMetadataList>() {
-				@Override
-				public void onSuccess(NotesMetadataList notes) {
-					
-					NoteMetadata itineraryNote = notes.getNotes().get(0);
-					getItineraryData(itineraryNote);
-				}
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState)
+  {
+    View v = inflater.inflate(R.layout.fragment_itinerary, null);
+    setHasOptionsMenu(true);
 
-				@Override
-				public void onException(Exception exception) {
-				}
-							});
-		} catch (TTransportException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void getItineraryData(NoteMetadata note)
-	{
-		String guid = note.getGuid();
-		
-		try {
-			mEvernoteSession.getClientFactory().createNoteStoreClient()
-			  .getNoteContent(guid, new OnClientCallback<String>()
-			  {
+    /*
+     * if(getArguments().containsKey("REFRESH")) { refresh =
+     * getArguments().getBoolean("REFRESH"); }
+     */
+    if (mEvernoteSession.isLoggedIn())
+      getItinerary(refresh);
 
-				@Override
-				public void onSuccess(String data) {
-					String content = android.text.Html.fromHtml(data).toString();
+    /*
+     * if (mEvernoteSession.isLoggedIn()) {
+     * //Toast.makeText(getActivity().getApplicationContext(),
+     * "Logged IN, Itinerary refresh", Toast.LENGTH_SHORT).show();
+     * getItinerary(refresh); } else {
+     * //Toast.makeText(getActivity().getApplicationContext(),
+     * "Logged OUT, Itinerary refresh", Toast.LENGTH_SHORT).show();
+     * 
+     * }
+     */
 
-					System.out.println("Content: " + content);
-					String[] trips = content.split("\n");
-					int j = 0;
-					for(int i = 0; i < trips.length;i++) {
-						String trip = trips[i];
-						if(trip.length() == 0){
-							continue;
-						}
-						//add new trip to list
-						tripsList.add(trip.split(":")[0]);
-						//add new list of plans for trip
-						tripPlansList.add(new ArrayList<String>());
-						
-						String[] plans = (trip.split(":")[1]).split(",");
-						//Toast.makeText(getActivity().getApplicationContext(), "Trip:" + tripsList, Toast.LENGTH_LONG).show();
-						for(String plan : plans) {
-							//add trip plan to list
-							(tripPlansList.get(j)).add(plan);
-						}
+    return v;
+  }
 
-						j++;
-					}
-					
+  private void getItinerary(boolean refresh)
+  {
+    // checks if itinerary needs to be refreshed
+    if (!refresh)
+    {
+      return;
+    }
+    tripsList = new ArrayList<String>();
+    tripPlansList = new ArrayList<ArrayList<String>>();
 
-					 ExpandableListView elv = (ExpandableListView) getActivity().findViewById(R.id.itinerary_list);
-					 elv.setAdapter(new ItineraryTripsListAdapter());
-				}
+    // set refresh to false
+    // refresh = false;
+    int pageSize = 1;
 
-				@Override
-				public void onException(Exception exception) {
-					exception.printStackTrace();
-					
-				}
-			  });
-		} catch (TTransportException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	 
-	 @Override
-	  public boolean onOptionsItemSelected(MenuItem item)
-	  {
-	    // This uses the imported MenuItem from ActionBarSherlock
-	    //Toast.makeText(this.getActivity(), "Got click: " + item.toString(), Toast.LENGTH_SHORT).show();
-	    switch (item.getItemId())
-	    {
-	    	case R.id.itinerary_menu_add:
-		    	System.out.println("Add to Itinerary button pressed");
-		    	Toast.makeText(getActivity().getApplicationContext(), "Add to Itinerary button pressed", Toast.LENGTH_SHORT).show();
-				break;
-				
-	    	case R.id.itinerary_menu_search:
-	    		System.out.println("Searach to Itinerary button pressed");
-		    	Toast.makeText(getActivity().getApplicationContext(), "Search Itinerary button pressed", Toast.LENGTH_SHORT).show();
-				break;
-	    }
-	    return true;
-	  }
-	 
-	 public class ItineraryTripsListAdapter extends BaseExpandableListAdapter {
-	 
-	 @Override
-	 public int getGroupCount() {
-	 return tripsList.size();
-	 }
-	  
-	 @Override
-	 public int getChildrenCount(int i) {
-	 return (tripPlansList.get(i)).size();
-	 }
-	  
-	 @Override
-	 public Object getGroup(int i) {
-	 return tripsList.get(i);
-	 }
-	  
-	 @Override
-	 public Object getChild(int i, int i1) {
-	 return (tripPlansList.get(i)).get(i1);
-	 }
-	  
-	 @Override
-	 public long getGroupId(int i) {
-	 return i;
-	 }
-	  
-	 @Override
-	 public long getChildId(int i, int i1) { 	
-	 return i1;
-	 }
-	  
-	 @Override
-	 public boolean hasStableIds() {
-	 return true;
-	 }
-	  
-	 @Override
-	 public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-	 TextView textView = new TextView(ItineraryFragment.this.getActivity());
-	 textView.setTextSize(30);
-	 //System.out.println("Trip(group):" + getGroup(i).toString());
-	 textView.setText("    " + getGroup(i).toString());
-	 return textView;
-	 }
-	  
-	 @Override
-	 public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
-	 final TextView textView = new TextView(ItineraryFragment.this.getActivity());
-	 textView.setTextSize(30);
-	 //System.out.println("Trip Plan(child):" + getGroup(i).toString());
-	 textView.setText(getChild(i, i1).toString());
-	 
-	 textView.setOnClickListener(new OnClickListener(){
-		 @Override
-			public void onClick(View v) {
-				
-				// Show Place Finder Fragment
-				//Toast.makeText(getActivity(), "Location Field clicked",Toast.LENGTH_SHORT).show();
-				startActivityForResult(new Intent(getActivity(),
-						NoteActivity.class).putExtra("ITINERARY_SELECT", textView.getText().toString()), ITINERARY_REQUEST);
-			}
-	 });
-	 
-	 return textView;
-	 }
-	  
-	 @Override
-	 public boolean isChildSelectable(int i, int i1) {
-	 return true;
-	 }
-	  
-	 }
-	 
-	 /**
-		 * Called when the control returns from an activity that we launched.
-		 */
-		@Override
-		public void onActivityResult(int requestCode, int resultCode, Intent data) {
-			super.onActivityResult(requestCode, resultCode, data);
-			switch (requestCode) {
-			// Grab image data when picker returns result
-			case ITINERARY_REQUEST:
-				if (resultCode == Activity.RESULT_OK) {
-					if(data != null){
-						Toast.makeText(getActivity().getApplicationContext(), data.toString(), Toast.LENGTH_LONG).show();
-					}
-				}
-				break;
-			}
-		}
-	
-		private void removeItineraryItem(int i, int i1)
-		{
-			//remove itinerary item if we want this feature.
-		}
+    NoteFilter filter = new NoteFilter();
+    filter.setWords("tag:app_itinerary");
 
-		
-	/**
-	   * Called when the user taps the "Log in to Evernote" button. Initiates the
-	   * Evernote OAuth process, or logs out if the user is already logged in.
-	   */
-	  public void startAuth(View view)
-	  {
-	    if (mEvernoteSession.isLoggedIn())
-	    {
-	      try
-	      {
-	        mEvernoteSession.logOut(this.getActivity().getApplicationContext());
-	      } catch (InvalidAuthenticationException e)
-	      {
-	        e.printStackTrace();
-	      }
-	    }
-	    else
-	    {
-	      mEvernoteSession.authenticate(this.getActivity());
-	    }
-	    getItinerary(true);
-	  }
+    NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
+    spec.setIncludeTitle(true);
+
+    try
+    {
+
+      mEvernoteSession
+          .getClientFactory()
+          .createNoteStoreClient()
+          .findNotesMetadata(filter, 0, pageSize, spec,
+              new OnClientCallback<NotesMetadataList>()
+              {
+                @Override
+                public void onSuccess(NotesMetadataList notes)
+                {
+
+                  NoteMetadata itineraryNote = notes.getNotes().get(0);
+                  getItineraryData(itineraryNote);
+                }
+
+                @Override
+                public void onException(Exception exception)
+                {
+                }
+              });
+    }
+    catch (TTransportException e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+  private void getItineraryData(NoteMetadata note)
+  {
+    String guid = note.getGuid();
+
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .getNoteContent(guid, new OnClientCallback<String>()
+          {
+
+            @Override
+            public void onSuccess(String data)
+            {
+              String content = android.text.Html.fromHtml(data).toString();
+
+              System.out.println("Content: " + content);
+              String[] trips = content.split("\n");
+              int j = 0;
+              for (int i = 0; i < trips.length; i++)
+              {
+                String trip = trips[i];
+                if (trip.length() == 0)
+                {
+                  continue;
+                }
+                // add new trip to list
+                tripsList.add(trip.split(":")[0]);
+                // add new list of plans for trip
+                tripPlansList.add(new ArrayList<String>());
+
+                String[] plans = (trip.split(":")[1]).split(",");
+                // Toast.makeText(getActivity().getApplicationContext(), "Trip:"
+                // + tripsList, Toast.LENGTH_LONG).show();
+                for (String plan : plans)
+                {
+                  // add trip plan to list
+                  (tripPlansList.get(j)).add(plan);
+                }
+
+                j++;
+              }
+
+              ExpandableListView elv = (ExpandableListView) getActivity()
+                  .findViewById(R.id.itinerary_list);
+              elv.setAdapter(new ItineraryTripsListAdapter());
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+              exception.printStackTrace();
+
+            }
+          });
+    }
+    catch (TTransportException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    // This uses the imported MenuItem from ActionBarSherlock
+    // Toast.makeText(this.getActivity(), "Got click: " + item.toString(),
+    // Toast.LENGTH_SHORT).show();
+    switch (item.getItemId())
+    {
+    case R.id.itinerary_menu_add:
+      System.out.println("Add to Itinerary button pressed");
+      Toast.makeText(getActivity().getApplicationContext(),
+          "Add to Itinerary button pressed", Toast.LENGTH_SHORT).show();
+      break;
+
+    case R.id.itinerary_menu_search:
+      System.out.println("Searach to Itinerary button pressed");
+      Toast.makeText(getActivity().getApplicationContext(),
+          "Search Itinerary button pressed", Toast.LENGTH_SHORT).show();
+      break;
+    }
+    return true;
+  }
+
+  public class ItineraryTripsListAdapter extends BaseExpandableListAdapter
+  {
+
+    @Override
+    public int getGroupCount()
+    {
+      return tripsList.size();
+    }
+
+    @Override
+    public int getChildrenCount(int i)
+    {
+      return (tripPlansList.get(i)).size();
+    }
+
+    @Override
+    public Object getGroup(int i)
+    {
+      return tripsList.get(i);
+    }
+
+    @Override
+    public Object getChild(int i, int i1)
+    {
+      return (tripPlansList.get(i)).get(i1);
+    }
+
+    @Override
+    public long getGroupId(int i)
+    {
+      return i;
+    }
+
+    @Override
+    public long getChildId(int i, int i1)
+    {
+      return i1;
+    }
+
+    @Override
+    public boolean hasStableIds()
+    {
+      return true;
+    }
+
+    @Override
+    public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup)
+    {
+      TextView textView = new TextView(ItineraryFragment.this.getActivity());
+      textView.setTextSize(30);
+      // System.out.println("Trip(group):" + getGroup(i).toString());
+      textView.setText("    " + getGroup(i).toString());
+      return textView;
+    }
+
+    @Override
+    public View getChildView(int i, int i1, boolean b, View view,
+        ViewGroup viewGroup)
+    {
+      final TextView textView = new TextView(
+          ItineraryFragment.this.getActivity());
+      textView.setTextSize(30);
+      // System.out.println("Trip Plan(child):" + getGroup(i).toString());
+      textView.setText(getChild(i, i1).toString());
+
+      textView.setOnClickListener(new OnClickListener()
+      {
+        @Override
+        public void onClick(View v)
+        {
+
+          // Show Place Finder Fragment
+          // Toast.makeText(getActivity(),
+          // "Location Field clicked",Toast.LENGTH_SHORT).show();
+          startActivityForResult(new Intent(getActivity(), NoteActivity.class)
+              .putExtra("ITINERARY_SELECT", textView.getText().toString()),
+              ITINERARY_REQUEST);
+        }
+      });
+
+      return textView;
+    }
+
+    @Override
+    public boolean isChildSelectable(int i, int i1)
+    {
+      return true;
+    }
+
+  }
+
+  /**
+   * Called when the control returns from an activity that we launched.
+   */
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
+    super.onActivityResult(requestCode, resultCode, data);
+    switch (requestCode)
+    {
+    // Grab image data when picker returns result
+    case ITINERARY_REQUEST:
+      if (resultCode == Activity.RESULT_OK)
+      {
+        if (data != null)
+        {
+          Toast.makeText(getActivity().getApplicationContext(),
+              data.toString(), Toast.LENGTH_LONG).show();
+        }
+      }
+      break;
+    }
+  }
+
+  private void removeItineraryItem(int i, int i1)
+  {
+    // remove itinerary item if we want this feature.
+  }
+
+  /**
+   * Called when the user taps the "Log in to Evernote" button. Initiates the
+   * Evernote OAuth process, or logs out if the user is already logged in.
+   */
+  public void startAuth(View view)
+  {
+    if (mEvernoteSession.isLoggedIn())
+    {
+      try
+      {
+        mEvernoteSession.logOut(this.getActivity().getApplicationContext());
+      }
+      catch (InvalidAuthenticationException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    else
+    {
+      mEvernoteSession.authenticate(this.getActivity());
+    }
+    getItinerary(true);
+  }
 }
