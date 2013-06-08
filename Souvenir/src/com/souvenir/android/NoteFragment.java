@@ -121,6 +121,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	// Note fields
 	EditText mTitle;
 	TextView mLocation;
+	TextView mTrophy;
 	EditText mEntry;
 
 	private ImageData mImageData;
@@ -816,18 +817,47 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	public static class TrophyDialogFragment extends DialogFragment {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-		    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			/*AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			Context mContext = getActivity().getApplicationContext();
+			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View view = inflater.inflate(R.layout.dialog_trophy, null);
+
+			final TextView mTrophy = (TextView) view.findViewById(R.id.trophyText);
+
+			builder = new AlertDialog.Builder(mContext);
+			builder.setView(view).setPositiveButton("Give Trophy", new DialogInterface.OnClickListener() {
+	               @Override
+	               public void onClick(DialogInterface dialog, int id) {
+	            	   Toast.makeText(getActivity().getApplicationContext(), 
+	            			   "Trophy created: " + mTrophy.getText().toString(), Toast.LENGTH_SHORT).show();
+	            	   
+	               }
+	           })
+	           .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+	               public void onClick(DialogInterface dialog, int id) {
+	                   Toast.makeText(getActivity().getApplicationContext(), "Trophy cancelled", Toast.LENGTH_SHORT).show();
+	               }
+	           });
+			
+			AlertDialog alertDialog = builder.create();
+			return alertDialog;
+			*/
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		    // Get the layout inflater
 		    LayoutInflater inflater = getActivity().getLayoutInflater();
-	
+		    final View view = inflater.inflate(R.layout.dialog_trophy, null);
+		    
 		    // Inflate and set the layout for the dialog
 		    // Pass null as the parent view because its going in the dialog layout
-		    builder.setView(inflater.inflate(R.layout.dialog_trophy, null))
+		    builder.setView(view)
 		    // Add action buttons
 		           .setPositiveButton("Give Trophy", new DialogInterface.OnClickListener() {
 		               @Override
 		               public void onClick(DialogInterface dialog, int id) {
-		            	   Toast.makeText(getActivity().getApplicationContext(), "Trophy created", Toast.LENGTH_SHORT).show();
+		            	   final TextView trophyDialog = (TextView) view.findViewById(R.id.trophyText);
+		            	   Toast.makeText(getActivity().getApplicationContext(), 
+		            			   "Trophy created: " + trophyDialog.getText().toString(), Toast.LENGTH_SHORT).show();
+		            	   
 		            	   
 		               }
 		           })
@@ -837,6 +867,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		               }
 		           });      
 		    return builder.create();
+		    
 		}
 	}
 	
