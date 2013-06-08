@@ -11,6 +11,17 @@
     android:background="@android:color/darker_gray"
     android:orientation="vertical" >
 
+	    <!-- <HorizontalScrollView
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	        <LinearLayout
+	            android:id="@+id/note_image_gallery"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal"
+	            />
+	    </HorizontalScrollView>
+	    -->
 	    <ImageView
 	        android:id="@+id/note_image"
 	        android:layout_width="fill_parent"
@@ -18,7 +29,6 @@
 	        android:background="@android:color/darker_gray"
 	        android:contentDescription="@string/img_desc"
 	        android:scaleType="centerInside" />
-	
 	    <EditText
 	        android:id="@+id/note_title"
 	        android:layout_width="match_parent"
@@ -42,6 +52,10 @@
 	        android:inputType="textPostalAddress"
 	        android:textColor="@android:color/primary_text_dark" />
 	
+	    <TextView
+	        android:id="@+id/note_trophy"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" />
 	    <EditText
 	        android:id="@+id/note_entry"
 	        android:layout_width="match_parent"

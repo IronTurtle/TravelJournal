@@ -105,7 +105,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	private boolean selectedPlace = false;
 	
 	Button btnTakePhoto;
-	final String TAG = "MyCamera";
+	private static final String CAMERA_TAG = "CAMERA";
+	private static final String GPS_TAG = "GPS";
+	private static final String TROPHY_TAG = "TROPHY";
 
 	// The path to and MIME type of the currently selected image from the
 	// gallery
@@ -176,11 +178,16 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	private String getDateTime()
 	{
 		Calendar cal = Calendar.getInstance();
-		return cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR)
-				+ ", " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE);
+		return String.valueOf(cal.get(Calendar.MONTH)) + "/" 
+				+ String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + "/" 
+				+ String.valueOf(cal.get(Calendar.YEAR)) + ", " 
+				+ String.valueOf(cal.get(Calendar.HOUR_OF_DAY)) + ":" 
+				+ String.valueOf(cal.get(Calendar.MINUTE));
 	}
 	
 	private void openCamera() {
+		//Using MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA allows you 
+		//to take multiple pics b4 exiting the camera intent
 		Intent cameraIntent = new Intent(
 				android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 		ContentValues values = new ContentValues();
@@ -261,6 +268,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		    case R.id.create_note_menu_trophy:
 		  		//startActivity(new Intent(this, EntryActivity.class));
 		    	Toast.makeText(getActivity(), "Trophy Button clicked",Toast.LENGTH_SHORT).show();
+		    	TrophyDialogFragment trophy = new TrophyDialogFragment();
+		    	trophy.show(getFragmentManager(), "TROPHY");
 		  		break;
 	    }
 	    return true;
@@ -438,6 +447,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		if(selectedPlace) {
 			attr.setPlaceName(location);
 		}
+		
+		attr.setSourceApplication("Souvenir App (Android)");
+		
 		note.setAttributes(attr);
 		
 		//System.out.println(note.getAttributes().getApplicationData().toString());
@@ -612,7 +624,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.e(TAG, "Error retrieving image");
+				Log.e(CAMERA_TAG, "Error retrieving image");
 			} finally {
 				if (cursor != null) {
 					cursor.close();
@@ -764,7 +776,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 					Toast.LENGTH_SHORT).show();
 			//create popup to ask if user wants to turn on GPS. If so, remind them to press back to go back to App.
 			GPSDialogFragment d = new GPSDialogFragment();
-			d.show(getFragmentManager(), "GPS");
+			d.show(getFragmentManager(), GPS_TAG);
 		}
 
 		@Override
@@ -801,8 +813,32 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	    }
 
 	}
+	public static class TrophyDialogFragment extends DialogFragment {
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+		    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		    // Get the layout inflater
+		    LayoutInflater inflater = getActivity().getLayoutInflater();
 	
-	
+		    // Inflate and set the layout for the dialog
+		    // Pass null as the parent view because its going in the dialog layout
+		    builder.setView(inflater.inflate(R.layout.dialog_trophy, null))
+		    // Add action buttons
+		           .setPositiveButton("Give Trophy", new DialogInterface.OnClickListener() {
+		               @Override
+		               public void onClick(DialogInterface dialog, int id) {
+		            	   Toast.makeText(getActivity().getApplicationContext(), "Trophy created", Toast.LENGTH_SHORT).show();
+		            	   
+		               }
+		           })
+		           .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+		               public void onClick(DialogInterface dialog, int id) {
+		                   Toast.makeText(getActivity().getApplicationContext(), "Trophy cancelled", Toast.LENGTH_SHORT).show();
+		               }
+		           });      
+		    return builder.create();
+		}
+	}
 	
 	@Override
 	public void onClick(View v) {
