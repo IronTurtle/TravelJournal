@@ -22,6 +22,7 @@
 	            android:orientation="horizontal"
 	            />
 	    </HorizontalScrollView>
+<<<<<<< HEAD
         -->
 
 <!--         <ImageView -->
@@ -75,4 +76,51 @@
             android:inputType="textMultiLine" />
     </LinearLayout>
 
+=======
+	    -->
+	    <ImageView
+	        android:id="@+id/note_image"
+	        android:layout_width="fill_parent"
+	        android:layout_height="250dp"
+	        android:background="@android:color/darker_gray"
+	        android:contentDescription="@string/img_desc"
+	        android:scaleType="centerInside" />
+	    <EditText
+	        android:id="@+id/note_title"
+	        android:layout_width="match_parent"
+	        android:layout_height="50dp"
+	        android:drawableTop="@color/primaryOrange"
+	        android:ems="10"
+	        android:gravity="bottom|left"
+	        android:hint="@string/titlePlaceholder"
+	        android:inputType="text"
+	        android:scrollHorizontally="true"
+	        android:paddingLeft="15dp" />
+	
+	    <TextView
+	        android:id="@+id/note_location"
+	        android:layout_width="match_parent"
+	        android:layout_height="50dp"
+	        android:ems="10"
+	        android:gravity="bottom|left"
+	        android:paddingLeft="15dp"
+	        android:hint="@string/locationPlaceholder"
+	        android:inputType="textPostalAddress"
+	        android:textColor="@android:color/primary_text_dark" />
+	
+	    <TextView
+	        android:id="@+id/note_trophy"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" />
+	    
+	    <EditText
+	        android:id="@+id/note_entry"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="top|left"
+	        android:hint="@string/entryPlaceholder"
+	        android:inputType="textMultiLine" />
+	
+	</LinearLayout>
+>>>>>>> 259dd1b269691ac1c312e485c4846be16830c7b0
 </ScrollView>
