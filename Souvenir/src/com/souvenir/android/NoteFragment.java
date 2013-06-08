@@ -89,6 +89,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
 
   ViewPager pager;
   ArrayList<String> urls = new ArrayList<String>();
+  ArrayList<ImageData> images = new ArrayList<ImageData>();
 
   Uri mImageUri;
 
@@ -104,7 +105,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
   private Button mBtnSelect;
   @SuppressWarnings("unused")
   private EditText mTextArea;
-  private ImageView mImageView;
+//  private ImageView mImageView;
 
   // location var
   int radiusRanges[] = { 50, 100, 150, 200 };
@@ -142,7 +143,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
   {
     View view = inflater.inflate(R.layout.fragment_note, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
-    mImageView = (ImageView) view.findViewById(R.id.note_image);
+//    mImageView = (ImageView) view.findViewById(R.id.note_image);
     mTitle = (EditText) view.findViewById(R.id.note_title);
     mLocation = (TextView) view.findViewById(R.id.note_location);
     mEntry = (EditText) view.findViewById(R.id.note_entry);
@@ -450,34 +451,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
    */
   public void saveNote(View view)
   {
-    Resource resource = new Resource();
 
-    ImageData imageData = mImageData;
-    String f = imageData.filePath;
-    InputStream in;
-    try
-    {
-      in = new BufferedInputStream(new FileInputStream(f));
-
-      FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
-      in.close();
-
-      resource.setData(data);
-      resource.setMime(imageData.mimeType);
-      ResourceAttributes attributes = new ResourceAttributes();
-      attributes.setFileName(imageData.fileName);
-      resource.setAttributes(attributes);
-
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
-
-    /*
-     * Time now = new Time(); now.setToNow(); String title =
-     * now.toString();//mTitle.getText().toString();
-     */
     String content = mEntry.getText().toString();
     String location = mLocation.getText().toString();
 
@@ -504,10 +478,42 @@ public class NoteFragment extends ParentFragment implements OnClickListener
 
     // System.out.println(note.getAttributes().getApplicationData().toString());
 
-    note.addToResources(resource);
+    content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
+    for (ImageData imageData : images)
+    {
 
-    note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>"
-        + EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
+      Resource resource = new Resource();
+
+      // ImageData imageData = mImageData;
+      String f = imageData.filePath;
+      InputStream in;
+      try
+      {
+        in = new BufferedInputStream(new FileInputStream(f));
+
+        FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
+        in.close();
+
+        resource.setData(data);
+        resource.setMime(imageData.mimeType);
+        ResourceAttributes attributes = new ResourceAttributes();
+        attributes.setFileName(imageData.fileName);
+        resource.setAttributes(attributes);
+
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+
+      note.addToResources(resource);
+      content += EvernoteUtil.createEnMediaTag(resource);
+    }
+    note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
+    /*
+     * Time now = new Time(); now.setToNow(); String title =
+     * now.toString();//mTitle.getText().toString();
+     */
 
     try
     {
@@ -570,7 +576,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
 
   public void clearForm(View view)
   {
-    mImageView.setImageResource(android.R.color.transparent);
+//    mImageView.setImageResource(android.R.color.transparent);
     mTitle.setText("");
     mLocation.setText("");
     mEntry.setText("");
@@ -763,7 +769,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
       System.out.println(image.filePath);
       urls.add("file://" + image.filePath);
       pager.getAdapter().notifyDataSetChanged();
-
+      images.add(image);
       if (mEvernoteSession.isLoggedIn())
       {
         // mBtnSave.setEnabled(true);
@@ -913,36 +919,47 @@ public class NoteFragment extends ParentFragment implements OnClickListener
 
   }
 
-  public static class TrophyDialogFragment extends DialogFragment {
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		    // Get the layout inflater
-		    LayoutInflater inflater = getActivity().getLayoutInflater();
-		    final View view = inflater.inflate(R.layout.dialog_trophy, null);
-		    
-		    // Inflate and set the layout for the dialog
-		    // Pass null as the parent view because its going in the dialog layout
-		    builder.setView(view)
-		    // Add action buttons
-		           .setPositiveButton("Give Trophy", new DialogInterface.OnClickListener() {
-		               @Override
-		               public void onClick(DialogInterface dialog, int id) {
-		            	   final TextView trophyDialog = (TextView) view.findViewById(R.id.trophyText);
-		            	   Toast.makeText(getActivity().getApplicationContext(), 
-		            			   "Trophy created: " + trophyDialog.getText().toString(), Toast.LENGTH_SHORT).show();
-		            	   
-		            	   
-		               }
-		           })
-		           .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-		               public void onClick(DialogInterface dialog, int id) {
-		                   Toast.makeText(getActivity().getApplicationContext(), "Trophy cancelled", Toast.LENGTH_SHORT).show();
-		               }
-		           });      
-		    return builder.create();
-		    
-		}
+  public static class TrophyDialogFragment extends DialogFragment
+  {
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+      // Get the layout inflater
+      LayoutInflater inflater = getActivity().getLayoutInflater();
+      final View view = inflater.inflate(R.layout.dialog_trophy, null);
+
+      // Inflate and set the layout for the dialog
+      // Pass null as the parent view because its going in the dialog layout
+      builder
+          .setView(view)
+          // Add action buttons
+          .setPositiveButton("Give Trophy",
+              new DialogInterface.OnClickListener()
+              {
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                  final TextView trophyDialog = (TextView) view
+                      .findViewById(R.id.trophyText);
+                  Toast.makeText(getActivity().getApplicationContext(),
+                      "Trophy created: " + trophyDialog.getText().toString(),
+                      Toast.LENGTH_SHORT).show();
+
+                }
+              })
+          .setNegativeButton(R.string.cancel,
+              new DialogInterface.OnClickListener()
+              {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                  Toast.makeText(getActivity().getApplicationContext(),
+                      "Trophy cancelled", Toast.LENGTH_SHORT).show();
+                }
+              });
+      return builder.create();
+
+    }
   }
 
   @Override
@@ -950,7 +967,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener
   {
 
   }
-  
 
   private class ClothingPagerAdapter extends
       android.support.v4.view.PagerAdapter
@@ -1062,5 +1078,5 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     {
     }
   }
-  
+
 }
