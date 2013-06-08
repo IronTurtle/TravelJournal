@@ -176,8 +176,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	private String getDateTime()
 	{
 		Calendar cal = Calendar.getInstance();
-		return cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR)
-				+ ", " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE);
+		return String.valueOf(cal.get(Calendar.MONTH)) + "/" 
+				+ String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + "/" 
+				+ String.valueOf(cal.get(Calendar.YEAR)) + ", " 
+				+ String.valueOf(cal.get(Calendar.HOUR_OF_DAY)) + ":" 
+				+ String.valueOf(cal.get(Calendar.MINUTE));
 	}
 	
 	private void openCamera() {
@@ -438,6 +441,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 		if(selectedPlace) {
 			attr.setPlaceName(location);
 		}
+		
+		attr.setSourceApplication("Souvenir App (Android)");
+		
 		note.setAttributes(attr);
 		
 		//System.out.println(note.getAttributes().getApplicationData().toString());
