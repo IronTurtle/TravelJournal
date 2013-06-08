@@ -817,31 +817,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener {
 	public static class TrophyDialogFragment extends DialogFragment {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			/*AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			Context mContext = getActivity().getApplicationContext();
-			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View view = inflater.inflate(R.layout.dialog_trophy, null);
-
-			final TextView mTrophy = (TextView) view.findViewById(R.id.trophyText);
-
-			builder = new AlertDialog.Builder(mContext);
-			builder.setView(view).setPositiveButton("Give Trophy", new DialogInterface.OnClickListener() {
-	               @Override
-	               public void onClick(DialogInterface dialog, int id) {
-	            	   Toast.makeText(getActivity().getApplicationContext(), 
-	            			   "Trophy created: " + mTrophy.getText().toString(), Toast.LENGTH_SHORT).show();
-	            	   
-	               }
-	           })
-	           .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-	               public void onClick(DialogInterface dialog, int id) {
-	                   Toast.makeText(getActivity().getApplicationContext(), "Trophy cancelled", Toast.LENGTH_SHORT).show();
-	               }
-	           });
-			
-			AlertDialog alertDialog = builder.create();
-			return alertDialog;
-			*/
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		    // Get the layout inflater
 		    LayoutInflater inflater = getActivity().getLayoutInflater();
