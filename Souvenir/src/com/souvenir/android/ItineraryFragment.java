@@ -43,7 +43,7 @@ public class ItineraryFragment extends ParentFragment
 {
 	private ArrayList<String> tripsList;
 	private ArrayList<ArrayList<String>> tripPlansList;
-	private boolean refresh = true;
+	private boolean refresh = false;
 	
 	private final int ITINERARY_REQUEST = 1714;
 
@@ -52,21 +52,22 @@ public class ItineraryFragment extends ParentFragment
 	 View v = inflater.inflate(R.layout.fragment_itinerary, null);
 	 setHasOptionsMenu(true);
 	 
-	 /*if(getArguments().containsKey("REFRESH")) {
+	 if(getArguments() != null && getArguments().containsKey("REFRESH")) {
 		 refresh = getArguments().getBoolean("REFRESH");
-	 }*/
+	 }
 	 
-	 getItinerary(refresh);
 	 
-	 /*if (mEvernoteSession.isLoggedIn())
+	 
+	 if (mEvernoteSession.isLoggedIn())
      {
+		 refresh = true;
 		 //Toast.makeText(getActivity().getApplicationContext(), "Logged IN, Itinerary refresh", Toast.LENGTH_SHORT).show();
 		 getItinerary(refresh);
      }
 	 else {
 		 //Toast.makeText(getActivity().getApplicationContext(), "Logged OUT, Itinerary refresh", Toast.LENGTH_SHORT).show();
 		 
-	 }*/
+	 }
 	 
 	 return v;
 	 }
