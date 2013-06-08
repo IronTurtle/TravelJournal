@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="200dp"
-    android:background="@android:color/holo_purple"
+    android:layout_height="300dp"
     android:orientation="vertical"
  >
 
@@ -12,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:background="@android:color/white"
-        android:maxHeight="200dp"
+        android:maxHeight="300dp"
         android:scaleType="centerCrop" />
 
     <ProgressBar
@@ -24,4 +22,4 @@
         android:background="@android:color/white"
         android:visibility="gone" />
 
-</LinearLayout>
+</RelativeLayout>

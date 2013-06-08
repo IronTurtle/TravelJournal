@@ -26,11 +26,16 @@
 package com.souvenir.android;
 
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.evernote.client.android.EvernoteSession;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 /**
  * This is the parent activity that all sample activities extend from. This
@@ -58,7 +63,8 @@ public class ParentFragment extends SherlockFragment
   // once your code is complete, or HOST_CHINA to use the Yinxiang Biji
   // (Evernote China) production service.
   private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
-
+  protected ImageLoader imageLoader = ImageLoader.getInstance();
+  protected DisplayImageOptions options;
   /**
    * ************************************************************************
    * The following values are simply part of the demo application. *
@@ -71,18 +77,24 @@ public class ParentFragment extends SherlockFragment
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    getActivity().setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    getActivity().setRequestedOrientation(
+        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
     // Set up the Evernote Singleton Session
     mEvernoteSession = EvernoteSession.getInstance(this.getActivity(),
         CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
+    options = new DisplayImageOptions.Builder().resetViewBeforeLoading()
+        .cacheOnDisc().imageScaleType(ImageScaleType.EXACTLY)
+        .bitmapConfig(Bitmap.Config.RGB_565)
+        .displayer(new FadeInBitmapDisplayer(300))
+        .imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
+
   }
 
-public void onClick(View v) {
-	// TODO Auto-generated method stub
-	
-}
+  public void onClick(View v)
+  {
+    // TODO Auto-generated method stub
 
-	
+  }
 
 }
