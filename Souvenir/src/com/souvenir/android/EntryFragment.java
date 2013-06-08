@@ -50,6 +50,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
 {
 
   ViewPager pager;
+  ArrayList<String> urls = new ArrayList<String>();
 
   // The path to and MIME type of the currently selected image from the
   // gallery
@@ -93,19 +94,18 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
     options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()
         .showStubImage(R.drawable.traveljournal).build();
 
-    mTitle.setText("LOREM IPSUM LROSDFSADFSDAFSAFDSDFSDFASFSAFSADF");
-    ArrayList<String> urls = new ArrayList<String>();
-    urls.add("http://www.joshuakennon.com/wp-content/uploads/2010/01/earnings-yield-stock-valuation.jpg");
+    // mTitle.setText("LOREM IPSUM LROSDFSADFSDAFSAFDSDFSDFASFSAFSADF");
+    // urls.add("http://www.joshuakennon.com/wp-content/uploads/2010/01/earnings-yield-stock-valuation.jpg");
     urls.add("http://us.123rf.com/400wm/400/400/forwardcom/forwardcom0710/forwardcom071000126/1877196-parthenon-erechthion-herodion-and-lycabetus-the-main-landmarks-of-athens-greece.jpg");
     pager.setAdapter(new ClothingPagerAdapter(urls));
 
-    // getMetadata();
-    // Bundle bundle = this.getActivity().getIntent().getExtras();
+    getMetadata();
+    Bundle bundle = this.getActivity().getIntent().getExtras();
 
-    // String guid = (String) bundle.get("guid");
-    // note.setGuid(guid);
-    // String title = (String) bundle.get("title");
-    // displayNote(guid, title);
+    String guid = (String) bundle.get("guid");
+    note.setGuid(guid);
+    String title = (String) bundle.get("title");
+    displayNote(guid, title);
 
     return view;
   }
@@ -321,14 +321,21 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
                             {
                               resource = data;
                               System.out.println(data.toString());
-                              imageLoader.displayImage(
-                                  ""
-                                      + mEvernoteSession
-                                          .getAuthenticationResult()
-                                          .getWebApiUrlPrefix() + "res/"
-                                      + data.getGuid() + "?auth="
-                                      + mEvernoteSession.getAuthToken(),
-                                  mImageView, options);
+                              urls.add(""
+                                  + mEvernoteSession.getAuthenticationResult()
+                                      .getWebApiUrlPrefix() + "res/"
+                                  + data.getGuid() + "?auth="
+                                  + mEvernoteSession.getAuthToken());
+                              
+                              pager.getAdapter().notifyDataSetChanged();
+                              // imageLoader.displayImage(
+                              // ""
+                              // + mEvernoteSession
+                              // .getAuthenticationResult()
+                              // .getWebApiUrlPrefix() + "res/"
+                              // + data.getGuid() + "?auth="
+                              // + mEvernoteSession.getAuthToken(),
+                              // mImageView, options);
                               // TODO: may be wrong...
                               // mImageData.imageBitmap =
                               // mImageView.getDrawingCache(false);
