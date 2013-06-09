@@ -25,25 +25,20 @@
  */
 package com.souvenir.android;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import android.widget.ListView;
-import android.view.View.OnClickListener;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,11 +46,15 @@ import android.widget.Toast;
 import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.android.OnClientCallback;
-import com.evernote.edam.type.LazyMap;
+import com.evernote.edam.notestore.NoteFilter;
+import com.evernote.edam.notestore.NoteMetadata;
+import com.evernote.edam.notestore.NotesMetadataList;
+import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.Note;
-import com.evernote.edam.notestore.*;
-import com.evernote.edam.type.*;
+import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.thrift.transport.TTransportException;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * This simple Android app demonstrates how to integrate with the Evernote API
@@ -89,7 +88,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
     View view = inflater.inflate(R.layout.fragment_snippet, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
     mBtnAuth.setOnClickListener(this);
-
     return view;
   }
 
@@ -222,6 +220,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
     Toast.makeText(this.getActivity().getApplicationContext(),
         R.string.success_creating_note, Toast.LENGTH_LONG).show();
+
   }
 
   public void listViewCreate()

@@ -309,7 +309,16 @@ public class ItineraryFragment extends ParentFragment
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode)
     {
-    // Grab image data when picker returns result
+
+    case NEW_ITINERART_ITEM:
+      if (resultCode == Activity.RESULT_OK)
+      {
+        if (data != null)
+        {
+          System.out.println("NEW ITINERARY ITEM: " + data.toString());
+        }
+      }
+      break;
     case ITINERARY_REQUEST:
       if (resultCode == Activity.RESULT_OK)
       {
