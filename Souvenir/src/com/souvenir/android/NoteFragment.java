@@ -41,9 +41,11 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.Time;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -532,9 +534,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
                                   + data.getGuid() + "?auth="
                                   + mEvernoteSession.getAuthToken());
                               ImageData mImageData = new ImageData();
+
                               mImageData.caption = div.attr("title");
                               images.add(mImageData);
                               pager.getAdapter().notifyDataSetChanged();
+                              mCaption.setText(images.get(pager
+                                  .getCurrentItem()).caption);
+
                               // imageLoader.displayImage(
                               // ""
                               // + mEvernoteSession
@@ -1199,6 +1205,30 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     @Override
     protected void onProgressUpdate(Void... values)
     {
+    }
+  }
+
+  public class UninterceptableViewPager extends ViewPager
+  {
+    public UninterceptableViewPager(Context context)
+    {
+      super(context);
+    }
+
+    public UninterceptableViewPager(Context context, AttributeSet attrs)
+    {
+      super(context, attrs);
+    }
+
+    public boolean onInterceptTouchEvent(MotionEvent ev)
+    {
+      // Tell our parent to stop intercepting our events!
+      boolean ret = super.onInterceptTouchEvent(ev);
+      if (ret)
+      {
+        getParent().requestDisallowInterceptTouchEvent(true);
+      }
+      return ret;
     }
   }
 

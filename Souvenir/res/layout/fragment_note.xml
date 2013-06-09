@@ -15,6 +15,7 @@
             android:id="@+id/pager"
             android:layout_width="fill_parent"
             android:layout_height="300dp"
+            class="com.souvenir.android.NoteFragment.UninterceptableViewPager"
             android:background="@android:color/black" />
 
         <EditText
