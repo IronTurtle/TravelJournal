@@ -1,29 +1,18 @@
-/*
- * Copyright 2012 Evernote Corporation
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package com.souvenir.android;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -48,6 +37,9 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -67,31 +59,66 @@ import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
 import com.evernote.client.conn.mobile.FileData;
+import com.evernote.edam.notestore.NoteFilter;
+import com.evernote.edam.notestore.NotesMetadataList;
+import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.LazyMap;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteAttributes;
+import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.thrift.transport.TTransportException;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-
-public class NoteFragment extends ParentFragment implements OnClickListener
+@SuppressWarnings("serial")
+public class NoteFragment extends ParentFragment implements OnClickListener,
+    Serializable
 {
-
+  Boolean oldNote = false;
   ViewPager pager;
   ArrayList<String> urls = new ArrayList<String>();
   ArrayList<ImageData> images = new ArrayList<ImageData>();
 
+  // The path to and MIME type of the currently selected image from the
+  // gallery
+  @SuppressWarnings("unused")
+  private class ImageData
+  {
+    public Bitmap imageBitmap;
+    public String filePath;
+    public String mimeType;
+    public String fileName;
+    protected String caption;
+  }
+
   Uri mImageUri;
+
+  // location var
+  int radiusRanges[] = { 50, 100, 150, 200 };
+  private double longitude;
+  private double latitude;
+  private LocationManager mlocManager;
+  private LocationListener mlocListener;
+  private boolean selectedPlace = false;
+
+  protected ImageLoader imageLoader = ImageLoader.getInstance();
+  private final int FACEBOOK_SHARE = 6135;
+  DisplayImageOptions options;
+
+  // Note fields
+  ImageView mImageView;
+  ImageData mImageData = new ImageData();
+  EditText mTitle;
+  TextView mLocation;
+  EditText mEntry;
+
+  Note note = new Note();
+  Resource resource = new Resource();
+  private EditText mCaption;
 
   // Activity result request codes
   private static final int SELECT_IMAGE = 1;
@@ -107,143 +134,104 @@ public class NoteFragment extends ParentFragment implements OnClickListener
   private EditText mTextArea;
   // private ImageView mImageView;
 
-  // location var
-  int radiusRanges[] = { 50, 100, 150, 200 };
-  private double longitude;
-  private double latitude;
-  private LocationManager mlocManager;
-  private LocationListener mlocListener;
-  private boolean selectedPlace = false;
-
   Button btnTakePhoto;
   private static final String CAMERA_TAG = "CAMERA";
   private static final String GPS_TAG = "GPS";
   private static final String TROPHY_TAG = "TROPHY";
-
-  // The path to and MIME type of the currently selected image from the
-  // gallery
-  private class ImageData
-  {
-    public Bitmap imageBitmap;
-    public String filePath;
-    public String mimeType;
-    public String fileName;
-  }
-
-  // Note fields
-  EditText mTitle;
-  TextView mLocation;
-  EditText mEntry;
-
-  private ImageData mImageData;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState)
   {
     View view = inflater.inflate(R.layout.fragment_note, container, false);
-    mBtnAuth = (Button) view.findViewById(R.id.auth_button);
-    // mImageView = (ImageView) view.findViewById(R.id.note_image);
+    setHasOptionsMenu(true);
+
+    // mImageView = (ImageView) view.findViewById(R.id.entry_image);
     mTitle = (EditText) view.findViewById(R.id.note_title);
     mLocation = (TextView) view.findViewById(R.id.note_location);
     mEntry = (EditText) view.findViewById(R.id.note_entry);
+    mCaption = (EditText) view.findViewById(R.id.image_caption);
+    mCaption.addTextChangedListener(new TextWatcher()
+    {
 
-    mLocation.setOnClickListener(new btnFindPlace());
-    mEntry.setOnKeyListener(new NoteEntryField());
-    /*
-     * if (getLastNonConfigurationInstance() != null) { mImageData = (ImageData)
-     * getLastNonConfigurationInstance();
-     * mImageView.setImageBitmap(mImageData.imageBitmap); }
-     */
+      @Override
+      public void afterTextChanged(Editable s)
+      {
+        images.get(pager.getCurrentItem()).caption = s.toString();
 
-    setHasOptionsMenu(true);
+      }
 
-    // open camera in background
-    CameraOperation c = new CameraOperation();
-    c.execute("");
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count,
+          int after)
+      {
+        // TODO Auto-generated method stub
 
-    // setup locationManager for GPS request
-    mlocManager = (LocationManager) getActivity().getSystemService(
-        Context.LOCATION_SERVICE);
-    mlocListener = new AppLocationListener();
-    mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mlocListener,
-        null);
+      }
 
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count)
+      {
+      }
+
+    });
     pager = (ViewPager) view.findViewById(R.id.pager);
+
     options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()
         .showStubImage(R.drawable.traveljournal).build();
-    urls.add("http://us.123rf.com/400wm/400/400/forwardcom/forwardcom0710/forwardcom071000126/1877196-parthenon-erechthion-herodion-and-lycabetus-the-main-landmarks-of-athens-greece.jpg");
+
+    // mTitle.setText("LOREM IPSUM LROSDFSADFSDAFSAFDSDFSDFASFSAFSADF");
+    // urls.add("http://www.joshuakennon.com/wp-content/uploads/2010/01/earnings-yield-stock-valuation.jpg");
+    // urls.add("http://us.123rf.com/400wm/400/400/forwardcom/forwardcom0710/forwardcom071000126/1877196-parthenon-erechthion-herodion-and-lycabetus-the-main-landmarks-of-athens-greece.jpg");
     pager.setAdapter(new ClothingPagerAdapter(urls));
-    // set title automatically
-    setDefaultTitle();
-    // set focus on entry field and show soft keyboard
+    pager.setOnPageChangeListener(new OnPageChangeListener()
+    {
+
+      @Override
+      public void onPageSelected(int arg0)
+      {
+        mCaption.setText(images.get(arg0).caption);
+      }
+
+      @Override
+      public void onPageScrolled(int arg0, float arg1, int arg2)
+      {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void onPageScrollStateChanged(int arg0)
+      {
+        // TODO Auto-generated method stub
+
+      }
+    });
+
+    getMetadata();
+    Bundle bundle = this.getActivity().getIntent().getExtras();
+    if (bundle != null)
+    {
+      oldNote = true;
+      String guid = (String) bundle.get("guid");
+      note.setGuid(guid);
+      String title = (String) bundle.get("title");
+      displayNote(guid, title);
+    }
+    else
+    {
+      CameraOperation c = new CameraOperation();
+      c.execute("");
+      // setup locationManager for GPS request
+      mlocManager = (LocationManager) getActivity().getSystemService(
+          Context.LOCATION_SERVICE);
+      mlocListener = new AppLocationListener();
+      mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+          mlocListener, null);
+      setDefaultTitle();
+
+    }
     return view;
-  }
-
-  private void setDefaultTitle()
-  {
-    Time now = new Time();
-    now.setToNow();
-    String title = "Photo taken on " + getDateTime();
-    if (getActivity().getIntent().hasExtra("ITINERARY_SELECT"))
-    {
-      mTitle.setText(title + ", at "
-          + getActivity().getIntent().getStringExtra("ITINERARY_SELECT"));
-    }
-    else
-    {
-      mTitle.setText(title);
-    }
-  }
-
-  private String getDateTime()
-  {
-    Calendar cal = Calendar.getInstance();
-    return String.valueOf(cal.get(Calendar.MONTH)) + "/"
-        + String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + "/"
-        + String.valueOf(cal.get(Calendar.YEAR)) + ", "
-        + String.valueOf(cal.get(Calendar.HOUR_OF_DAY)) + ":"
-        + String.valueOf(cal.get(Calendar.MINUTE));
-  }
-
-  private void openCamera()
-  {
-    // Using MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA allows you
-    // to take multiple pics b4 exiting the camera intent
-    Intent cameraIntent = new Intent(
-        android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-    ContentValues values = new ContentValues();
-
-    mImageUri = NoteFragment.this.getActivity().getApplicationContext()
-        .getContentResolver()
-        .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-    if (mImageUri == null)
-    {
-      Log.e("image uri is null", "what?");
-    }
-    else
-    {
-
-      Log.e("oh nevermind", "image uri is NOT null");
-    }
-    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
-    startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
-  }
-
-  /**
-   * Called when the activity is first created.
-   */
-  @Override
-  public void onCreate(Bundle savedInstanceState)
-  {
-    super.onCreate(savedInstanceState);
-    // setContentView(R.layout.main);
-  }
-
-  @Override
-  public void onResume()
-  {
-    super.onResume();
   }
 
   @Override
@@ -299,30 +287,64 @@ public class NoteFragment extends ParentFragment implements OnClickListener
       TrophyDialogFragment trophy = new TrophyDialogFragment();
       trophy.show(getFragmentManager(), "TROPHY");
       break;
+    case R.id.viewedit_note_menu_save:
+      System.out.println("Save pressed");
+      // Toast.makeText(getActivity(), "Save Button clicked",
+      // Toast.LENGTH_SHORT).show();
+      updateNote(this.getView());
+      break;
+    case R.id.viewedit_note_menu_fbshare:
+      System.out.println("FACEBOOK SHARING");
+      /*
+       * getActivity().startActivityForResult(new Intent(getActivity(),
+       * ShareActivity.class), FACEBOOK_SHARE);
+       * 
+       * getActivity().startActivityForResult(new Intent(getActivity(),
+       * ShareActivity.class).putExtra("TITLE", mTitle.getText().toString()),
+       * FACEBOOK_SHARE); getActivity().startActivityForResult(new
+       * Intent(getActivity(), ShareActivity.class).putExtra("LOCATION",
+       * mLocation.getText().toString()), FACEBOOK_SHARE);
+       * getActivity().startActivityForResult(new Intent(getActivity(),
+       * ShareActivity.class).putExtra("ENTRY", mEntry.getText().toString()),
+       * FACEBOOK_SHARE);
+       */
+
+      String[] noteContent = { mTitle.getText().toString(),
+          mLocation.getText().toString(), mEntry.getText().toString() };
+      getActivity().startActivityForResult(
+          new Intent(getActivity(), ShareActivity.class).putExtra("NOTE",
+              noteContent), FACEBOOK_SHARE);
+
+      break;
     }
     return true;
   }
 
-  /*
-   * @Override public Object onRetainNonConfigurationInstance() { return
-   * mImageData; }
-   */
+  class NoteEntryField implements EditText.OnKeyListener
+  {
 
-  /***************************************************************************
-   * The remaining code in this class simply demonstrates the use of the *
-   * Evernote API once authnetication is complete. You don't need any of it * in
-   * your application. *
-   ***************************************************************************/
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event)
+    {
+      // updateUi();
+      return false;
+    }
+  }
 
-  /**
-   * Called when the control returns from an activity that we launched.
-   */
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data)
   {
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode)
     {
+    case FACEBOOK_SHARE:
+      if (resultCode == Activity.RESULT_OK)
+      {
+        ((EntryActivity) getActivity()).finish();
+        getFragmentManager().popBackStack();
+
+      }
+      break;
     // Grab image data when picker returns result
     case SELECT_IMAGE:
       if (resultCode == Activity.RESULT_OK)
@@ -380,72 +402,294 @@ public class NoteFragment extends ParentFragment implements OnClickListener
         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
   }
 
-  /**
-   * Button to capture image for note
-   * 
-   * @author ironsuturtle Sends the user to the camera application to take a
-   *         photo and save
-   */
-  class NoteEntryField implements EditText.OnKeyListener
+  public void getMetadata()
   {
+    int pageSize = 10;
 
-    @Override
-    public boolean onKey(View v, int keyCode, KeyEvent event)
+    NoteFilter filter = new NoteFilter();
+    filter.setOrder(NoteSortOrder.UPDATED.getValue());
+    filter.setWords("-tag:app_itinerary*");
+
+    NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
+    spec.setIncludeTitle(true);
+
+    try
     {
-      // updateUi();
-      return false;
-    }
-  }
-
-  /**
-   * Button to capture image for note
-   * 
-   * @author ironsuturtle Sends the user to the camera application to take a
-   *         photo and save
-   */
-  class btnTakePhotoClicker implements Button.OnClickListener
-  {
-    @Override
-    public void onClick(View v)
-    {
-      Intent cameraIntent = new Intent(
-          android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-      ContentValues values = new ContentValues();
-
-      mImageUri = NoteFragment.this.getActivity().getApplicationContext()
-          .getContentResolver()
-          .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-      if (mImageUri == null)
+      if (mEvernoteSession.isLoggedIn())
       {
-        Log.e("image uri is null", "what?");
-      }
-      else
-      {
+        mEvernoteSession
+            .getClientFactory()
+            .createNoteStoreClient()
+            .findNotesMetadata(filter, 0, pageSize, spec,
+                new OnClientCallback<NotesMetadataList>()
+                {
+                  @Override
+                  public void onSuccess(NotesMetadataList notes)
+                  {
+                    displayNote(notes.getNotes().get(0).getGuid(), notes
+                        .getNotes().get(0).getTitle());
+                  }
 
-        Log.e("oh nevermind", "image uri is NOT null");
+                  @Override
+                  public void onException(Exception exception)
+                  {
+
+                  }
+                });
       }
-      cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
-      startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
     }
-  }
-
-  class btnFindPlace implements Button.OnClickListener
-  {
-    @Override
-    public void onClick(View v)
+    catch (TTransportException e)
     {
 
-      // Show Place Finder Fragment
-      // Toast.makeText(getActivity(),
-      // "Location Field clicked",Toast.LENGTH_SHORT).show();
-      startActivityForResult(
-          new Intent(getActivity(), PlacesActivity.class).putExtra(
-              "PREV_LOC_DATA", mLocation.getText().toString()),
-          LOCATION_REQUEST);
     }
   }
 
-  /**
+  public void displayNote(final String guid, String title)
+  {
+
+    mTitle.setText(title.toUpperCase(Locale.US));
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .getNote(guid, true, true, true, true, new OnClientCallback<Note>()
+          {
+            public void onSuccess(Note note)
+            {
+              String location = note.getAttributes().getPlaceName();
+              if (location == null)
+              {
+                location = String.valueOf((note.getAttributes().getLatitude())
+                    + String.valueOf(note.getAttributes().getLongitude()));
+              }
+
+              mLocation.setText(location);
+              System.out.println("LOCATION: " + location);
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+              exception.printStackTrace();
+            }
+          });
+      // Set location to correct field
+      /*
+       * mEvernoteSession.getClientFactory().createNoteStoreClient()
+       * .getNoteApplicationData(guid, new OnClientCallback<LazyMap>() { public
+       * void onSuccess(LazyMap resources) {
+       * 
+       * System.out.println(resources.getFullMap().values()); String location =
+       * resources.getFullMap().get("LOCATION"); System.out.println("LOCATION: "
+       * + location); mLocation.setText(location); }
+       * 
+       * @Override public void onException(Exception exception) {
+       * exception.printStackTrace(); } });
+       */
+      System.out.println("Getting Note data");
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .getNoteContent(guid, new OnClientCallback<String>()
+          {
+            @Override
+            public void onSuccess(String noteContent)
+            {
+
+              System.out.println("Getting note content...");
+              String contents = noteContent;
+
+              System.out.println("Got note content");
+
+              mEntry.setText(android.text.Html.fromHtml(contents));
+
+              Document doc = Jsoup.parse(contents);
+              System.out.println("contents");
+              System.out.println(contents);
+              Elements divs = doc.getElementsByAttribute("hash");
+              System.out.println("Images");
+              for (final Element div : divs)
+              {
+                System.out.println(div.attr("hash"));
+                System.out.println(div.attr("title"));
+
+                // TODO: may be wrong...
+                mImageData.fileName = div.attr("hash");
+                try
+                {
+                  mEvernoteSession
+                      .getClientFactory()
+                      .createNoteStoreClient()
+                      .getResourceByHash(guid,
+                          EvernoteUtil.hexToBytes(div.attr("hash")), false,
+                          true, false, new OnClientCallback<Resource>()
+                          {
+                            @Override
+                            public void onSuccess(Resource data)
+                            {
+                              resource = data;
+                              System.out.println(data.toString());
+                              urls.add(""
+                                  + mEvernoteSession.getAuthenticationResult()
+                                      .getWebApiUrlPrefix() + "res/"
+                                  + data.getGuid() + "?auth="
+                                  + mEvernoteSession.getAuthToken());
+                              ImageData mImageData = new ImageData();
+                              mImageData.caption = div.attr("title");
+                              images.add(mImageData);
+                              pager.getAdapter().notifyDataSetChanged();
+                              // imageLoader.displayImage(
+                              // ""
+                              // + mEvernoteSession
+                              // .getAuthenticationResult()
+                              // .getWebApiUrlPrefix() + "res/"
+                              // + data.getGuid() + "?auth="
+                              // + mEvernoteSession.getAuthToken(),
+                              // mImageView, options);
+                              // TODO: may be wrong...
+                              // mImageData.imageBitmap =
+                              // mImageView.getDrawingCache(false);
+
+                            }
+
+                            @Override
+                            public void onException(Exception exception)
+                            {
+                              exception.printStackTrace();
+
+                            }
+
+                          });
+                }
+                catch (TTransportException e)
+                {
+                  e.printStackTrace();
+                }
+              }
+
+              // removeDialog(DIALOG_PROGRESS);
+              // Toast.makeText(getApplicationContext(),
+              // R.string.msg_image_saved,
+              // Toast.LENGTH_LONG).show();
+              // notes = data;
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+
+            }
+          });
+    }
+    catch (TTransportException e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+  public void updateNote(View view)
+  {
+    try
+    {
+      note.setTitle(mTitle.getText().toString());
+      System.out.println("Note Title: " + note.getTitle());
+
+      // Trying to add locations to data resources
+      NoteAttributes attr = new NoteAttributes();
+      LazyMap map = new LazyMap();
+
+      map.putToFullMap("LOCATION", mLocation.getText().toString());
+      attr.setApplicationData(map);
+      note.setAttributes(attr);
+
+      System.out.println(note.getAttributes().getApplicationData().toString());
+
+      note.addToResources(resource);
+
+      note.setTitle(mTitle.getText().toString());
+      note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>"
+          + mEntry.getText().toString() + "</p>"
+          + EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
+
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .updateNote(note, new OnClientCallback<Note>()
+          {
+
+            @Override
+            public void onSuccess(Note data)
+            {
+              Toast.makeText(getActivity(), R.string.success_creating_note,
+                  Toast.LENGTH_LONG).show();
+              ((EntryActivity) getActivity()).finish();
+              getFragmentManager().popBackStack();
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+              exception.printStackTrace();
+              Toast.makeText(getActivity(), R.string.err_update_note,
+                  Toast.LENGTH_LONG).show();
+              ((EntryActivity) getActivity()).finish();
+              getFragmentManager().popBackStack();
+            }
+
+          });
+    }
+    catch (TTransportException e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+  private void setDefaultTitle()
+  {
+    Time now = new Time();
+    now.setToNow();
+    String title = "Photo taken on " + getDateTime();
+    if (getActivity().getIntent().hasExtra("ITINERARY_SELECT"))
+    {
+      mTitle.setText(title + ", at "
+          + getActivity().getIntent().getStringExtra("ITINERARY_SELECT"));
+    }
+    else
+    {
+      mTitle.setText(title);
+    }
+  }
+
+  private String getDateTime()
+  {
+    Calendar cal = Calendar.getInstance();
+    return String.valueOf(cal.get(Calendar.MONTH)) + "/"
+        + String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + "/"
+        + String.valueOf(cal.get(Calendar.YEAR)) + ", "
+        + String.valueOf(cal.get(Calendar.HOUR_OF_DAY)) + ":"
+        + String.valueOf(cal.get(Calendar.MINUTE));
+  }
+
+  private void openCamera()
+  {
+    // Using MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA allows you
+    // to take multiple pics b4 exiting the camera intent
+    Intent cameraIntent = new Intent(
+        android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+    ContentValues values = new ContentValues();
+
+    mImageUri = NoteFragment.this.getActivity().getApplicationContext()
+        .getContentResolver()
+        .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    if (mImageUri == null)
+    {
+      Log.e("image uri is null", "what?");
+    }
+    else
+    {
+
+      Log.e("oh nevermind", "image uri is NOT null");
+    }
+    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+    startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+  }
+
+  /*
    * Saves text field content as note to selected notebook, or default notebook
    * if no notebook select
    */
@@ -507,9 +751,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener
       }
 
       note.addToResources(resource);
-      content += EvernoteUtil.createEnMediaTag(resource);
+      String enmedia = EvernoteUtil.createEnMediaTag(resource).replaceFirst(
+          " ", " title=\"" + imageData.caption + "\" ");
+      content += enmedia;
     }
     note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
+    System.out.println(content);
     /*
      * Time now = new Time(); now.setToNow(); String title =
      * now.toString();//mTitle.getText().toString();
@@ -563,6 +810,62 @@ public class NoteFragment extends ParentFragment implements OnClickListener
   }
 
   /**
+   * Button to capture image for note
+   * 
+   * @author ironsuturtle Sends the user to the camera application to take a
+   *         photo and save
+   */
+  class btnTakePhotoClicker implements Button.OnClickListener
+  {
+    @Override
+    public void onClick(View v)
+    {
+      Intent cameraIntent = new Intent(
+          android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+      ContentValues values = new ContentValues();
+
+      mImageUri = NoteFragment.this.getActivity().getApplicationContext()
+          .getContentResolver()
+          .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+      if (mImageUri == null)
+      {
+        Log.e("image uri is null", "what?");
+      }
+      else
+      {
+
+        Log.e("oh nevermind", "image uri is NOT null");
+      }
+      cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+      startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+    }
+  }
+
+  class btnFindPlace implements Button.OnClickListener
+  {
+    @Override
+    public void onClick(View v)
+    {
+
+      // Show Place Finder Fragment
+      // Toast.makeText(getActivity(),
+      // "Location Field clicked",Toast.LENGTH_SHORT).show();
+      startActivityForResult(
+          new Intent(getActivity(), PlacesActivity.class).putExtra(
+              "PREV_LOC_DATA", mLocation.getText().toString()),
+          LOCATION_REQUEST);
+    }
+  }
+
+  public void clearForm(View view)
+  {
+    // mImageView.setImageResource(android.R.color.transparent);
+    mTitle.setText("");
+    mLocation.setText("");
+    mEntry.setText("");
+  }
+
+  /**
    * Called when the user taps the "Select Image" button.
    * <p/>
    * Sends the user to the image gallery to choose an image to share.
@@ -574,12 +877,87 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     startActivityForResult(intent, SELECT_IMAGE);
   }
 
-  public void clearForm(View view)
+  @Override
+  public void onClick(View v)
   {
-    // mImageView.setImageResource(android.R.color.transparent);
-    mTitle.setText("");
-    mLocation.setText("");
-    mEntry.setText("");
+    switch (v.getId())
+    {
+    }
+  }
+
+  public static class GPSDialogFragment extends DialogFragment
+  {
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+      // Use the Builder class for convenient dialog construction
+      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+      builder
+          .setMessage(R.string.gps_dialog)
+          .setPositiveButton(R.string.gps_yes,
+              new DialogInterface.OnClickListener()
+              {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                  startActivity(new Intent(
+                      android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                }
+              })
+          .setNegativeButton(R.string.gps_no,
+              new DialogInterface.OnClickListener()
+              {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                  // User cancelled the dialog
+                }
+              });
+      // Create the AlertDialog object and return it
+      return builder.create();
+    }
+
+  }
+
+  public static class TrophyDialogFragment extends DialogFragment
+  {
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+      // Get the layout inflater
+      LayoutInflater inflater = getActivity().getLayoutInflater();
+      final View view = inflater.inflate(R.layout.dialog_trophy, null);
+
+      // Inflate and set the layout for the dialog
+      // Pass null as the parent view because its going in the dialog layout
+      builder
+          .setView(view)
+          // Add action buttons
+          .setPositiveButton("Give Trophy",
+              new DialogInterface.OnClickListener()
+              {
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                  final TextView trophyDialog = (TextView) view
+                      .findViewById(R.id.trophyText);
+                  Toast.makeText(getActivity().getApplicationContext(),
+                      "Trophy created: " + trophyDialog.getText().toString(),
+                      Toast.LENGTH_SHORT).show();
+
+                }
+              })
+          .setNegativeButton(R.string.cancel,
+              new DialogInterface.OnClickListener()
+              {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                  Toast.makeText(getActivity().getApplicationContext(),
+                      "Trophy cancelled", Toast.LENGTH_SHORT).show();
+                }
+              });
+      return builder.create();
+
+    }
   }
 
   /**
@@ -884,87 +1262,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener
     {
 
     }
-
-  }
-
-  public static class GPSDialogFragment extends DialogFragment
-  {
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState)
-    {
-      // Use the Builder class for convenient dialog construction
-      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-      builder
-          .setMessage(R.string.gps_dialog)
-          .setPositiveButton(R.string.gps_yes,
-              new DialogInterface.OnClickListener()
-              {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                  startActivity(new Intent(
-                      android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                }
-              })
-          .setNegativeButton(R.string.gps_no,
-              new DialogInterface.OnClickListener()
-              {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                  // User cancelled the dialog
-                }
-              });
-      // Create the AlertDialog object and return it
-      return builder.create();
-    }
-
-  }
-
-  public static class TrophyDialogFragment extends DialogFragment
-  {
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState)
-    {
-      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-      // Get the layout inflater
-      LayoutInflater inflater = getActivity().getLayoutInflater();
-      final View view = inflater.inflate(R.layout.dialog_trophy, null);
-
-      // Inflate and set the layout for the dialog
-      // Pass null as the parent view because its going in the dialog layout
-      builder
-          .setView(view)
-          // Add action buttons
-          .setPositiveButton("Give Trophy",
-              new DialogInterface.OnClickListener()
-              {
-                @Override
-                public void onClick(DialogInterface dialog, int id)
-                {
-                  final TextView trophyDialog = (TextView) view
-                      .findViewById(R.id.trophyText);
-                  Toast.makeText(getActivity().getApplicationContext(),
-                      "Trophy created: " + trophyDialog.getText().toString(),
-                      Toast.LENGTH_SHORT).show();
-
-                }
-              })
-          .setNegativeButton(R.string.cancel,
-              new DialogInterface.OnClickListener()
-              {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                  Toast.makeText(getActivity().getApplicationContext(),
-                      "Trophy cancelled", Toast.LENGTH_SHORT).show();
-                }
-              });
-      return builder.create();
-
-    }
-  }
-
-  @Override
-  public void onClick(View v)
-  {
 
   }
 

@@ -23,7 +23,7 @@ public class EntryActivity extends SherlockFragmentActivity
     final ActionBar bar = getSupportActionBar();
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
-    EntryFragment mEntryFragment = new EntryFragment();
+    NoteFragment mEntryFragment = new NoteFragment();
     FragmentTransaction fragmentTransaction = getSupportFragmentManager()
         .beginTransaction();
     fragmentTransaction.add(android.R.id.content, mEntryFragment);
