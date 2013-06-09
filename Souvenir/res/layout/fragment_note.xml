@@ -18,6 +18,17 @@
             android:background="@android:color/black" />
 
         <EditText
+            android:id="@+id/image_caption"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:drawableTop="@color/primaryOrange"
+            android:gravity="bottom|left"
+            android:hint="Caption"
+            android:inputType="text"
+            android:paddingLeft="15dp"
+            android:scrollHorizontally="true" />
+
+        <EditText
             android:id="@+id/note_title"
             android:layout_width="match_parent"
             android:layout_height="50dp"
