@@ -51,19 +51,17 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <EditText
+        <Button
             android:id="@+id/itinerary_item_startdate"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="date" />
+            android:layout_weight="1" />
 
-        <EditText
+        <Button
             android:id="@+id/itinerary_item_starttime"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:inputType="time" />
+            android:layout_weight="2" />
 
     </LinearLayout>
 
@@ -77,19 +75,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <EditText
+        <Button
             android:id="@+id/itinerary_item_enddate"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="date" />
+            android:layout_weight="1" />
 
-        <EditText
+        <Button
             android:id="@+id/itinerary_item_endtime"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:inputType="time" />
+            android:layout_weight="2" />
 
     </LinearLayout>
 

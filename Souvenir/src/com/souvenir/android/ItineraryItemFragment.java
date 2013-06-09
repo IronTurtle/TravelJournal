@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.Button;
 
 import com.actionbarsherlock.view.MenuItem;
 
@@ -40,11 +40,11 @@ public class ItineraryItemFragment extends ParentFragment
     String curDate = sdf.format(d).split(";")[0];
     String curTime = sdf.format(d).split(";")[1];
 
-    ((EditText) v.findViewById(R.id.itinerary_item_startdate)).setText(curDate);
-    ((EditText) v.findViewById(R.id.itinerary_item_enddate)).setText(curDate);
+    ((Button) v.findViewById(R.id.itinerary_item_startdate)).setText(curDate);
+    ((Button) v.findViewById(R.id.itinerary_item_enddate)).setText(curDate);
 
-    ((EditText) v.findViewById(R.id.itinerary_item_starttime)).setText(curTime);
-    ((EditText) v.findViewById(R.id.itinerary_item_endtime)).setText(curTime);
+    ((Button) v.findViewById(R.id.itinerary_item_starttime)).setText(curTime);
+    ((Button) v.findViewById(R.id.itinerary_item_endtime)).setText(curTime);
 
   }
 
