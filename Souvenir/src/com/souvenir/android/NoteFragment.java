@@ -105,7 +105,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
   private Button mBtnSelect;
   @SuppressWarnings("unused")
   private EditText mTextArea;
-//  private ImageView mImageView;
+  // private ImageView mImageView;
 
   // location var
   int radiusRanges[] = { 50, 100, 150, 200 };
@@ -143,7 +143,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
   {
     View view = inflater.inflate(R.layout.fragment_note, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
-//    mImageView = (ImageView) view.findViewById(R.id.note_image);
+    // mImageView = (ImageView) view.findViewById(R.id.note_image);
     mTitle = (EditText) view.findViewById(R.id.note_title);
     mLocation = (TextView) view.findViewById(R.id.note_location);
     mEntry = (EditText) view.findViewById(R.id.note_entry);
@@ -576,7 +576,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener
 
   public void clearForm(View view)
   {
-//    mImageView.setImageResource(android.R.color.transparent);
+    // mImageView.setImageResource(android.R.color.transparent);
     mTitle.setText("");
     mLocation.setText("");
     mEntry.setText("");

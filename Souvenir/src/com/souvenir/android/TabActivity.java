@@ -43,27 +43,31 @@ public class TabActivity extends SherlockFragmentActivity
     final ActionBar bar = getSupportActionBar();
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-    //create TabAdapter for ActionbarSherlock
+    // create TabAdapter for ActionbarSherlock
     mTabsAdapter = new TabsAdapter(this, mViewPager);
 
-    //init tabs
-    
-    mTabsAdapter.addTab(bar.newTab().setText("Itinerary").setIcon(R.drawable.list), ItineraryFragment.class, null);
-    
-    mTabsAdapter.addTab(bar.newTab().setText("Me").setIcon(R.drawable.me), SnippetFragment.class, null);
-    
-   // mTabsAdapter.addTab(bar.newTab().setText("Others").setIcon(R.drawable.them), OtherFragment.class,null);
-    
-    //set to show "Me" tab as default
+    // init tabs
+
+    mTabsAdapter.addTab(
+        bar.newTab().setText("Itinerary").setIcon(R.drawable.list),
+        ItineraryFragment.class, null);
+
+    mTabsAdapter.addTab(bar.newTab().setText("Me").setIcon(R.drawable.me),
+        SnippetFragment.class, null);
+
+    // mTabsAdapter.addTab(bar.newTab().setText("Others").setIcon(R.drawable.them),
+    // OtherFragment.class,null);
+
+    // set to show "Me" tab as default
     mViewPager.setCurrentItem(1);
   }
-  
+
   @Override
   public void onResume()
   {
-	  super.onResume();
-	//set to show "Me" tab as default
-	  mViewPager.setCurrentItem(1);
+    super.onResume();
+    // set to show "Me" tab as default
+    mViewPager.setCurrentItem(1);
   }
 
   @Override
@@ -78,7 +82,8 @@ public class TabActivity extends SherlockFragmentActivity
   public boolean onOptionsItemSelected(MenuItem item)
   {
     // This uses the imported MenuItem from ActionBarSherlock
-    //Toast.makeText(this, "Got click: " + item.toString(), Toast.LENGTH_SHORT).show();
+    // Toast.makeText(this, "Got click: " + item.toString(),
+    // Toast.LENGTH_SHORT).show();
     switch (item.getItemId())
     {
     case R.id.menu_add_note:
@@ -87,10 +92,10 @@ public class TabActivity extends SherlockFragmentActivity
 
     case R.id.menu_search:
       break;
-      
+
     case R.id.facebook_login:
-    	startActivity(new Intent(this, OtherActivity.class));
-    	break;
+      startActivity(new Intent(this, OtherActivity.class));
+      break;
     }
     return true;
   }

@@ -84,7 +84,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
     View view = inflater.inflate(R.layout.fragment_entry, container, false);
     setHasOptionsMenu(true);
 
-//    mImageView = (ImageView) view.findViewById(R.id.entry_image);
+    // mImageView = (ImageView) view.findViewById(R.id.entry_image);
     mTitle = (EditText) view.findViewById(R.id.entry_title);
     mLocation = (TextView) view.findViewById(R.id.entry_location);
     mEntry = (EditText) view.findViewById(R.id.entry_entry);
@@ -326,7 +326,7 @@ public class EntryFragment extends ParentFragment implements OnClickListener,
                                       .getWebApiUrlPrefix() + "res/"
                                   + data.getGuid() + "?auth="
                                   + mEvernoteSession.getAuthToken());
-                              
+
                               pager.getAdapter().notifyDataSetChanged();
                               // imageLoader.displayImage(
                               // ""

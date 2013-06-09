@@ -57,7 +57,6 @@ import com.evernote.edam.notestore.*;
 import com.evernote.edam.type.*;
 import com.evernote.thrift.transport.TTransportException;
 
-
 /**
  * This simple Android app demonstrates how to integrate with the Evernote API
  * (aka EDAM).
@@ -68,8 +67,8 @@ import com.evernote.thrift.transport.TTransportException;
  */
 public class SnippetFragment extends ParentFragment implements OnClickListener
 {
-	private static final int SNIPPET_PAGE_SIZE = 3;
-	
+  private static final int SNIPPET_PAGE_SIZE = 3;
+
   // UI elements that we update
   private Button mBtnAuth;
 
@@ -90,7 +89,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
     View view = inflater.inflate(R.layout.fragment_snippet, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
     mBtnAuth.setOnClickListener(this);
-
 
     return view;
   }
@@ -154,7 +152,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
       try
       {
         mEvernoteSession.logOut(this.getActivity().getApplicationContext());
-      } catch (InvalidAuthenticationException e)
+      }
+      catch (InvalidAuthenticationException e)
       {
         e.printStackTrace();
       }
@@ -241,7 +240,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);
-      //System.out.println("searching");
+      // System.out.println("searching");
 
       try
       {
@@ -265,9 +264,9 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                     listView.setAdapter(adapter);
                     listView.setScrollingCacheEnabled(false);
 
-
-                    //Log.e("log_tag ******", notes.getNotes().get(0).getTitle());
-                    //Log.e("log_tag ******", entries.get(0).getTitle());
+                    // Log.e("log_tag ******",
+                    // notes.getNotes().get(0).getTitle());
+                    // Log.e("log_tag ******", entries.get(0).getTitle());
                     for (int i = 0; i < entries.size(); i++)
                     {
                       NoteMetadata snippetEntry = entries.get(i);
@@ -303,7 +302,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
                                   }
                                 });
-                      } catch (Exception e)
+                      }
+                      catch (Exception e)
                       {
                         e.printStackTrace();
                       }
@@ -337,7 +337,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                     // removeDialog(DIALOG_PROGRESS);
                   }
                 });
-      } catch (TTransportException e)
+      }
+      catch (TTransportException e)
       {
         e.printStackTrace();
       }
@@ -408,9 +409,10 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
         public void onClick(View v)
         {
           String item = snippetEntry.getTitle();
-          //System.out.println("Clicked" + item);
+          // System.out.println("Clicked" + item);
 
-          //Toast.makeText(SnippetFragment.this.getActivity().getBaseContext(),item, Toast.LENGTH_LONG).show();
+          // Toast.makeText(SnippetFragment.this.getActivity().getBaseContext(),item,
+          // Toast.LENGTH_LONG).show();
 
           Intent intent = new Intent(SnippetFragment.this.getActivity(),
               EntryActivity.class).putExtra("title", item).putExtra("guid",
@@ -437,50 +439,53 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
               + "thm/note/" + snippetEntry.getGuid() + "?auth="
               + mEvernoteSession.getAuthToken(), snippetPic, options);
 
-      
-	  try {
-		  mEvernoteSession.getClientFactory().createNoteStoreClient()
-			.getNote(snippetEntry.getGuid(), true, true, true, true, new OnClientCallback<Note>()
-			          {
-	            public void onSuccess(Note note)
-	            {
-	            	String location = note.getAttributes().getPlaceName();
-	            	if(location == null) {
-	            		location = String.valueOf((note.getAttributes().getLatitude())
-	            						+ String.valueOf(note.getAttributes().getLongitude()));
-	            	}
+      try
+      {
+        mEvernoteSession
+            .getClientFactory()
+            .createNoteStoreClient()
+            .getNote(snippetEntry.getGuid(), true, true, true, true,
+                new OnClientCallback<Note>()
+                {
+                  public void onSuccess(Note note)
+                  {
+                    String location = note.getAttributes().getPlaceName();
+                    if (location == null)
+                    {
+                      location = String.valueOf((note.getAttributes()
+                          .getLatitude())
+                          + String.valueOf(note.getAttributes().getLongitude()));
+                    }
 
-	            	snippetLocation.setText(location);
-          		System.out.println("LOCATION: " + location);
-	            }
+                    snippetLocation.setText(location);
+                    System.out.println("LOCATION: " + location);
+                  }
 
-	            @Override
-	            public void onException(Exception exception)
-	            {
-	              exception.printStackTrace();
-	            }
-	          });
-		/*mEvernoteSession.getClientFactory().createNoteStoreClient()
-		  .getNoteApplicationData(snippetEntry.getGuid(), new OnClientCallback<LazyMap>()
-		  {
-		    public void onSuccess(LazyMap resources)
-		    {
-	
-		      //System.out.println(resources.getFullMap().values());
-		      String location = resources.getFullMap().get("LOCATION");
-		      
-		      snippetLocation.setText(location);
-		    }
-		    
-		    @Override
-		    public void onException(Exception exception)
-		    {
-		      exception.printStackTrace();
-		    }
-		  });*/
-		} catch (TTransportException e) {
-			e.printStackTrace();
-		}
+                  @Override
+                  public void onException(Exception exception)
+                  {
+                    exception.printStackTrace();
+                  }
+                });
+        /*
+         * mEvernoteSession.getClientFactory().createNoteStoreClient()
+         * .getNoteApplicationData(snippetEntry.getGuid(), new
+         * OnClientCallback<LazyMap>() { public void onSuccess(LazyMap
+         * resources) {
+         * 
+         * //System.out.println(resources.getFullMap().values()); String
+         * location = resources.getFullMap().get("LOCATION");
+         * 
+         * snippetLocation.setText(location); }
+         * 
+         * @Override public void onException(Exception exception) {
+         * exception.printStackTrace(); } });
+         */
+      }
+      catch (TTransportException e)
+      {
+        e.printStackTrace();
+      }
       snippetEvent.setText(snippetEntry.getTitle().toUpperCase());
       snippetText.setText(android.text.Html.fromHtml(snippetEntry.getContent())
           .toString());
@@ -490,6 +495,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
       return snippetView;
     }
-   }
+  }
 
 }

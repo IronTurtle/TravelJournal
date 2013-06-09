@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item android:id="@+id/menu_cancel_itinerary_item" android:showAsAction="always|withText"
+	    android:icon="@drawable/back"
+		android:title="@string/cancel_itinerary_item"/>
+	
+	<item android:id="@+id/menu_save_itinerary_item" android:showAsAction="always|withText"
+	    android:icon="@drawable/save"
+		android:title="@string/save_itinerary_item" />
+
+
+</menu>

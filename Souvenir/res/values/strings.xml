@@ -60,5 +60,15 @@
     <string name="fb_share">Facebook Sharing for Souvenir</string>
     <string name="login_needed">You are not logged into Evernote. Please Log In.</string>
     <string name="cancel">Cancel</string>
+    <string name="title_activity_itinerary_item">Add New Itinerary Item</string>
+    <string name="title_fragment_itinerary_item">Add New Itinerary Item</string>
+    <string name="itinerary_item_title">Itinerary Title</string>
+    <string name="itinerary_item_location">Itinerary Location</string>
+    <string name="itinerary_item_istrip">is Trip</string>
+    <string name="itinerary_item_from">FROM</string>
+    <string name="itinerary_item_to">TO</string>
+    <string name="itinerary_item_distance">DISTANCE</string>
+    <string name="save_itinerary_item">Save</string>
+    <string name="cancel_itinerary_item">Cancel</string>
 
 </resources>

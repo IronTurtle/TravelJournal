@@ -1,6 +1,5 @@
 package com.souvenir.android;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ public class NoteActivity extends SherlockFragmentActivity
   TextView tabCenter;
   TextView tabxt;
 
-
   @SuppressWarnings("unused")
   private final Handler handler = new Handler();
 
@@ -38,7 +36,7 @@ public class NoteActivity extends SherlockFragmentActivity
         .beginTransaction();
     fragmentTransaction.add(R.id.fragment, mEntryFragment);
     fragmentTransaction.commit();
-}
+  }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
@@ -46,18 +44,19 @@ public class NoteActivity extends SherlockFragmentActivity
     getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
     return super.onCreateOptionsMenu(menu);
   }
-  
-  
-  public void finishNote(String data) {
-	  
-	  if(data != null) {
-	    String id_data = data;
 
-	    Intent resultIntent = new Intent();
-	    resultIntent.putExtra("ITINERARY_SELECT", id_data);
-	    setResult(Activity.RESULT_OK, resultIntent);
-	  }
-	  finish();
+  public void finishNote(String data)
+  {
+
+    if (data != null)
+    {
+      String id_data = data;
+
+      Intent resultIntent = new Intent();
+      resultIntent.putExtra("ITINERARY_SELECT", id_data);
+      setResult(Activity.RESULT_OK, resultIntent);
+    }
+    finish();
   }
 
 }

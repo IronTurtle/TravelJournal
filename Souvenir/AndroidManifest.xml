@@ -76,6 +76,14 @@
             android:name="com.souvenir.android.ShareActivity"
             android:label="@string/fb_share" >
         </activity>
+        <activity
+            android:name="com.souvenir.android.ItineraryItem"
+            android:label="@string/title_fragment_itinerary_item" >
+        </activity>
+        <activity
+            android:name="com.souvenir.android.ItineraryItemFragment"
+            android:label="@string/title_fragment_itinerary_item" >
+        </activity>
     </application>
 
 </manifest>
