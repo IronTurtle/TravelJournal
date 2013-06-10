@@ -414,8 +414,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
           // Toast.LENGTH_LONG).show();
 
           Intent intent = new Intent(SnippetFragment.this.getActivity(),
-              EntryActivity.class).putExtra("title", item).putExtra("guid",
-              snippetEntry.getGuid());
+              EntryActivity.class).putExtra("note", snippetEntry);
           SnippetFragment.this.getActivity()
               .startActivityForResult(intent, 300);
 

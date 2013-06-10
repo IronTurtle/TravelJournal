@@ -211,10 +211,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     {
       // getMetadata();
       oldNote = true;
-      String guid = (String) bundle.get("guid");
-      note.setGuid(guid);
-      String title = (String) bundle.get("title");
-      displayNote(guid, title);
+      note = (Note) bundle.get("note");
+      // String guid = (String) bundle.get("guid");
+      // note.setGuid(guid);
+      // String title = (String) bundle.get("title");
+      displayNote();
     }
     else
     {
@@ -442,149 +443,133 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   // }
   // }
 
-  public void displayNote(final String guid, String title)
+  public void displayNote()
   {
 
-    mTitle.setText(title.toUpperCase(Locale.US));
-    try
+    mTitle.setText(note.getTitle().toUpperCase(Locale.US));
+
+    String location = note.getAttributes().getPlaceName();
+    if (location == null)
     {
-      mEvernoteSession.getClientFactory().createNoteStoreClient()
-          .getNote(guid, true, true, true, true, new OnClientCallback<Note>()
-          {
-            public void onSuccess(Note note)
-            {
-              String location = note.getAttributes().getPlaceName();
-              if (location == null)
-              {
-                location = String.valueOf((note.getAttributes().getLatitude())
-                    + String.valueOf(note.getAttributes().getLongitude()));
-              }
-
-              mLocation.setText(location);
-              System.out.println("LOCATION: " + location);
-            }
-
-            @Override
-            public void onException(Exception exception)
-            {
-              exception.printStackTrace();
-            }
-          });
-      // Set location to correct field
-      /*
-       * mEvernoteSession.getClientFactory().createNoteStoreClient()
-       * .getNoteApplicationData(guid, new OnClientCallback<LazyMap>() { public
-       * void onSuccess(LazyMap resources) {
-       * 
-       * System.out.println(resources.getFullMap().values()); String location =
-       * resources.getFullMap().get("LOCATION"); System.out.println("LOCATION: "
-       * + location); mLocation.setText(location); }
-       * 
-       * @Override public void onException(Exception exception) {
-       * exception.printStackTrace(); } });
-       */
-      System.out.println("Getting Note data");
-      mEvernoteSession.getClientFactory().createNoteStoreClient()
-          .getNoteContent(guid, new OnClientCallback<String>()
-          {
-            @Override
-            public void onSuccess(String noteContent)
-            {
-
-              System.out.println("Getting note content...");
-              String contents = noteContent;
-
-              System.out.println("Got note content");
-
-              mEntry.setText(android.text.Html.fromHtml(contents));
-
-              Document doc = Jsoup.parse(contents);
-              System.out.println("contents");
-              System.out.println(contents);
-              Elements divs = doc.getElementsByAttribute("hash");
-              System.out.println("Images");
-              for (final Element div : divs)
-              {
-                System.out.println(div.attr("hash"));
-                System.out.println(div.attr("title"));
-
-                // TODO: may be wrong...
-                mImageData.fileName = div.attr("hash");
-                try
-                {
-                  mEvernoteSession
-                      .getClientFactory()
-                      .createNoteStoreClient()
-                      .getResourceByHash(guid,
-                          EvernoteUtil.hexToBytes(div.attr("hash")), false,
-                          true, false, new OnClientCallback<Resource>()
-                          {
-                            @Override
-                            public void onSuccess(Resource data)
-                            {
-                              resource = data;
-                              System.out.println(data.toString());
-                              urls.add(""
-                                  + mEvernoteSession.getAuthenticationResult()
-                                      .getWebApiUrlPrefix() + "res/"
-                                  + data.getGuid() + "?auth="
-                                  + mEvernoteSession.getAuthToken());
-                              ImageData mImageData = new ImageData();
-
-                              mImageData.caption = div.attr("title");
-                              images.add(mImageData);
-                              pager.getAdapter().notifyDataSetChanged();
-                              mCaption.setText(images.get(pager
-                                  .getCurrentItem()).caption);
-
-                              // imageLoader.displayImage(
-                              // ""
-                              // + mEvernoteSession
-                              // .getAuthenticationResult()
-                              // .getWebApiUrlPrefix() + "res/"
-                              // + data.getGuid() + "?auth="
-                              // + mEvernoteSession.getAuthToken(),
-                              // mImageView, options);
-                              // TODO: may be wrong...
-                              // mImageData.imageBitmap =
-                              // mImageView.getDrawingCache(false);
-
-                            }
-
-                            @Override
-                            public void onException(Exception exception)
-                            {
-                              exception.printStackTrace();
-
-                            }
-
-                          });
-                }
-                catch (TTransportException e)
-                {
-                  e.printStackTrace();
-                }
-              }
-
-              // removeDialog(DIALOG_PROGRESS);
-              // Toast.makeText(getApplicationContext(),
-              // R.string.msg_image_saved,
-              // Toast.LENGTH_LONG).show();
-              // notes = data;
-            }
-
-            @Override
-            public void onException(Exception exception)
-            {
-
-            }
-          });
+      location = String.valueOf((note.getAttributes().getLatitude())
+          + String.valueOf(note.getAttributes().getLongitude()));
     }
-    catch (TTransportException e)
+
+    mLocation.setText(location);
+    System.out.println("LOCATION: " + location);
+
+    // Set location to correct field
+    /*
+     * mEvernoteSession.getClientFactory().createNoteStoreClient()
+     * .getNoteApplicationData(guid, new OnClientCallback<LazyMap>() { public
+     * void onSuccess(LazyMap resources) {
+     * 
+     * System.out.println(resources.getFullMap().values()); String location =
+     * resources.getFullMap().get("LOCATION"); System.out.println("LOCATION: " +
+     * location); mLocation.setText(location); }
+     * 
+     * @Override public void onException(Exception exception) {
+     * exception.printStackTrace(); } });
+     */
+    System.out.println("Getting Note data");
+    // mEvernoteSession.getClientFactory().createNoteStoreClient()
+    // .getNoteContent(guid, new OnClientCallback<String>()
+    // {
+    // @Override
+    // public void onSuccess(String noteContent)
+    // {
+
+    System.out.println("Getting note content...");
+    String contents = note.getContent();
+
+    System.out.println("Got note content");
+
+    mEntry.setText(android.text.Html.fromHtml(contents));
+
+    Document doc = Jsoup.parse(contents);
+    System.out.println("contents");
+    System.out.println(contents);
+    Elements divs = doc.getElementsByAttribute("hash");
+    System.out.println("Images");
+    for (final Element div : divs)
     {
-      e.printStackTrace();
+      System.out.println(div.attr("hash"));
+      System.out.println(div.attr("title"));
+
+      // TODO: may be wrong...
+      mImageData.fileName = div.attr("hash");
+      try
+      {
+        mEvernoteSession
+            .getClientFactory()
+            .createNoteStoreClient()
+            .getResourceByHash(note.getGuid(),
+                EvernoteUtil.hexToBytes(div.attr("hash")), false, true, false,
+                new OnClientCallback<Resource>()
+                {
+                  @Override
+                  public void onSuccess(Resource data)
+                  {
+                    resource = data;
+                    System.out.println(data.toString());
+                    urls.add(""
+                        + mEvernoteSession.getAuthenticationResult()
+                            .getWebApiUrlPrefix() + "res/" + data.getGuid()
+                        + "?auth=" + mEvernoteSession.getAuthToken());
+                    ImageData mImageData = new ImageData();
+
+                    mImageData.caption = div.attr("title");
+                    images.add(mImageData);
+                    pager.getAdapter().notifyDataSetChanged();
+                    mCaption.setText(images.get(pager.getCurrentItem()).caption);
+
+                    // imageLoader.displayImage(
+                    // ""
+                    // + mEvernoteSession
+                    // .getAuthenticationResult()
+                    // .getWebApiUrlPrefix() + "res/"
+                    // + data.getGuid() + "?auth="
+                    // + mEvernoteSession.getAuthToken(),
+                    // mImageView, options);
+                    // TODO: may be wrong...
+                    // mImageData.imageBitmap =
+                    // mImageView.getDrawingCache(false);
+
+                  }
+
+                  @Override
+                  public void onException(Exception exception)
+                  {
+                    exception.printStackTrace();
+
+                  }
+
+                });
+      }
+      catch (TTransportException e)
+      {
+        e.printStackTrace();
+      }
     }
+
+    // removeDialog(DIALOG_PROGRESS);
+    // Toast.makeText(getApplicationContext(),
+    // R.string.msg_image_saved,
+    // Toast.LENGTH_LONG).show();
+    // notes = data;
   }
+
+  // @Override
+  // public void onException(Exception exception)
+  // {
+  //
+  // }
+  // });
+  // }
+  // catch (TTransportException e)
+  // {
+  // e.printStackTrace();
+  // }
 
   public void updateNote(View view)
   {
