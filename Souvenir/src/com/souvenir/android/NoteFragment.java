@@ -61,13 +61,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
 import com.evernote.client.conn.mobile.FileData;
-import com.evernote.edam.notestore.NoteFilter;
-import com.evernote.edam.notestore.NotesMetadataList;
-import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.LazyMap;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteAttributes;
-import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.thrift.transport.TTransportException;
@@ -210,10 +206,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       }
     });
 
-    getMetadata();
     Bundle bundle = this.getActivity().getIntent().getExtras();
     if (bundle != null)
     {
+      // getMetadata();
       oldNote = true;
       String guid = (String) bundle.get("guid");
       note.setGuid(guid);
@@ -404,47 +400,47 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
   }
 
-  public void getMetadata()
-  {
-    int pageSize = 10;
-
-    NoteFilter filter = new NoteFilter();
-    filter.setOrder(NoteSortOrder.UPDATED.getValue());
-    filter.setWords("-tag:app_itinerary*");
-
-    NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
-    spec.setIncludeTitle(true);
-
-    try
-    {
-      if (mEvernoteSession.isLoggedIn())
-      {
-        mEvernoteSession
-            .getClientFactory()
-            .createNoteStoreClient()
-            .findNotesMetadata(filter, 0, pageSize, spec,
-                new OnClientCallback<NotesMetadataList>()
-                {
-                  @Override
-                  public void onSuccess(NotesMetadataList notes)
-                  {
-                    displayNote(notes.getNotes().get(0).getGuid(), notes
-                        .getNotes().get(0).getTitle());
-                  }
-
-                  @Override
-                  public void onException(Exception exception)
-                  {
-
-                  }
-                });
-      }
-    }
-    catch (TTransportException e)
-    {
-
-    }
-  }
+  // public void getMetadata()
+  // {
+  // int pageSize = 10;
+  //
+  // NoteFilter filter = new NoteFilter();
+  // filter.setOrder(NoteSortOrder.UPDATED.getValue());
+  // filter.setWords("-tag:app_itinerary*");
+  //
+  // NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
+  // spec.setIncludeTitle(true);
+  //
+  // try
+  // {
+  // if (mEvernoteSession.isLoggedIn())
+  // {
+  // mEvernoteSession
+  // .getClientFactory()
+  // .createNoteStoreClient()
+  // .findNotesMetadata(filter, 0, pageSize, spec,
+  // new OnClientCallback<NotesMetadataList>()
+  // {
+  // @Override
+  // public void onSuccess(NotesMetadataList notes)
+  // {
+  // displayNote(notes.getNotes().get(0).getGuid(), notes
+  // .getNotes().get(0).getTitle());
+  // }
+  //
+  // @Override
+  // public void onException(Exception exception)
+  // {
+  //
+  // }
+  // });
+  // }
+  // }
+  // catch (TTransportException e)
+  // {
+  //
+  // }
+  // }
 
   public void displayNote(final String guid, String title)
   {
@@ -1224,10 +1220,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     {
       // Tell our parent to stop intercepting our events!
       boolean ret = super.onInterceptTouchEvent(ev);
-      if (ret)
-      {
-        getParent().requestDisallowInterceptTouchEvent(true);
-      }
+      // if (ret)
+      // {
+      getParent().requestDisallowInterceptTouchEvent(true);
+      // }
       return ret;
     }
   }
