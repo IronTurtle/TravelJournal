@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import org.jsoup.Jsoup;
@@ -64,6 +65,7 @@ import com.evernote.client.conn.mobile.FileData;
 import com.evernote.edam.type.LazyMap;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteAttributes;
+import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.thrift.transport.TTransportException;
@@ -76,6 +78,8 @@ import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 public class NoteFragment extends ParentFragment implements OnClickListener,
     Serializable
 {
+  private static String TRAVEL_NOTEBOOK_NAME = "Travel Notebook";
+  private static String NOTEBOOK_GUID;
   Boolean oldNote = false;
   ViewPager pager;
   ArrayList<String> urls = new ArrayList<String>();
@@ -234,7 +238,48 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mLocation.setOnClickListener(new btnFindPlace());
     // mEntry.setOnKeyListener(new NoteEntryField());
 
+    getTravelNotebook();
+
     return view;
+  }
+
+  private void getTravelNotebook()
+  {
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .listNotebooks(new OnClientCallback<List<Notebook>>()
+          {
+
+            @Override
+            public void onSuccess(List<Notebook> notebookList)
+            {
+              // TODO Auto-generated method stub
+              for (Notebook notebook : notebookList)
+              {
+                if ((notebook.getName().toString())
+                    .equals(TRAVEL_NOTEBOOK_NAME))
+                {
+                  NOTEBOOK_GUID = notebook.getGuid();
+                  break;
+                }
+              }
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+              // TODO Auto-generated method stub
+
+            }
+
+          });
+    }
+    catch (TTransportException e1)
+    {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
   }
 
   @Override
@@ -690,7 +735,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     String content = mEntry.getText().toString();
     String location = mLocation.getText().toString();
 
-    Note note = new Note();
+    final Note note = new Note();
+    if (NOTEBOOK_GUID != null)
+    {
+      note.setNotebookGuid(NOTEBOOK_GUID);
+    }
     // note.setTitle(title);
     note.setTitle(mTitle.getText().toString());
     System.out.println("Note Title: " + note.getTitle());

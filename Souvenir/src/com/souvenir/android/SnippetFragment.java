@@ -235,7 +235,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
       NoteFilter filter = new NoteFilter();
       filter.setOrder(NoteSortOrder.UPDATED.getValue());
-      filter.setWords("-tag:app_itinerary");
+      filter.setWords("notebook:\"Travel Notebook\"");
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);
