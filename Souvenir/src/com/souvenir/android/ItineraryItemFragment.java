@@ -74,13 +74,14 @@ public class ItineraryItemFragment extends ParentFragment
       itemEndTime = ((Button) v.findViewById(R.id.itinerary_item_endtime))
           .getText().toString();
       itemDistance = Double.valueOf(((EditText) v
-          .findViewById(R.id.itinerary_item_distance)).getText().toString());
+          .findViewById(R.id.itinerary_item_distance_from_home)).getText()
+          .toString());
 
-      // ((ItineraryItem) getActivity()).createNewItineraryItem(itemTitle,
-      // itemIsTrip, itemType, itemLocation, itemStartDate, itemEndDate,
-      // itemStartTime, itemEndTime, itemDistance);
-      //
-      // getFragmentManager().popBackStack();
+      ((ItineraryItem) getActivity()).sendItineraryItemData(itemTitle,
+          itemIsTrip, itemType, itemLocation, itemStartDate, itemEndDate,
+          itemStartTime, itemEndTime, itemDistance);
+
+      getFragmentManager().popBackStack();
       break;
     case R.id.menu_cancel_itinerary_item:
 

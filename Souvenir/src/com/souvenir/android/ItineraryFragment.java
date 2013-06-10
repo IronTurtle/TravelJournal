@@ -30,7 +30,7 @@ public class ItineraryFragment extends ParentFragment
   private ArrayList<ArrayList<String>> tripPlansList;
   private boolean refresh = false;
 
-  private static final int NEW_ITINERART_ITEM = 3171;
+  private static final int NEW_ITINERARY_ITEM = 3171;
   private final int ITINERARY_REQUEST = 1714;
 
   @Override
@@ -50,7 +50,7 @@ public class ItineraryFragment extends ParentFragment
         Toast.makeText(getActivity().getApplicationContext(),
             "Adding new itinerary item", Toast.LENGTH_SHORT).show();
         startActivityForResult(new Intent(getActivity(), ItineraryItem.class),
-            NEW_ITINERART_ITEM);
+            NEW_ITINERARY_ITEM);
       }
     });
 
@@ -310,12 +310,19 @@ public class ItineraryFragment extends ParentFragment
     switch (requestCode)
     {
 
-    case NEW_ITINERART_ITEM:
+    case NEW_ITINERARY_ITEM:
+      Toast.makeText(getActivity().getApplicationContext(), "new itinerary",
+          Toast.LENGTH_SHORT).show();
       if (resultCode == Activity.RESULT_OK)
       {
         if (data != null)
         {
-          System.out.println("NEW ITINERARY ITEM: " + data.toString());
+          Toast.makeText(getActivity().getApplicationContext(),
+              "NEW ITINERARY ITEM: " + data.getExtras(), Toast.LENGTH_SHORT)
+              .show();
+          // System.out.println("NEW ITINERARY ITEM: " +
+          // data.getExtras().toString());
+          createNewItineraryItem(data.getExtras());
         }
       }
       break;
@@ -330,6 +337,19 @@ public class ItineraryFragment extends ParentFragment
       }
       break;
     }
+  }
+
+  private void createNewItineraryItem(Bundle bundle)
+  {
+    bundle.getString("ITINERARY_TITLE");
+    bundle.getBoolean("ITINERARY_ISTRIP");
+    bundle.getString("ITINERARY_TYPE");
+    bundle.getString("ITINERARY_LOCATION");
+    bundle.getString("ITINERARY_STARTDATE");
+    bundle.getString("ITINERARY_ENDDATE");
+    bundle.getString("ITINERARY_STARTTIME");
+    bundle.getString("ITINERARY_ENDTIME");
+    bundle.getDouble("ITINERARY_DISTANCE");
   }
 
   private void removeItineraryItem(int i, int i1)

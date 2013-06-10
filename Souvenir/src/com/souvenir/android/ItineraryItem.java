@@ -35,11 +35,12 @@ public class ItineraryItem extends SherlockFragmentActivity
     return super.onCreateOptionsMenu(menu);
   }
 
-  public void createNewItineraryItem(String itemTitle, boolean itemIsTrip,
+  public void sendItineraryItemData(String itemTitle, boolean itemIsTrip,
       String itemType, String itemLocation, String itemStartDate,
       String itemEndDate, String itemStartTime, String itemEndTime,
       double itemDistance)
   {
+    System.out.println("putting extras...");
     Intent resultIntent = new Intent();
     resultIntent.putExtra("ITINERARY_TITLE", itemTitle);
     resultIntent.putExtra("ITINERARY_ISTRIP", itemIsTrip);
@@ -51,6 +52,7 @@ public class ItineraryItem extends SherlockFragmentActivity
     resultIntent.putExtra("ITINERARY_ENDTIME", itemEndTime);
     resultIntent.putExtra("ITINERARY_DISTANCE", itemDistance);
     setResult(Activity.RESULT_OK, resultIntent);
+    System.out.println("extras set...");
     finish();
   }
 

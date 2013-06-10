@@ -207,7 +207,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     });
 
     Bundle bundle = this.getActivity().getIntent().getExtras();
-    if (bundle != null)
+    if (bundle != null && bundle.containsKey("guid"))
     {
       // getMetadata();
       oldNote = true;
@@ -229,6 +229,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       setDefaultTitle();
 
     }
+
+    mLocation.setOnClickListener(new btnFindPlace());
+    // mEntry.setOnKeyListener(new NoteEntryField());
+
     return view;
   }
 
