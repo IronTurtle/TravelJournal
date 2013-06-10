@@ -438,59 +438,21 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
               + "thm/note/" + snippetEntry.getGuid() + "?auth="
               + mEvernoteSession.getAuthToken(), snippetPic, options);
 
-      try
+      String location = snippetEntry.getAttributes().getPlaceName();
+      if (location == null)
       {
-        mEvernoteSession
-            .getClientFactory()
-            .createNoteStoreClient()
-            .getNote(snippetEntry.getGuid(), true, true, true, true,
-                new OnClientCallback<Note>()
-                {
-                  public void onSuccess(Note note)
-                  {
-                    String location = note.getAttributes().getPlaceName();
-                    if (location == null)
-                    {
-                      location = String.valueOf((note.getAttributes()
-                          .getLatitude())
-                          + String.valueOf(note.getAttributes().getLongitude()));
-                    }
-
-                    snippetLocation.setText(location);
-                    System.out.println("LOCATION: " + location);
-                  }
-
-                  @Override
-                  public void onException(Exception exception)
-                  {
-                    exception.printStackTrace();
-                  }
-                });
-        /*
-         * mEvernoteSession.getClientFactory().createNoteStoreClient()
-         * .getNoteApplicationData(snippetEntry.getGuid(), new
-         * OnClientCallback<LazyMap>() { public void onSuccess(LazyMap
-         * resources) {
-         * 
-         * //System.out.println(resources.getFullMap().values()); String
-         * location = resources.getFullMap().get("LOCATION");
-         * 
-         * snippetLocation.setText(location); }
-         * 
-         * @Override public void onException(Exception exception) {
-         * exception.printStackTrace(); } });
-         */
+        location = String.valueOf((snippetEntry.getAttributes().getLatitude())
+            + String.valueOf(snippetEntry.getAttributes().getLongitude()));
       }
-      catch (TTransportException e)
-      {
-        e.printStackTrace();
-      }
+
+      snippetLocation.setText(location);
+      System.out.println("LOCATION: " + location);
       snippetEvent.setText(snippetEntry.getTitle().toUpperCase());
       snippetText.setText(android.text.Html.fromHtml(snippetEntry.getContent())
           .toString());
 
       // snippetText.setText(Integer.valueOf(position).toString());
-      snippetLocation.setText("Evernote Hack");
+      // snippetLocation.setText("Evernote Hack");
 
       return snippetView;
     }
