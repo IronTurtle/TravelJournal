@@ -108,6 +108,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   private LocationManager mlocManager;
   private LocationListener mlocListener;
   private boolean selectedPlace = false;
+  private boolean contentChanged = false;
 
   protected ImageLoader imageLoader = ImageLoader.getInstance();
   private final int FACEBOOK_SHARE = 6135;
@@ -238,7 +239,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
 
     mLocation.setOnClickListener(new btnFindPlace());
-    // mEntry.setOnKeyListener(new NoteEntryField());
+    mEntry.setOnKeyListener(new NoteEntryField());
 
     getTravelNotebook();
 
@@ -539,8 +540,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       location = String.valueOf((note.getAttributes().getLatitude())
           + String.valueOf(note.getAttributes().getLongitude()));
     }
-
-    mLocation.setText(location);
+    if (location != null)
+    {
+      selectedPlace = true;
+      mLocation.setText(location);
+    }
+    latitude = note.getAttributes().getLatitude();
+    longitude = note.getAttributes().getLongitude();
     // System.out.println("LOCATION: " + location);
 
     // Set location to correct field
@@ -569,7 +575,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     System.out.println("Got note content");
 
-    mEntry.setText(android.text.Html.fromHtml(contents));
+    mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
 
     Document doc = Jsoup.parse(contents);
     System.out.println("contents");
@@ -680,7 +686,26 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
        * mEntry.getText().toString() + "</p>" +
        * EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
        */
-      String content = mEntry.getText().toString();
+
+      String content;
+      System.out.println("curContent: " + mEntry.getText().toString() + "\n"
+          + ((note.getContent().split("<p>")[1]).split("</p>")[0]));
+      if (mEntry.getText().toString()
+          .equals(((note.getContent().split("<p>")[1]).split("</p>")[0])))
+      {
+        content = note.getContent().replace(EvernoteUtil.NOTE_SUFFIX, "");
+      }
+      else
+      {
+        String contentRes = (note.getContent().split("</p>")[1]).replace(
+            EvernoteUtil.NOTE_SUFFIX, "");
+        content = EvernoteUtil.NOTE_PREFIX + "<p>"
+            + mEntry.getText().toString() + "</p>" + contentRes;
+
+        contentChanged = true;
+
+      }
+
       String location = mLocation.getText().toString();
 
       // final Note note = new Note();
@@ -697,8 +722,21 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       LazyMap map = new LazyMap();
 
       map.putToFullMap("LOCATION", location);
-      attr.setLongitude(longitude);
-      attr.setLatitude(latitude);
+      if (longitude != 0 && latitude != 0)
+      {
+        attr.setLongitude(longitude);
+        attr.setLatitude(latitude);
+      }
+      else
+      {
+        attr.setLatitudeIsSet(false);
+        attr.setLongitudeIsSet(false);
+        if (!selectedPlace)
+        {
+          attr.setPlaceName(LOCATION_NOT_SPECIFIED);
+        }
+      }
+
       if (selectedPlace)
       {
         attr.setPlaceName(location);
@@ -710,17 +748,19 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
       // System.out.println(note.getAttributes().getApplicationData().toString());
 
-      content = note.getContent().replace(EvernoteUtil.NOTE_SUFFIX, "");
       // content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
+      boolean newImages = false;
       for (ImageData imageData : images)
       {
 
         if (imageData.isNew)
         {
-          Resource resource = new Resource();
+          newImages = true;
           // ImageData imageData = mImageData;
           // ImageData imageData = images.get(images.size() - 1);
           String f = imageData.filePath;
+
+          Resource resource = new Resource();
           InputStream in;
           try
           {
@@ -741,7 +781,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           {
             e.printStackTrace();
           }
-
           System.out.println("Resource size: " + note.getResourcesSize());
           note.addToResources(resource);
           System.out.println("Resource size: " + note.getResourcesSize());
@@ -749,10 +788,14 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           String enmedia = EvernoteUtil.createEnMediaTag(resource)
               .replaceFirst(" ", " title=\"" + imageData.caption + "\" ");
           content += enmedia;
+
         }
       }
-      note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
-      System.out.println(content);
+      if (contentChanged || newImages)
+      {
+        note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
+      }
+      System.out.println(note.getContent());
       /*
        * Time now = new Time(); now.setToNow(); String title =
        * now.toString();//mTitle.getText().toString();
@@ -923,7 +966,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       content += enmedia;
     }
     note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
-    System.out.println(content);
+    System.out.println(note.getContent());
     /*
      * Time now = new Time(); now.setToNow(); String title =
      * now.toString();//mTitle.getText().toString();

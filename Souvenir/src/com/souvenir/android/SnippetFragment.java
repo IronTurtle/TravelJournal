@@ -449,7 +449,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
       }
 
       snippetLocation.setText(location);
-      System.out.println("LOCATION: " + location);
+      // System.out.println("LOCATION: " + location);
       snippetEvent.setText(snippetEntry.getTitle().toUpperCase());
       snippetText.setText(android.text.Html.fromHtml(snippetEntry.getContent())
           .toString());
