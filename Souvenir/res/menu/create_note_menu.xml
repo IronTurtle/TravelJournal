@@ -17,4 +17,8 @@
 		android:icon="@drawable/trophy"
 		android:title="Trophy" />
 	
+	<item android:id="@+id/viewedit_note_menu_fbshare" android:showAsAction="ifRoom"
+		android:icon="@drawable/share"
+		android:title="Share to Facebook" />
+	
 </menu>
