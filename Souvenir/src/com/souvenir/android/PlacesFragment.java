@@ -8,20 +8,18 @@ import org.gmarz.googleplaces.PlacesResult;
 import org.gmarz.googleplaces.models.Place;
 import org.gmarz.googleplaces.query.NearbySearchQuery;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -30,13 +28,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 
 public class PlacesFragment extends ParentFragment
 {
@@ -272,6 +263,8 @@ public class PlacesFragment extends ParentFragment
       String text = "Current location is: " + "Latitude = " + loc.getLatitude()
           + " Longitude = " + loc.getLongitude();
 
+      ((EditText) (getView().findViewById(R.id.selectedPlace)))
+          .setText(latitude + ", " + longitude);
       Toast.makeText(getActivity().getApplicationContext(), text,
           Toast.LENGTH_SHORT).show();
       // query results from Google Places API

@@ -52,6 +52,7 @@ import com.evernote.edam.notestore.NotesMetadataList;
 import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteSortOrder;
+import com.evernote.edam.type.Notebook;
 import com.evernote.thrift.transport.TTransportException;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -66,7 +67,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  */
 public class SnippetFragment extends ParentFragment implements OnClickListener
 {
-  private static final int SNIPPET_PAGE_SIZE = 3;
+  private static final int SNIPPET_PAGE_SIZE = 5;
+  private static String TRAVEL_NOTEBOOK_NAME = "Travel Notebook";
+  private static String NOTEBOOK_GUID;
 
   // UI elements that we update
   private Button mBtnAuth;
@@ -88,6 +91,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
     View view = inflater.inflate(R.layout.fragment_snippet, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
     mBtnAuth.setOnClickListener(this);
+    checkForTravelNotebook();
     return view;
   }
 
@@ -235,7 +239,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
 
       NoteFilter filter = new NoteFilter();
       filter.setOrder(NoteSortOrder.UPDATED.getValue());
-      filter.setWords("notebook:\"Travel Notebook\"");
+      filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
 
       NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
       spec.setIncludeTitle(true);
@@ -275,8 +279,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                         mEvernoteSession
                             .getClientFactory()
                             .createNoteStoreClient()
-                            .getNote(snippetEntry.getGuid(), true, true, true,
-                                true, new OnClientCallback<Note>()
+                            .getNote(snippetEntry.getGuid(), true, false,
+                                false, false, new OnClientCallback<Note>()
                                 {
                                   @Override
                                   public void onSuccess(Note note)
@@ -457,4 +461,69 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
     }
   }
 
+  private void checkForTravelNotebook()
+  {
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .listNotebooks(new OnClientCallback<List<Notebook>>()
+          {
+
+            @Override
+            public void onSuccess(List<Notebook> notebookList)
+            {
+              for (Notebook notebook : notebookList)
+              {
+                if ((notebook.getName().toString())
+                    .equals(TRAVEL_NOTEBOOK_NAME))
+                {
+                  NOTEBOOK_GUID = notebook.getGuid();
+                  return;
+                }
+              }
+              // Travel Notebook not found/created
+              Notebook notebook = new Notebook();
+              notebook.setName(TRAVEL_NOTEBOOK_NAME);
+              try
+              {
+                mEvernoteSession.getClientFactory().createNoteStoreClient()
+                    .createNotebook(notebook, new OnClientCallback<Notebook>()
+                    {
+
+                      @Override
+                      public void onSuccess(Notebook created)
+                      {
+                        NOTEBOOK_GUID = created.getGuid();
+                      }
+
+                      @Override
+                      public void onException(Exception exception)
+                      {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                            "Warning: Travel Notebook not created.",
+                            Toast.LENGTH_LONG).show();
+                        exception.printStackTrace();
+                      }
+
+                    });
+              }
+              catch (TTransportException e)
+              {
+                e.printStackTrace();
+              }
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+
+            }
+
+          });
+    }
+    catch (TTransportException e1)
+    {
+      e1.printStackTrace();
+    }
+  }
 }

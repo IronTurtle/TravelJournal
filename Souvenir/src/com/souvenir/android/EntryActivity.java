@@ -33,7 +33,7 @@ public class EntryActivity extends SherlockFragmentActivity
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getSupportMenuInflater().inflate(R.menu.viewedit_note_menu, menu);
+    getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
     return super.onCreateOptionsMenu(menu);
   }
 

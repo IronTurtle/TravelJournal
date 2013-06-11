@@ -79,6 +79,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     Serializable
 {
   private static String TRAVEL_NOTEBOOK_NAME = "Travel Notebook";
+  private static final String LOCATION_NOT_SPECIFIED = "<Location not specified>";
   private static String NOTEBOOK_GUID;
   Boolean oldNote = false;
   ViewPager pager;
@@ -94,7 +95,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     public String filePath;
     public String mimeType;
     public String fileName;
-    protected String caption;
+    protected String caption = "";
+    public boolean isNew = false;
   }
 
   Uri mImageUri;
@@ -198,21 +200,21 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       @Override
       public void onPageScrolled(int arg0, float arg1, int arg2)
       {
-        // TODO Auto-generated method stub
 
       }
 
       @Override
       public void onPageScrollStateChanged(int arg0)
       {
-        // TODO Auto-generated method stub
 
       }
     });
 
     Bundle bundle = this.getActivity().getIntent().getExtras();
-    if (bundle != null && bundle.containsKey("guid"))
+    if (bundle != null && bundle.containsKey("note"))
     {
+      getActivity().getWindow().setSoftInputMode(
+          WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
       // getMetadata();
       oldNote = true;
       note = (Note) bundle.get("note");
@@ -254,22 +256,50 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
             @Override
             public void onSuccess(List<Notebook> notebookList)
             {
-              // TODO Auto-generated method stub
               for (Notebook notebook : notebookList)
               {
                 if ((notebook.getName().toString())
                     .equals(TRAVEL_NOTEBOOK_NAME))
                 {
                   NOTEBOOK_GUID = notebook.getGuid();
-                  break;
+                  return;
                 }
+              }
+              // Travel Notebook not found/created
+              Notebook notebook = new Notebook();
+              notebook.setName(TRAVEL_NOTEBOOK_NAME);
+              try
+              {
+                mEvernoteSession.getClientFactory().createNoteStoreClient()
+                    .createNotebook(notebook, new OnClientCallback<Notebook>()
+                    {
+
+                      @Override
+                      public void onSuccess(Notebook created)
+                      {
+                        NOTEBOOK_GUID = created.getGuid();
+                      }
+
+                      @Override
+                      public void onException(Exception exception)
+                      {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                            "Warning: Travel Notebook not created.",
+                            Toast.LENGTH_LONG).show();
+                        exception.printStackTrace();
+                      }
+
+                    });
+              }
+              catch (TTransportException e)
+              {
+                e.printStackTrace();
               }
             }
 
             @Override
             public void onException(Exception exception)
             {
-              // TODO Auto-generated method stub
 
             }
 
@@ -277,7 +307,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     catch (TTransportException e1)
     {
-      // TODO Auto-generated catch block
       e1.printStackTrace();
     }
   }
@@ -294,7 +323,14 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       System.out.println("Save pressed");
       Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
           .show();
-      saveNote(this.getView());
+      if (!oldNote)
+      {
+        saveNote(this.getView());
+      }
+      else
+      {
+        this.updateNote(this.getView());
+      }
       break;
     case R.id.create_note_menu_camera:
       // startActivity(new Intent(this, NoteActivity.class));
@@ -505,7 +541,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
 
     mLocation.setText(location);
-    System.out.println("LOCATION: " + location);
+    // System.out.println("LOCATION: " + location);
 
     // Set location to correct field
     /*
@@ -624,6 +660,35 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
     try
     {
+      /*
+       * note.setTitle(mTitle.getText().toString());
+       * System.out.println("Note Title: " + note.getTitle());
+       * 
+       * // Trying to add locations to data resources NoteAttributes attr = new
+       * NoteAttributes(); LazyMap map = new LazyMap();
+       * 
+       * map.putToFullMap("LOCATION", mLocation.getText().toString());
+       * attr.setApplicationData(map); note.setAttributes(attr);
+       * 
+       * System.out.println(note.getAttributes().getApplicationData().toString())
+       * ;
+       * 
+       * note.addToResources(resource);
+       * 
+       * note.setTitle(mTitle.getText().toString());
+       * note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" +
+       * mEntry.getText().toString() + "</p>" +
+       * EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
+       */
+      String content = mEntry.getText().toString();
+      String location = mLocation.getText().toString();
+
+      // final Note note = new Note();
+      if (NOTEBOOK_GUID != null)
+      {
+        note.setNotebookGuid(NOTEBOOK_GUID);
+      }
+      // note.setTitle(title);
       note.setTitle(mTitle.getText().toString());
       System.out.println("Note Title: " + note.getTitle());
 
@@ -631,18 +696,67 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       NoteAttributes attr = new NoteAttributes();
       LazyMap map = new LazyMap();
 
-      map.putToFullMap("LOCATION", mLocation.getText().toString());
-      attr.setApplicationData(map);
+      map.putToFullMap("LOCATION", location);
+      attr.setLongitude(longitude);
+      attr.setLatitude(latitude);
+      if (selectedPlace)
+      {
+        attr.setPlaceName(location);
+      }
+
+      attr.setSourceApplication("Souvenir App (Android)");
+
       note.setAttributes(attr);
 
-      System.out.println(note.getAttributes().getApplicationData().toString());
+      // System.out.println(note.getAttributes().getApplicationData().toString());
 
-      note.addToResources(resource);
+      content = note.getContent().replace(EvernoteUtil.NOTE_SUFFIX, "");
+      // content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
+      for (ImageData imageData : images)
+      {
 
-      note.setTitle(mTitle.getText().toString());
-      note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>"
-          + mEntry.getText().toString() + "</p>"
-          + EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
+        if (imageData.isNew)
+        {
+          Resource resource = new Resource();
+          // ImageData imageData = mImageData;
+          // ImageData imageData = images.get(images.size() - 1);
+          String f = imageData.filePath;
+          InputStream in;
+          try
+          {
+            System.out.println("f: " + f);
+            in = new BufferedInputStream(new FileInputStream(f));
+
+            FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
+            in.close();
+
+            resource.setData(data);
+            resource.setMime(imageData.mimeType);
+            ResourceAttributes attributes = new ResourceAttributes();
+            attributes.setFileName(imageData.fileName);
+            resource.setAttributes(attributes);
+
+          }
+          catch (Exception e)
+          {
+            e.printStackTrace();
+          }
+
+          System.out.println("Resource size: " + note.getResourcesSize());
+          note.addToResources(resource);
+          System.out.println("Resource size: " + note.getResourcesSize());
+
+          String enmedia = EvernoteUtil.createEnMediaTag(resource)
+              .replaceFirst(" ", " title=\"" + imageData.caption + "\" ");
+          content += enmedia;
+        }
+      }
+      note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
+      System.out.println(content);
+      /*
+       * Time now = new Time(); now.setToNow(); String title =
+       * now.toString();//mTitle.getText().toString();
+       */
 
       mEvernoteSession.getClientFactory().createNoteStoreClient()
           .updateNote(note, new OnClientCallback<Note>()
@@ -749,8 +863,21 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     LazyMap map = new LazyMap();
 
     map.putToFullMap("LOCATION", location);
-    attr.setLongitude(longitude);
-    attr.setLatitude(latitude);
+    if (longitude != 0 && latitude != 0)
+    {
+      attr.setLongitude(longitude);
+      attr.setLatitude(latitude);
+    }
+    else
+    {
+      attr.setLatitudeIsSet(false);
+      attr.setLongitudeIsSet(false);
+      if (!selectedPlace)
+      {
+        attr.setPlaceName(LOCATION_NOT_SPECIFIED);
+      }
+    }
+
     if (selectedPlace)
     {
       attr.setPlaceName(location);
@@ -1056,6 +1183,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
               .getColumnIndex(queryColumns[2]));
           image.fileName = cursor.getString(cursor
               .getColumnIndex(queryColumns[3]));
+          image.isNew = true;
 
           // First decode with inJustDecodeBounds=true to check
           // dimensions
@@ -1184,7 +1312,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // mImageView.setImageBitmap(image.imageBitmap);
       // }
 
-      System.out.println(image.filePath);
+      System.out.println("image filepath: " + image.filePath);
       urls.add("file://" + image.filePath);
       pager.getAdapter().notifyDataSetChanged();
       images.add(image);
