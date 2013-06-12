@@ -91,7 +91,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
     View view = inflater.inflate(R.layout.fragment_snippet, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
     mBtnAuth.setOnClickListener(this);
-    checkForTravelNotebook();
     return view;
   }
 
@@ -133,7 +132,9 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
       // mBtnAuth.setText(R.string.label_log_out);
       View b = this.getView().findViewById(R.id.auth_button);
       b.setVisibility(View.GONE);
-      listViewCreate();
+
+      checkForTravelNotebook();
+      // listViewCreate();
     }
     else
     {
@@ -478,6 +479,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                     .equals(TRAVEL_NOTEBOOK_NAME))
                 {
                   NOTEBOOK_GUID = notebook.getGuid();
+                  listViewCreate();
                   return;
                 }
               }
@@ -506,6 +508,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener
                       }
 
                     });
+
+                listViewCreate();
               }
               catch (TTransportException e)
               {

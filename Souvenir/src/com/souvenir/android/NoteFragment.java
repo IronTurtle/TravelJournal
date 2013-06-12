@@ -226,8 +226,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     else
     {
-      CameraOperation c = new CameraOperation();
-      c.execute("");
+      // CameraOperation c = new CameraOperation();
+      // c.execute("");/
+      openCamera();
       // setup locationManager for GPS request
       mlocManager = (LocationManager) getActivity().getSystemService(
           Context.LOCATION_SERVICE);
@@ -1379,7 +1380,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
         // Open Camera app first automatically
         openCamera();
-
         /*
          * mlocManager = (LocationManager)
          * getActivity().getSystemService(Context.LOCATION_SERVICE);

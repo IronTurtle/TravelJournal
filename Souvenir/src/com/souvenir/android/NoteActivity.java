@@ -28,6 +28,7 @@ public class NoteActivity extends SherlockFragmentActivity
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.fragment_standard);
+
     final ActionBar bar = getSupportActionBar();
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
@@ -36,6 +37,13 @@ public class NoteActivity extends SherlockFragmentActivity
         .beginTransaction();
     fragmentTransaction.add(R.id.fragment, mEntryFragment);
     fragmentTransaction.commit();
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle savedInstanceState)
+  {
+    super.onSaveInstanceState(savedInstanceState);
+
   }
 
   @Override
@@ -59,4 +67,12 @@ public class NoteActivity extends SherlockFragmentActivity
     finish();
   }
 
+  @Override
+  public void onDestroy()
+  {
+    super.onDestroy(); // Always call the superclass
+
+    // Stop method tracing that the activity started during onCreate()
+    android.os.Debug.stopMethodTracing();
+  }
 }
