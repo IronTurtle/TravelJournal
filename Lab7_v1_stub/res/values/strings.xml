@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AppRater</string>
+    
+    <!-- AppView text -->
+    <string name="sample_app_name">Sample App Name</string>
+    <string name="installed">Installed</string>
+    
+    <!-- Notification text -->
+	<string name="newAppNotificationTicker">New App to review!</string>
+	<string name="newAppNotificationText">You\'ve got a new App to review!</string>
+	<string name="newAppNotificationOriginName">App Rater</string>
+    <string name="newAppToast">New App Received…</string>
+    
+    <!-- Menu titles -->
+    <string name="menutitle_startDownload">Get Apps</string>
+    <string name="menutitle_stopDownload">Stop</string>
+    <string name="menutitle_removeAll">Remove All Apps</string>
+    
+    <!-- Contextual Action Menu titles -->
+    <string name="contextmenutitle_installed">Installed</string>
+    <string name="contextmenutitle_recordComment">Record Comment</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/menu_startDownload"
+        android:title="@string/menutitle_startDownload"
+        android:showAsAction="ifRoom|withText" >
+    </item>
+    <item android:id="@+id/menu_stopDownload"
+        android:title="@string/menutitle_stopDownload"
+        android:showAsAction="ifRoom|withText" >
+    </item>
+    <item android:id="@+id/menu_removeAll"
+        android:title="@string/menutitle_removeAll"
+        android:showAsAction="ifRoom|withText" >
+    </item>
+</menu>

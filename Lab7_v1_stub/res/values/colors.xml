@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="appText">#000000</color>
+	<color name="new_app">#FEB380</color>
+	<color name="installed_app">#FEFF80</color>
+	<color name="rated_app">#CCFE80</color>
+</resources>
