@@ -26,6 +26,7 @@
 package com.souvenir.android;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -47,8 +48,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.evernote.client.android.InvalidAuthenticationException;
+import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.notestore.NoteMetadata;
 import com.evernote.edam.type.Note;
+import com.evernote.edam.type.Notebook;
+import com.evernote.thrift.transport.TTransportException;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.souvenir.database.SouvenirContentProvider;
@@ -87,6 +91,15 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
         .getContentResolver()
         .insert(Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"),
             values);
+    ContentValues values2 = new ContentValues();
+    values2.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID, 123456);
+    values2.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE, "test2");
+    values2.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+        "content");
+    this.getActivity()
+        .getContentResolver()
+        .insert(Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"),
+            values2);
 
     View view = inflater.inflate(R.layout.fragment_snippet, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
@@ -448,9 +461,9 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     @Override
     public void bindView(View view, Context context, Cursor cursor)
     {
-      SNote note = new SNote(cursor.getString(0), cursor.getString(0),
+      SNote note = new SNote(cursor.getString(2), cursor.getString(0),
           cursor.getString(0), cursor.getString(0), cursor.getString(0),
-          cursor.getString(0), cursor.getString(0));
+          cursor.getString(0), cursor.getString(0), cursor.getString(0));
 
       // ((AppView) view).setOnAppChangeListener(null);
       ((SnippetView) view).setSNote(note);
@@ -462,88 +475,80 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     {
       SNote note = new SNote(cursor.getString(0), cursor.getString(0),
           cursor.getString(0), cursor.getString(0), cursor.getString(0),
-          cursor.getString(0), cursor.getString(0));
+          cursor.getString(0), cursor.getString(0), cursor.getString(0));
       SnippetView sv = new SnippetView(context, note);
       return sv;
-      // App app = new App(cursor.getString(AppTable.APP_COL_NAME),
-      // cursor.getString(AppTable.APP_COL_INSTALLURI),
-      // cursor.getFloat(AppTable.APP_COL_RATING),
-      // cursor.getLong(AppTable.APP_COL_ID),
-      // cursor.getInt(AppTable.APP_COL_INSTALLED) > 0);
-      // AppView av = new AppView(context, app);
-      // av.setOnAppChangeListener(this.m_listener);
-      // return av;
     }
   }
 
-  // private void checkForTravelNotebook()
-  // {
-  // try
-  // {
-  // mEvernoteSession.getClientFactory().createNoteStoreClient()
-  // .listNotebooks(new OnClientCallback<List<Notebook>>()
-  // {
-  //
-  // @Override
-  // public void onSuccess(List<Notebook> notebookList)
-  // {
-  // for (Notebook notebook : notebookList)
-  // {
-  // if ((notebook.getName().toString())
-  // .equals(TRAVEL_NOTEBOOK_NAME))
-  // {
-  // NOTEBOOK_GUID = notebook.getGuid();
-  // listViewCreate();
-  // return;
-  // }
-  // }
-  // // Travel Notebook not found/created
-  // Notebook notebook = new Notebook();
-  // notebook.setName(TRAVEL_NOTEBOOK_NAME);
-  // try
-  // {
-  // mEvernoteSession.getClientFactory().createNoteStoreClient()
-  // .createNotebook(notebook, new OnClientCallback<Notebook>()
-  // {
-  //
-  // @Override
-  // public void onSuccess(Notebook created)
-  // {
-  // NOTEBOOK_GUID = created.getGuid();
-  // }
-  //
-  // @Override
-  // public void onException(Exception exception)
-  // {
-  // Toast.makeText(getActivity().getApplicationContext(),
-  // "Warning: Travel Notebook not created.",
-  // Toast.LENGTH_LONG).show();
-  // exception.printStackTrace();
-  // }
-  //
-  // });
-  //
-  // listViewCreate();
-  // }
-  // catch (TTransportException e)
-  // {
-  // e.printStackTrace();
-  // }
-  // }
-  //
-  // @Override
-  // public void onException(Exception exception)
-  // {
-  //
-  // }
-  //
-  // });
-  // }
-  // catch (TTransportException e1)
-  // {
-  // e1.printStackTrace();
-  // }
-  // }
+  private void checkForTravelNotebook()
+  {
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .listNotebooks(new OnClientCallback<List<Notebook>>()
+          {
+
+            @Override
+            public void onSuccess(List<Notebook> notebookList)
+            {
+              for (Notebook notebook : notebookList)
+              {
+                if ((notebook.getName().toString())
+                    .equals(TRAVEL_NOTEBOOK_NAME))
+                {
+                  NOTEBOOK_GUID = notebook.getGuid();
+                  // listViewCreate();
+                  return;
+                }
+              }
+              // Travel Notebook not found/created
+              Notebook notebook = new Notebook();
+              notebook.setName(TRAVEL_NOTEBOOK_NAME);
+              try
+              {
+                mEvernoteSession.getClientFactory().createNoteStoreClient()
+                    .createNotebook(notebook, new OnClientCallback<Notebook>()
+                    {
+
+                      @Override
+                      public void onSuccess(Notebook created)
+                      {
+                        NOTEBOOK_GUID = created.getGuid();
+                      }
+
+                      @Override
+                      public void onException(Exception exception)
+                      {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                            "Warning: Travel Notebook not created.",
+                            Toast.LENGTH_LONG).show();
+                        exception.printStackTrace();
+                      }
+
+                    });
+
+                // listViewCreate();
+              }
+              catch (TTransportException e)
+              {
+                e.printStackTrace();
+              }
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+
+            }
+
+          });
+    }
+    catch (TTransportException e1)
+    {
+      e1.printStackTrace();
+    }
+  }
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
@@ -552,12 +557,9 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT };
-    // String[] projection = { AppTable.APP_KEY_ID, AppTable.APP_KEY_NAME,
-    // AppTable.APP_KEY_RATING, AppTable.APP_KEY_INSTALLURI,
-    // AppTable.APP_KEY_INSTALLED };
-    //
+
     Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps");
-    //
+
     CursorLoader cursorLoader = new CursorLoader(getActivity(), uri,
         projection, null, null, "");
     return cursorLoader;

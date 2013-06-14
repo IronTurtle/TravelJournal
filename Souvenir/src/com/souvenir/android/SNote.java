@@ -2,26 +2,40 @@ package com.souvenir.android;
 
 public class SNote
 {
+  public SNote(String noteTitle, String evernoteGUID, String noteContent,
+      String noteLocation, String trophyNumber, String tripID,
+      String noteModifyDate, String noteCreateDate)
+  {
+    super();
+    this.noteTitle = noteTitle;
+    this.evernoteGUID = evernoteGUID;
+    this.noteContent = noteContent;
+    this.noteLocation = noteLocation;
+    this.trophyNumber = trophyNumber;
+    this.tripID = tripID;
+    this.noteModifyDate = noteModifyDate;
+    this.noteCreateDate = noteCreateDate;
+  }
+
+  public SNote(String noteTitle, String noteContent, String noteLocation,
+      String noteModifyDate, String noteCreateDate)
+  {
+    super();
+    this.noteTitle = noteTitle;
+    this.noteContent = noteContent;
+    this.noteLocation = noteLocation;
+    this.noteModifyDate = noteModifyDate;
+    this.noteCreateDate = noteCreateDate;
+  }
+
   String noteTitle;
   String evernoteGUID;
   String noteContent;
   String noteLocation;
   String trophyNumber;
   String tripID;
-  String noteDate;
-
-  public SNote(String noteName, String evernoteGUID, String noteContent,
-      String noteLocation, String trophyNumber, String tripID, String noteDate)
-  {
-    super();
-    this.noteTitle = noteName;
-    this.evernoteGUID = evernoteGUID;
-    this.noteContent = noteContent;
-    this.noteLocation = noteLocation;
-    this.trophyNumber = trophyNumber;
-    this.tripID = tripID;
-    this.noteDate = noteDate;
-  }
+  String noteModifyDate;
+  String noteCreateDate;
 
   public String getNoteTitle()
   {
@@ -83,14 +97,24 @@ public class SNote
     this.tripID = tripID;
   }
 
-  public String getNoteDate()
+  public String getNoteModifyDate()
   {
-    return noteDate;
+    return noteModifyDate;
   }
 
-  public void setNoteDate(String noteDate)
+  public void setNoteModifyDate(String noteModifyDate)
   {
-    this.noteDate = noteDate;
+    this.noteModifyDate = noteModifyDate;
+  }
+
+  public String getNoteCreateDate()
+  {
+    return noteCreateDate;
+  }
+
+  public void setNoteCreateDate(String noteCreateDate)
+  {
+    this.noteCreateDate = noteCreateDate;
   }
 
 }

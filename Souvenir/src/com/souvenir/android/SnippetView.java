@@ -65,6 +65,7 @@ public class SnippetView extends RelativeLayout
 
     snippetLocation.setText(note.getNoteLocation());
     snippetEvent.setText(note.getNoteTitle());
+    System.out.println(note.getNoteTitle());
     snippetText.setText(android.text.Html.fromHtml(note.getNoteContent())
         .toString());
   }

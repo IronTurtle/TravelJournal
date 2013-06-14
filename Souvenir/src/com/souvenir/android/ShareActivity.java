@@ -1,8 +1,9 @@
 package com.souvenir.android;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 
 public class ShareActivity extends SherlockFragmentActivity

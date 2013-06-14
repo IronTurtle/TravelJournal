@@ -2,25 +2,13 @@ package com.souvenir.android;
 
 import java.util.Arrays;
 
-import com.facebook.widget.UserSettingsFragment;
-
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-import android.support.v4.view.ViewPager;
-import android.widget.TextView;
-
-import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
-
-import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import com.facebook.Session;
-import com.facebook.SessionState;
+import com.facebook.widget.UserSettingsFragment;
 
 public class OtherActivity extends SherlockFragmentActivity
 {
