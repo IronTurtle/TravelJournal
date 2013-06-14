@@ -12,7 +12,8 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 
-public class NoteActivity extends SherlockFragmentActivity
+public class NoteActivity extends SherlockFragmentActivity implements
+    NoteFragment.OnHeadlineSelectedListener
 {
 
   ViewPager mViewPager;
@@ -35,7 +36,7 @@ public class NoteActivity extends SherlockFragmentActivity
     NoteFragment mEntryFragment = new NoteFragment();
     FragmentTransaction fragmentTransaction = getSupportFragmentManager()
         .beginTransaction();
-    fragmentTransaction.add(R.id.fragment, mEntryFragment);
+    fragmentTransaction.add(android.R.id.content, mEntryFragment);
     fragmentTransaction.commit();
   }
 
@@ -74,5 +75,23 @@ public class NoteActivity extends SherlockFragmentActivity
 
     // Stop method tracing that the activity started during onCreate()
     android.os.Debug.stopMethodTracing();
+  }
+
+  @Override
+  public void onArticleSelected(String location)
+  {
+    PlacesFragment newFragment = new PlacesFragment();
+    Bundle args = new Bundle();
+    args.putString("PREV_LOC_DATA", location);
+    newFragment.setArguments(args);
+    FragmentTransaction transaction = getSupportFragmentManager()
+        .beginTransaction();
+
+    // Replace whatever is in the fragment_container view with this fragment,
+    // and add the transaction to the back stack so the user can navigate back
+    transaction.replace(android.R.id.content, newFragment);
+    transaction.addToBackStack(null);
+    transaction.commit();
+
   }
 }

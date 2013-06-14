@@ -84,6 +84,11 @@
             android:name="com.souvenir.android.ItineraryItemFragment"
             android:label="@string/title_fragment_itinerary_item" >
         </activity>
+
+        <provider
+            android:name="com.souvenir.database.SouvenirContentProvider"
+            android:authorities="com.souvenir.database"
+            android:exported="false" />
     </application>
 
 </manifest>

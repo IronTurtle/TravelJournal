@@ -1057,15 +1057,42 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     @Override
     public void onClick(View v)
     {
-
-      // Show Place Finder Fragment
-      // Toast.makeText(getActivity(),
-      // "Location Field clicked",Toast.LENGTH_SHORT).show();
-      startActivityForResult(
-          new Intent(getActivity(), PlacesActivity.class).putExtra(
-              "PREV_LOC_DATA", mLocation.getText().toString()),
-          LOCATION_REQUEST);
+      //
+      // // Show Place Finder Fragment
+      // // Toast.makeText(getActivity(),
+      // // "Location Field clicked",Toast.LENGTH_SHORT).show();
+      // startActivityForResult(
+      // new Intent(getActivity(), PlacesActivity.class).putExtra(
+      // "PREV_LOC_DATA", mLocation.getText().toString()),
+      // LOCATION_REQUEST);
+      mCallback.onArticleSelected(mLocation.getText().toString());
     }
+  }
+
+  OnHeadlineSelectedListener mCallback;
+
+  @Override
+  public void onAttach(Activity activity)
+  {
+    super.onAttach(activity);
+
+    // This makes sure that the container activity has implemented
+    // the callback interface. If not, it throws an exception.
+    try
+    {
+      mCallback = (OnHeadlineSelectedListener) activity;
+    }
+    catch (ClassCastException e)
+    {
+      throw new ClassCastException(activity.toString()
+          + " must implement OnHeadlineSelectedListener");
+    }
+  }
+
+  public interface OnHeadlineSelectedListener
+  {
+    /** Called by HeadlinesFragment when a list item is selected */
+    public void onArticleSelected(String location);
   }
 
   public void clearForm(View view)

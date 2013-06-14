@@ -50,29 +50,32 @@ public class PlacesFragment extends ParentFragment
     View view = inflater.inflate(R.layout.fragment_places, container, false);
 
     selected = (EditText) view.findViewById(R.id.selectedPlace);
+    String prev_loc = getArguments().getString("PREV_LOC_DATA");
+    selected.setText(prev_loc);
 
-    // TODO: Should not use try-catch, but if hasExtra, if not, getSingleUpdate
-    try
-    {
-      System.out.println(getActivity().getIntent().hasExtra("PREV_LOC_DATA"));
-      // if(getActivity().getIntent().hasExtra("PREV_LOC_DATA")) {
-      String prev_loc = (String) getActivity().getIntent().getExtras()
-          .getString("PREV_LOC_DATA");
-      selected.setText(prev_loc);
-      /*
-       * } else { mlocManager = (LocationManager)
-       * getActivity().getSystemService(Context.LOCATION_SERVICE);
-       * 
-       * mlocListener = new AppLocationListener();
-       * mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
-       * mlocListener, null); }
-       */
-    }
-    catch (Exception e)
-    {
-      // no prev location selected, do nothing
-      e.printStackTrace();
-    }
+    // // TODO: Should not use try-catch, but if hasExtra, if not,
+    // getSingleUpdate
+    // try
+    // {
+    // System.out.println(getActivity().getIntent().hasExtra("PREV_LOC_DATA"));
+    // // if(getActivity().getIntent().hasExtra("PREV_LOC_DATA")) {
+    // String prev_loc = (String) getActivity().getIntent().getExtras()
+    // .getString("PREV_LOC_DATA");
+    // selected.setText(prev_loc);
+    // /*
+    // * } else { mlocManager = (LocationManager)
+    // * getActivity().getSystemService(Context.LOCATION_SERVICE);
+    // *
+    // * mlocListener = new AppLocationListener();
+    // * mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+    // * mlocListener, null); }
+    // */
+    // }
+    // catch (Exception e)
+    // {
+    // // no prev location selected, do nothing
+    // e.printStackTrace();
+    // }
 
     // set up location service and listener for Google Places API
     mlocManager = (LocationManager) getActivity().getSystemService(
@@ -234,14 +237,15 @@ public class PlacesFragment extends ParentFragment
         @Override
         public void onClick(View v)
         {
-          EditText selected = (EditText) getActivity().findViewById(
-              R.id.selectedPlace);
-          System.out.println(curPlace.getName());
-          selected.setText(curPlace.getName() + ", " + curPlace.getAddress());
-          ((PlacesActivity) getActivity()).setLocationData(curPlace.getName()
-              + ", " + curPlace.getAddress());
-
-          getFragmentManager().popBackStack();
+          // EditText selected = (EditText) getActivity().findViewById(
+          // R.id.selectedPlace);
+          // System.out.println(curPlace.getName());
+          // selected.setText(curPlace.getName() + ", " +
+          // curPlace.getAddress());
+          // ((PlacesActivity) getActivity()).setLocationData(curPlace.getName()
+          // + ", " + curPlace.getAddress());
+          //
+          // getFragmentManager().popBackStack();
         }
       });
       return snippetView;

@@ -11,14 +11,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.ActionBar.Tab;
-//import com.actionbarsherlock.sample.styled.R;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+
+//import com.actionbarsherlock.sample.styled.R;
 
 public class TabActivity extends SherlockFragmentActivity
 {
@@ -45,21 +45,14 @@ public class TabActivity extends SherlockFragmentActivity
 
     // create TabAdapter for ActionbarSherlock
     mTabsAdapter = new TabsAdapter(this, mViewPager);
-
-    // init tabs
-
-    mTabsAdapter.addTab(
-        bar.newTab().setText("Itinerary").setIcon(R.drawable.list),
-        ItineraryFragment.class, null);
-
+    // mTabsAdapter.addTab(
+    // bar.newTab().setText("Itinerary").setIcon(R.drawable.list),
+    // ItineraryFragment.class, null);
     mTabsAdapter.addTab(bar.newTab().setText("Me").setIcon(R.drawable.me),
         SnippetFragment.class, null);
 
-    // mTabsAdapter.addTab(bar.newTab().setText("Others").setIcon(R.drawable.them),
-    // OtherFragment.class,null);
-
     // set to show "Me" tab as default
-    mViewPager.setCurrentItem(1);
+    mViewPager.setCurrentItem(0);
   }
 
   @Override
@@ -67,7 +60,7 @@ public class TabActivity extends SherlockFragmentActivity
   {
     super.onResume();
     // set to show "Me" tab as default
-    mViewPager.setCurrentItem(1);
+    mViewPager.setCurrentItem(0);
   }
 
   @Override

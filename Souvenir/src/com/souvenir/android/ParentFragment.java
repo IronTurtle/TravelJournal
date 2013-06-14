@@ -28,7 +28,6 @@ package com.souvenir.android;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.View;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.evernote.client.android.EvernoteSession;
@@ -41,38 +40,15 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
  * This is the parent activity that all sample activities extend from. This
  * creates the Evernote Session in onCreate and stores the CONSUMER_KEY and
  * CONSUMER_SECRET
- * 
- * In this example, it also takes care of dialogs
  */
 public class ParentFragment extends SherlockFragment
 {
-
-  /**
-   * ************************************************************************
-   * You MUST change the following values to run this sample application. *
-   * *************************************************************************
-   */
-
-  // Your Evernote API key. See http://dev.evernote.com/documentation/cloud/
-  // Please obfuscate your code to help keep these values secret.
   private static final String CONSUMER_KEY = "ironsuturtle";
   private static final String CONSUMER_SECRET = "e0441c112aab58f6";
-
-  // Initial development is done on Evernote's testing service, the sandbox.
-  // Change to HOST_PRODUCTION to use the Evernote production service
-  // once your code is complete, or HOST_CHINA to use the Yinxiang Biji
-  // (Evernote China) production service.
   private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
   protected ImageLoader imageLoader = ImageLoader.getInstance();
   protected DisplayImageOptions options;
-  /**
-   * ************************************************************************
-   * The following values are simply part of the demo application. *
-   * *************************************************************************
-   */
-
   protected EvernoteSession mEvernoteSession;
-  protected final int DIALOG_PROGRESS = 101;
 
   public void onCreate(Bundle savedInstanceState)
   {
@@ -90,11 +66,4 @@ public class ParentFragment extends SherlockFragment
         .imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
 
   }
-
-  public void onClick(View v)
-  {
-    // TODO Auto-generated method stub
-
-  }
-
 }
