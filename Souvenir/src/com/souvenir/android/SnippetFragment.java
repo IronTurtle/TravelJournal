@@ -25,7 +25,6 @@
  */
 package com.souvenir.android;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -49,8 +48,12 @@ import android.widget.Toast;
 
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.android.OnClientCallback;
+import com.evernote.edam.notestore.NoteFilter;
 import com.evernote.edam.notestore.NoteMetadata;
+import com.evernote.edam.notestore.NotesMetadataList;
+import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.Note;
+import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Notebook;
 import com.evernote.thrift.transport.TTransportException;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -72,8 +75,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   final String TAG1 = "MyCamera";
   ListView listView;
   SnippetCursorAdapter adapter;
-  public ArrayList<NoteMetadata> entries;
-  public ArrayList<Note> entries2;
+  // public ArrayList<NoteMetadata> entries;
+  // public ArrayList<Note> entries2;
 
   ImageLoader imageLoader;
   DisplayImageOptions options;
@@ -82,24 +85,25 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState)
   {
-    ContentValues values = new ContentValues();
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID, 12345);
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE, "test");
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
-        "content");
-    this.getActivity()
-        .getContentResolver()
-        .insert(Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"),
-            values);
-    ContentValues values2 = new ContentValues();
-    values2.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID, 123456);
-    values2.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE, "test2");
-    values2.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
-        "content");
-    this.getActivity()
-        .getContentResolver()
-        .insert(Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"),
-            values2);
+    // ContentValues values = new ContentValues();
+    // values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID, 12345);
+    // values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE, "test");
+    // values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+    // "content");
+    // this.getActivity()
+    // .getContentResolver()
+    // .insert(Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"),
+    // values);
+    // ContentValues values2 = new ContentValues();
+    // values2.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID, 123456);
+    // values2.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
+    // "test2");
+    // values2.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+    // "content");
+    // this.getActivity()
+    // .getContentResolver()
+    // .insert(Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"),
+    // values2);
 
     View view = inflater.inflate(R.layout.fragment_snippet, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
@@ -122,7 +126,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   public void onResume()
   {
     super.onResume();
-    // updateUi();
+    updateUi();
   }
 
   private void updateUi()
@@ -134,7 +138,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       b.setVisibility(View.GONE);
 
       // checkForTravelNotebook();
-      // listViewCreate();
+      listViewCreate();
     }
     else
     {
@@ -198,123 +202,143 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
   }
 
-  // public void listViewCreate()
-  // {
-  // // Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
-  // entries = new ArrayList<NoteMetadata>();
-  //
-  // // update();
-  // if (mEvernoteSession.isLoggedIn())
-  // {
-  // int pageSize = SNIPPET_PAGE_SIZE;
-  //
-  // NoteFilter filter = new NoteFilter();
-  // filter.setOrder(NoteSortOrder.UPDATED.getValue());
-  // filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
-  //
-  // NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
-  // spec.setIncludeTitle(true);
-  // // System.out.println("searching");
-  //
-  // try
-  // {
-  // mEvernoteSession
-  // .getClientFactory()
-  // .createNoteStoreClient()
-  // .findNotesMetadata(filter, 0, pageSize, spec,
-  // new OnClientCallback<NotesMetadataList>()
-  // {
-  // @Override
-  // public void onSuccess(NotesMetadataList notes)
-  // {
-  //
-  // entries.addAll(notes.getNotes());
-  // entries2 = new ArrayList<Note>(entries.size());
-  // final SnippetAdapter adapter = new SnippetAdapter(
-  // SnippetFragment.this.getActivity(), R.layout.snippet,
-  // entries2, mEvernoteSession);
-  // // listView.setAdapter(adapter);
-  //
-  // // Log.e("log_tag ******",
-  // // notes.getNotes().get(0).getTitle());
-  // // Log.e("log_tag ******", entries.get(0).getTitle());
-  // for (int i = 0; i < entries.size(); i++)
-  // {
-  // NoteMetadata snippetEntry = entries.get(i);
-  // final int position = i;
-  // try
-  // {
-  // mEvernoteSession
-  // .getClientFactory()
-  // .createNoteStoreClient()
-  // .getNote(snippetEntry.getGuid(), true, false,
-  // false, false, new OnClientCallback<Note>()
-  // {
-  // @Override
-  // public void onSuccess(Note note)
-  // {
-  // // contents.add(android.text.Html.fromHtml(note.getContent()).toString());
-  // entries2.add(position, note);
-  // adapter.notifyDataSetChanged();
-  // // snippetText.setText(android.text.Html.fromHtml(note
-  // // .getContent()));
-  // // removeDialog(DIALOG_PROGRESS);
-  // // System.out.println("" + position +
-  // // snippetText.getText());
-  // // Toast.makeText(SnippetFragment.this.getActivity(),
-  // // snippetText.getText(),
-  // // Toast.LENGTH_LONG).show();
-  // // notes = data;
-  // }
-  //
-  // @Override
-  // public void onException(Exception exception)
-  // {
-  //
-  // }
-  // });
-  // }
-  // catch (Exception e)
-  // {
-  // e.printStackTrace();
-  // }
-  //
-  // }
-  //
-  // /*
-  // * listView.setOnItemClickListener(new OnItemClickListener()
-  // * {
-  // *
-  // * @Override public void onItemClick(AdapterView<?> parent,
-  // * View view, int position, long id) { String item =
-  // * entries.get(position).getTitle();
-  // * System.out.println("Clicked" + item);
-  // *
-  // * Toast.makeText(SnippetFragment.this.getActivity().
-  // * getBaseContext(), item, Toast.LENGTH_LONG).show(); //
-  // * Intent i = new
-  // * Intent(this.getActivity().getApplicationContext(), //
-  // * JournalEntry.class); // startActivityForResult(i, 100); }
-  // * });
-  // */
-  // }
-  //
-  // @Override
-  // public void onException(Exception exception)
-  // {
-  // // Log.e(LOGTAG, "Error saving note", exception);
-  // // Toast.makeText(getApplicationContext(),
-  // // R.string.error_saving_note, Toast.LENGTH_LONG).show();
-  // // removeDialog(DIALOG_PROGRESS);
-  // }
-  // });
-  // }
-  // catch (TTransportException e)
-  // {
-  // e.printStackTrace();
-  // }
-  // }
-  // }
+  public void listViewCreate()
+  {
+    // // Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
+    // entries = new ArrayList<NoteMetadata>();
+
+    // update();
+    if (mEvernoteSession.isLoggedIn())
+    {
+      int pageSize = SNIPPET_PAGE_SIZE;
+
+      NoteFilter filter = new NoteFilter();
+      filter.setOrder(NoteSortOrder.UPDATED.getValue());
+      filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
+
+      NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
+      spec.setIncludeTitle(true);
+      // System.out.println("searching");
+
+      try
+      {
+        mEvernoteSession
+            .getClientFactory()
+            .createNoteStoreClient()
+            .findNotesMetadata(filter, 0, pageSize, spec,
+                new OnClientCallback<NotesMetadataList>()
+                {
+                  @Override
+                  public void onSuccess(NotesMetadataList notes)
+                  {
+
+                    // entries.addAll(notes.getNotes());
+                    // entries2 = new ArrayList<Note>(entries.size());
+                    // final SnippetAdapter adapter = new SnippetAdapter(
+                    // SnippetFragment.this.getActivity(), R.layout.snippet,
+                    // entries2, mEvernoteSession);
+                    // listView.setAdapter(adapter);
+
+                    // Log.e("log_tag ******",
+                    // notes.getNotes().get(0).getTitle());
+                    // Log.e("log_tag ******", entries.get(0).getTitle());
+                    for (int i = 0; i < notes.getNotesSize(); i++)
+                    {
+                      NoteMetadata snippetEntry = notes.getNotes().get(i);
+                      final int position = i;
+                      try
+                      {
+                        mEvernoteSession
+                            .getClientFactory()
+                            .createNoteStoreClient()
+                            .getNote(snippetEntry.getGuid(), true, false,
+                                false, false, new OnClientCallback<Note>()
+                                {
+                                  @Override
+                                  public void onSuccess(Note note)
+                                  {
+                                    // contents.add(android.text.Html.fromHtml(note.getContent()).toString());
+                                    // entries2.add(position, note);
+                                    // adapter.notifyDataSetChanged();
+                                    // snippetText.setText(android.text.Html.fromHtml(note
+                                    // .getContent()));
+                                    // removeDialog(DIALOG_PROGRESS);
+                                    // System.out.println("" + position +
+                                    // snippetText.getText());
+                                    // Toast.makeText(SnippetFragment.this.getActivity(),
+                                    // snippetText.getText(),
+                                    // Toast.LENGTH_LONG).show();
+                                    // notes = data;
+                                    ContentValues values = new ContentValues();
+                                    values
+                                        .put(
+                                            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
+                                            note.getGuid());
+                                    values
+                                        .put(
+                                            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
+                                            note.getTitle());
+                                    values
+                                        .put(
+                                            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+                                            note.getContent());
+                                    SnippetFragment.this
+                                        .getActivity()
+                                        .getContentResolver()
+                                        .insert(
+                                            Uri.parse(SouvenirContentProvider.CONTENT_URI
+                                                + "/apps"), values);
+                                    adapter.notifyDataSetChanged();
+                                  }
+
+                                  @Override
+                                  public void onException(Exception exception)
+                                  {
+
+                                  }
+                                });
+                      }
+                      catch (Exception e)
+                      {
+                        e.printStackTrace();
+                      }
+
+                    }
+
+                    /*
+                     * listView.setOnItemClickListener(new OnItemClickListener()
+                     * {
+                     * 
+                     * @Override public void onItemClick(AdapterView<?> parent,
+                     * View view, int position, long id) { String item =
+                     * entries.get(position).getTitle();
+                     * System.out.println("Clicked" + item);
+                     * 
+                     * Toast.makeText(SnippetFragment.this.getActivity().
+                     * getBaseContext(), item, Toast.LENGTH_LONG).show(); //
+                     * Intent i = new
+                     * Intent(this.getActivity().getApplicationContext(), //
+                     * JournalEntry.class); // startActivityForResult(i, 100); }
+                     * });
+                     */
+                  }
+
+                  @Override
+                  public void onException(Exception exception)
+                  {
+                    // Log.e(LOGTAG, "Error saving note", exception);
+                    // Toast.makeText(getApplicationContext(),
+                    // R.string.error_saving_note, Toast.LENGTH_LONG).show();
+                    // removeDialog(DIALOG_PROGRESS);
+                  }
+                });
+      }
+      catch (TTransportException e)
+      {
+        e.printStackTrace();
+      }
+    }
+  }
 
   @Override
   public void onClick(View v)
@@ -461,8 +485,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     @Override
     public void bindView(View view, Context context, Cursor cursor)
     {
-      SNote note = new SNote(cursor.getString(2), cursor.getString(0),
-          cursor.getString(0), cursor.getString(0), cursor.getString(0),
+      SNote note = new SNote(cursor.getString(2), cursor.getString(3),
+          cursor.getString(3), cursor.getString(0), cursor.getString(0),
           cursor.getString(0), cursor.getString(0), cursor.getString(0));
 
       // ((AppView) view).setOnAppChangeListener(null);
@@ -473,8 +497,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
-      SNote note = new SNote(cursor.getString(0), cursor.getString(0),
-          cursor.getString(0), cursor.getString(0), cursor.getString(0),
+      SNote note = new SNote(cursor.getString(2), cursor.getString(3),
+          cursor.getString(3), cursor.getString(0), cursor.getString(0),
           cursor.getString(0), cursor.getString(0), cursor.getString(0));
       SnippetView sv = new SnippetView(context, note);
       return sv;

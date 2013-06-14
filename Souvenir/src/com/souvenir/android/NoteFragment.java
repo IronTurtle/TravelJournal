@@ -88,7 +88,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
   // The path to and MIME type of the currently selected image from the
   // gallery
-  @SuppressWarnings("unused")
   private class ImageData
   {
     public Bitmap imageBitmap;
@@ -852,7 +851,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   private String getDateTime()
   {
     Calendar cal = Calendar.getInstance();
-    return String.valueOf(cal.get(Calendar.MONTH)) + "/"
+    return String.valueOf(cal.get(Calendar.MONTH) + 1) + "/"
         + String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + "/"
         + String.valueOf(cal.get(Calendar.YEAR)) + ", "
         + String.valueOf(cal.get(Calendar.HOUR_OF_DAY)) + ":"
