@@ -1,50 +1,160 @@
 package com.souvenir.android;
 
-public class SNote
+import java.util.ArrayList;
+
+import android.content.res.Resources;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class SNote implements Parcelable
 {
-  public SNote(String noteTitle, String evernoteGUID, String noteContent,
-      String noteLocation, String trophyNumber, String tripID,
-      String noteModifyDate, String noteCreateDate)
-  {
-    super();
-    this.noteTitle = noteTitle;
-    this.evernoteGUID = evernoteGUID;
-    this.noteContent = noteContent;
-    this.noteLocation = noteLocation;
-    this.trophyNumber = trophyNumber;
-    this.tripID = tripID;
-    this.noteModifyDate = noteModifyDate;
-    this.noteCreateDate = noteCreateDate;
-  }
-
-  public SNote(String noteTitle, String noteContent, String noteLocation,
-      String noteModifyDate, String noteCreateDate)
-  {
-    super();
-    this.noteTitle = noteTitle;
-    this.noteContent = noteContent;
-    this.noteLocation = noteLocation;
-    this.noteModifyDate = noteModifyDate;
-    this.noteCreateDate = noteCreateDate;
-  }
-
-  String noteTitle;
+  String title;
+  String content;
+  String location;
+  String modifyDate;
+  String createDate;
   String evernoteGUID;
-  String noteContent;
-  String noteLocation;
+  ArrayList<Resources> resources;
+  ArrayList<String> tags;
   String trophyNumber;
   String tripID;
-  String noteModifyDate;
-  String noteCreateDate;
 
-  public String getNoteTitle()
+  public SNote(String title, String content, String location)
   {
-    return noteTitle;
+    super();
+    this.title = title;
+    this.content = content;
+    this.location = location;
   }
 
-  public void setNoteTitle(String noteTitle)
+  public SNote(String title, String content, String location,
+      String evernoteGUID, String trophyNumber, String tripID)
   {
-    this.noteTitle = noteTitle;
+    super();
+    this.title = title;
+    this.content = content;
+    this.location = location;
+    this.evernoteGUID = evernoteGUID;
+    this.trophyNumber = trophyNumber;
+    this.tripID = tripID;
+  }
+
+  public SNote(String title, String content, String location,
+      String modifyDate, String createDate, String evernoteGUID,
+      ArrayList<Resources> resources, ArrayList<String> tags,
+      String trophyNumber, String tripID)
+  {
+    super();
+    this.title = title;
+    this.content = content;
+    this.location = location;
+    this.modifyDate = modifyDate;
+    this.createDate = createDate;
+    this.evernoteGUID = evernoteGUID;
+    this.resources = resources;
+    this.tags = tags;
+    this.trophyNumber = trophyNumber;
+    this.tripID = tripID;
+  }
+
+  @Override
+  public int describeContents()
+  {
+    return 0;
+  }
+
+  @Override
+  public void writeToParcel(Parcel dest, int flags)
+  {
+    dest.writeString(this.title);
+    dest.writeString(this.content);
+    dest.writeString(this.location);
+    dest.writeString(this.modifyDate);
+    dest.writeString(this.createDate);
+    dest.writeString(this.evernoteGUID);
+    dest.writeList(this.resources);
+    dest.writeList(this.tags);
+    dest.writeString(this.trophyNumber);
+    dest.writeString(this.tripID);
+  }
+
+  public static final Parcelable.Creator<SNote> CREATOR = new Parcelable.Creator<SNote>()
+  {
+    public SNote createFromParcel(Parcel in)
+    {
+      return new SNote(in);
+    }
+
+    public SNote[] newArray(int size)
+    {
+      return new SNote[size];
+    }
+  };
+
+  @SuppressWarnings("unchecked")
+  public SNote(Parcel in)
+  {
+    super();
+    this.title = in.readString();
+    this.content = in.readString();
+    this.location = in.readString();
+    this.modifyDate = in.readString();
+    this.createDate = in.readString();
+    this.evernoteGUID = in.readString();
+    this.resources = in.readArrayList(String.class.getClassLoader());
+    this.tags = in.readArrayList(String.class.getClassLoader());
+    this.trophyNumber = in.readString();
+    this.tripID = in.readString();
+  }
+
+  public String getTitle()
+  {
+    return title;
+  }
+
+  public void setTitle(String title)
+  {
+    this.title = title;
+  }
+
+  public String getContent()
+  {
+    return content;
+  }
+
+  public void setContent(String content)
+  {
+    this.content = content;
+  }
+
+  public String getLocation()
+  {
+    return location;
+  }
+
+  public void setLocation(String location)
+  {
+    this.location = location;
+  }
+
+  public String getModifyDate()
+  {
+    return modifyDate;
+  }
+
+  public void setModifyDate(String modifyDate)
+  {
+    this.modifyDate = modifyDate;
+  }
+
+  public String getCreateDate()
+  {
+    return createDate;
+  }
+
+  public void setCreateDate(String createDate)
+  {
+    this.createDate = createDate;
   }
 
   public String getEvernoteGUID()
@@ -57,24 +167,24 @@ public class SNote
     this.evernoteGUID = evernoteGUID;
   }
 
-  public String getNoteContent()
+  public ArrayList<Resources> getResources()
   {
-    return noteContent;
+    return resources;
   }
 
-  public void setNoteContent(String noteContent)
+  public void setResources(ArrayList<Resources> resources)
   {
-    this.noteContent = noteContent;
+    this.resources = resources;
   }
 
-  public String getNoteLocation()
+  public ArrayList<String> getTags()
   {
-    return noteLocation;
+    return tags;
   }
 
-  public void setNoteLocation(String noteLocation)
+  public void setTags(ArrayList<String> tags)
   {
-    this.noteLocation = noteLocation;
+    this.tags = tags;
   }
 
   public String getTrophyNumber()
@@ -95,26 +205,6 @@ public class SNote
   public void setTripID(String tripID)
   {
     this.tripID = tripID;
-  }
-
-  public String getNoteModifyDate()
-  {
-    return noteModifyDate;
-  }
-
-  public void setNoteModifyDate(String noteModifyDate)
-  {
-    this.noteModifyDate = noteModifyDate;
-  }
-
-  public String getNoteCreateDate()
-  {
-    return noteCreateDate;
-  }
-
-  public void setNoteCreateDate(String noteCreateDate)
-  {
-    this.noteCreateDate = noteCreateDate;
   }
 
 }

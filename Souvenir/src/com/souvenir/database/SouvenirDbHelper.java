@@ -17,8 +17,10 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID + INTEGER_TYPE
       + " UNIQUE" + COMMA_SEP
       + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE + TEXT_TYPE
-      + COMMA_SEP + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT
-      + TEXT_TYPE + " )";
+      + COMMA_SEP + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION
+      + TEXT_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT + TEXT_TYPE
+      + " )";
 
   public static final String SQL_DELETE_NOTE_TABLE = "DROP TABLE IF EXISTS "
       + SouvenirContract.SouvenirNote.TABLE_NAME_NOTE;

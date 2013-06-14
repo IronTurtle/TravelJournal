@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class SnippetView extends RelativeLayout
 {
 
-  private SNote m_app;
+  private SNote mNote;
 
   /**
    * The container ViewGroup for all other Views in an AppView. Used to set the
@@ -47,7 +47,7 @@ public class SnippetView extends RelativeLayout
 
   public void setSNote(SNote note)
   {
-    this.m_app = note;
+    this.mNote = note;
 
     snippetText.setText("");
 
@@ -63,11 +63,15 @@ public class SnippetView extends RelativeLayout
     // + String.valueOf(snippetEntry.getAttributes().getLongitude()));
     // }
 
-    snippetLocation.setText(note.getNoteLocation());
-    snippetEvent.setText(note.getNoteTitle());
-    System.out.println(note.getNoteTitle());
-    snippetText.setText(android.text.Html.fromHtml(note.getNoteContent())
+    snippetLocation.setText(note.getLocation());
+    snippetEvent.setText(note.getTitle());
+    snippetText.setText(android.text.Html.fromHtml(note.getContent())
         .toString());
+  }
+
+  public SNote getNote()
+  {
+    return mNote;
   }
 
   // /**

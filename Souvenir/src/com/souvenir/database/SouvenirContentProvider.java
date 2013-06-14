@@ -347,7 +347,8 @@ public class SouvenirContentProvider extends ContentProvider
     String[] available = { SouvenirContract.SouvenirNote._ID,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT };
+        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION };
 
     if (projection != null)
     {
