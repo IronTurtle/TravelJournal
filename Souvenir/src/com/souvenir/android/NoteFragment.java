@@ -426,7 +426,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     case FACEBOOK_SHARE:
       if (resultCode == Activity.RESULT_OK)
       {
-        ((EntryActivity) getActivity()).finish();
+        getActivity().finish();
         getFragmentManager().popBackStack();
 
       }
@@ -532,26 +532,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   public void displayNote()
   {
 
-    mTitle.setText(note.getTitle().toUpperCase(Locale.US));
-
-    String location = note.getAttributes().getPlaceName();
-    if (location == null)
-    {
-      location = String.valueOf((note.getAttributes().getLatitude())
-          + String.valueOf(note.getAttributes().getLongitude()));
-    }
-    if (location != null)
-    {
-      selectedPlace = true;
-      mLocation.setText(location);
-    }
-    latitude = note.getAttributes().getLatitude();
-    longitude = note.getAttributes().getLongitude();
-    System.out.println("Getting note content...");
-    String contents = note.getContent();
-
-    System.out.println("Got note content");
-
+    mTitle.setText(mNote.getTitle().toUpperCase(Locale.US));
+    mLocation.setText(mNote.getLocation());
+    String contents = mNote.getContent();
     mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
 
     Document doc = Jsoup.parse(contents);
@@ -570,7 +553,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
         mEvernoteSession
             .getClientFactory()
             .createNoteStoreClient()
-            .getResourceByHash(note.getGuid(),
+            .getResourceByHash(mNote.getEvernoteGUID(),
                 EvernoteUtil.hexToBytes(div.attr("hash")), false, true, false,
                 new OnClientCallback<Resource>()
                 {
@@ -833,7 +816,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
             {
               Toast.makeText(getActivity(), R.string.success_creating_note,
                   Toast.LENGTH_LONG).show();
-              ((EntryActivity) getActivity()).finish();
+              getActivity().finish();
               getFragmentManager().popBackStack();
             }
 
@@ -843,7 +826,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
               exception.printStackTrace();
               Toast.makeText(getActivity(), R.string.err_update_note,
                   Toast.LENGTH_LONG).show();
-              ((EntryActivity) getActivity()).finish();
+              getActivity().finish();
               getFragmentManager().popBackStack();
             }
 

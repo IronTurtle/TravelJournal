@@ -1,11 +1,18 @@
 package com.souvenir.android;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.evernote.client.android.EvernoteSession;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 public class SnippetView extends RelativeLayout
 {
@@ -31,6 +38,13 @@ public class SnippetView extends RelativeLayout
   private TextView snippetLocation;
 
   private TextView snippetEvent;
+
+  private static final String CONSUMER_KEY = "ironsuturtle";
+  private static final String CONSUMER_SECRET = "e0441c112aab58f6";
+  private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
+  protected ImageLoader imageLoader = ImageLoader.getInstance();
+  protected DisplayImageOptions options;
+  protected EvernoteSession mEvernoteSession;
 
   public SnippetView(Context context, SNote note)
   {
@@ -67,6 +81,18 @@ public class SnippetView extends RelativeLayout
     snippetEvent.setText(note.getTitle());
     snippetText.setText(android.text.Html.fromHtml(note.getContent())
         .toString());
+    mEvernoteSession = EvernoteSession.getInstance(context, CONSUMER_KEY,
+        CONSUMER_SECRET, EVERNOTE_SERVICE);
+    options = new DisplayImageOptions.Builder().resetViewBeforeLoading()
+        .cacheOnDisc().imageScaleType(ImageScaleType.EXACTLY)
+        .bitmapConfig(Bitmap.Config.RGB_565)
+        .displayer(new FadeInBitmapDisplayer(300))
+        .imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
+
+    ImageLoader.getInstance().displayImage(
+        "" + mEvernoteSession.getAuthenticationResult().getWebApiUrlPrefix()
+            + "thm/note/" + note.getEvernoteGUID() + "?auth="
+            + mEvernoteSession.getAuthToken(), snippetPic, options);
   }
 
   public SNote getNote()

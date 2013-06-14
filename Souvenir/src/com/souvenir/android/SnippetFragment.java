@@ -97,8 +97,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
           long id)
       {
         Intent intent = new Intent(SnippetFragment.this.getActivity(),
-            EntryActivity.class).putExtra("note",
-            ((SnippetView) view).getNote());
+            NoteActivity.class).putExtra("note", ((SnippetView) view).getNote());
         getActivity().startActivityForResult(intent, 300);
       }
     });
@@ -456,8 +455,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     public void bindView(View view, Context context, Cursor cursor)
     {
       SNote note = new SNote(cursor.getString(1), cursor.getString(2),
-          cursor.getString(3), cursor.getString(0), cursor.getString(0),
-          cursor.getString(0));
+          cursor.getString(3), cursor.getString(4), cursor.getString(0),
+          cursor.getString(4));
 
       // ((AppView) view).setOnAppChangeListener(null);
       ((SnippetView) view).setSNote(note);
@@ -468,8 +467,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
       SNote note = new SNote(cursor.getString(1), cursor.getString(2),
-          cursor.getString(3), cursor.getString(0), cursor.getString(0),
-          cursor.getString(0));
+          cursor.getString(3), cursor.getString(4), cursor.getString(0),
+          cursor.getString(4));
       SnippetView sv = new SnippetView(context, note);
       return sv;
     }
