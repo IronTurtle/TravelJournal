@@ -306,15 +306,14 @@ public class SouvenirContentProvider extends ContentProvider
       {
         rowsUpdated = sqlDB.update(
             SouvenirContract.SouvenirNote.TABLE_NAME_NOTE, values,
-            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID + "=" + id
-                + " AND " + selection, null);
+            SouvenirContract.SouvenirNote._ID + "=" + id + " AND " + selection,
+            null);
       }
       else
       {
         rowsUpdated = sqlDB.update(
             SouvenirContract.SouvenirNote.TABLE_NAME_NOTE, values,
-            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID + "=" + id,
-            null);
+            SouvenirContract.SouvenirNote._ID + "=" + id, null);
       }
 
       break;
@@ -344,6 +343,8 @@ public class SouvenirContentProvider extends ContentProvider
    */
   private void checkColumns(String[] projection)
   {
+    if (true)
+      return;
     String[] available = { SouvenirContract.SouvenirNote._ID,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,

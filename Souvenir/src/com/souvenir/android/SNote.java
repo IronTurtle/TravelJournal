@@ -8,6 +8,7 @@ import android.os.Parcelable;
 
 public class SNote implements Parcelable
 {
+  int id;
   String title;
   String content;
   String location;
@@ -18,6 +19,7 @@ public class SNote implements Parcelable
   ArrayList<String> tags;
   String trophyNumber;
   String tripID;
+  int syncNum;
 
   public SNote(String title, String content, String location)
   {
@@ -66,6 +68,7 @@ public class SNote implements Parcelable
   @Override
   public void writeToParcel(Parcel dest, int flags)
   {
+    dest.writeInt(id);
     dest.writeString(this.title);
     dest.writeString(this.content);
     dest.writeString(this.location);
@@ -95,6 +98,7 @@ public class SNote implements Parcelable
   public SNote(Parcel in)
   {
     super();
+    this.id = in.readInt();
     this.title = in.readString();
     this.content = in.readString();
     this.location = in.readString();
@@ -205,6 +209,26 @@ public class SNote implements Parcelable
   public void setTripID(String tripID)
   {
     this.tripID = tripID;
+  }
+
+  public int getSyncNum()
+  {
+    return syncNum;
+  }
+
+  public void setSyncNum(int syncNum)
+  {
+    this.syncNum = syncNum;
+  }
+
+  public int getId()
+  {
+    return id;
+  }
+
+  public void setId(int id)
+  {
+    this.id = id;
   }
 
 }

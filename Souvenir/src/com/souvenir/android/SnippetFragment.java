@@ -225,6 +225,36 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                   System.out.println(data.getNotesSize());
                   for (Note note : data.getNotes())
                   {
+                    Cursor cursor;
+                    String[] projection = {
+                        SouvenirContract.SouvenirNote._ID,
+                        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
+                        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+                        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
+                        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
+                        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM,
+                        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY };
+
+                    if ((cursor = getActivity().getContentResolver().query(
+                        Uri.parse(SouvenirContentProvider.CONTENT_URI
+                            + "/apps/" + note.getGuid()), projection, null,
+                        null, null)) != null
+                        && cursor.getCount() > 0)
+                    {
+                      System.out.println("This GUID already exists "
+                          + cursor.getCount());
+                      cursor.moveToFirst();
+                      SNote oldNote = new SNote(cursor.getString(1), cursor
+                          .getString(2), cursor.getString(3), cursor
+                          .getString(4), cursor.getString(0), cursor
+                          .getString(4));
+                      int syncnum = cursor.getInt(cursor
+                          .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM));
+                      int dirty = cursor.getInt(cursor
+                          .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY));
+                      System.out.println("syncnumber: " + syncnum);
+                      break;
+                    }
 
                     try
                     {
@@ -317,9 +347,12 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
   public void syncCheck()
   {
+
     prefs = getActivity().getSharedPreferences(getActivity().getPackageName(),
         Context.MODE_PRIVATE);
-
+    fullSync();
+    if (true)
+      return;
     final int lastUpdateCount = prefs.getInt("lastUpdateCount", 0);
     final long lastSyncTime = prefs.getLong("lastSyncTime", 0);
 

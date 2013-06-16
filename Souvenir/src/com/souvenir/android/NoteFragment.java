@@ -71,6 +71,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
+import com.souvenir.database.SouvenirContentProvider;
+import com.souvenir.database.SouvenirContract;
 
 @SuppressWarnings("serial")
 public class NoteFragment extends ParentFragment implements OnClickListener,
@@ -979,6 +981,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
             @Override
             public void onSuccess(Note data)
             {
+              mNote.setSyncNum(data.getUpdateSequenceNum());
+              mNote.setEvernoteGUID(data.getGuid());
+              update(mNote);
               NoteFragment.this.clearForm(NoteFragment.this.getView());
               Toast.makeText(getActivity(), R.string.success_creating_note,
                   Toast.LENGTH_LONG).show();
@@ -1014,6 +1019,20 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     // ((NoteActivity) getActivity()).finish();
     // getFragmentManager().popBackStack();
+  }
+
+  protected void update(SNote mNote2)
+  {
+    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps/"
+        + mNote2.getId());
+
+    ContentValues values = new ContentValues();
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
+        mNote2.getEvernoteGUID());
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM,
+        mNote2.getSyncNum());
+
+    getActivity().getContentResolver().update(uri, values, null, null);
   }
 
   /**
