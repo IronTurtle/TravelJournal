@@ -3,7 +3,6 @@ package com.souvenir.android;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -15,8 +14,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 
 //import com.actionbarsherlock.sample.styled.R;
 
@@ -63,35 +60,35 @@ public class TabActivity extends SherlockFragmentActivity
     mViewPager.setCurrentItem(0);
   }
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu)
-  {
-    getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+  // @Override
+  // public boolean onCreateOptionsMenu(Menu menu)
+  // {
+  // getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+  //
+  // return super.onCreateOptionsMenu(menu);
+  // }
 
-    return super.onCreateOptionsMenu(menu);
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item)
-  {
-    // This uses the imported MenuItem from ActionBarSherlock
-    // Toast.makeText(this, "Got click: " + item.toString(),
-    // Toast.LENGTH_SHORT).show();
-    switch (item.getItemId())
-    {
-    case R.id.menu_add_note:
-      startActivity(new Intent(this, NoteActivity.class));
-      break;
-
-    case R.id.menu_search:
-      break;
-
-    case R.id.facebook_login:
-      startActivity(new Intent(this, OtherActivity.class));
-      break;
-    }
-    return true;
-  }
+  // @Override
+  // public boolean onOptionsItemSelected(MenuItem item)
+  // {
+  // // This uses the imported MenuItem from ActionBarSherlock
+  // // Toast.makeText(this, "Got click: " + item.toString(),
+  // // Toast.LENGTH_SHORT).show();
+  // switch (item.getItemId())
+  // {
+  // case R.id.menu_add_note:
+  // startActivity(new Intent(this, NoteActivity.class));
+  // break;
+  //
+  // case R.id.menu_search:
+  // break;
+  //
+  // case R.id.facebook_login:
+  // startActivity(new Intent(this, OtherActivity.class));
+  // break;
+  // }
+  // return true;
+  // }
 
   public static class TabsAdapter extends FragmentPagerAdapter implements
       ActionBar.TabListener, ViewPager.OnPageChangeListener

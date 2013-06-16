@@ -42,11 +42,9 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.Time;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -131,13 +129,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   private static final int CAMERA_PIC_REQUEST = 1313;
   private static final int LOCATION_REQUEST = 1034;
   // UI elements that we update
-  @SuppressWarnings("unused")
-  private Button mBtnAuth;
-  @SuppressWarnings("unused")
-  private Button mBtnSelect;
-  @SuppressWarnings("unused")
-  private EditText mTextArea;
-  // private ImageView mImageView;
 
   Button btnTakePhoto;
   private static final String CAMERA_TAG = "CAMERA";
@@ -933,7 +924,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
 
     attr.setSourceApplication("Souvenir App (Android)");
-
+    attr.setContentClass("com.souvenir.android");
     note.setAttributes(attr);
 
     // System.out.println(note.getAttributes().getApplicationData().toString());
@@ -1442,30 +1433,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     @Override
     protected void onProgressUpdate(Void... values)
     {
-    }
-  }
-
-  public class UninterceptableViewPager extends ViewPager
-  {
-    public UninterceptableViewPager(Context context)
-    {
-      super(context);
-    }
-
-    public UninterceptableViewPager(Context context, AttributeSet attrs)
-    {
-      super(context, attrs);
-    }
-
-    public boolean onInterceptTouchEvent(MotionEvent ev)
-    {
-      // Tell our parent to stop intercepting our events!
-      boolean ret = super.onInterceptTouchEvent(ev);
-      // if (ret)
-      // {
-      getParent().requestDisallowInterceptTouchEvent(true);
-      // }
-      return ret;
     }
   }
 

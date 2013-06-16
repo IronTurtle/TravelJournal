@@ -43,9 +43,9 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
  */
 public class ParentFragment extends SherlockFragment
 {
-  private static final String CONSUMER_KEY = "ironsuturtle";
-  private static final String CONSUMER_SECRET = "e0441c112aab58f6";
-  private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
+  static final String CONSUMER_KEY = "ironsuturtle";
+  static final String CONSUMER_SECRET = "e0441c112aab58f6";
+  static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
   protected ImageLoader imageLoader = ImageLoader.getInstance();
   protected DisplayImageOptions options;
   protected EvernoteSession mEvernoteSession;

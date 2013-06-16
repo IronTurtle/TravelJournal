@@ -30,6 +30,7 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,12 +49,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.notestore.NoteFilter;
-import com.evernote.edam.notestore.NoteMetadata;
-import com.evernote.edam.notestore.NotesMetadataList;
-import com.evernote.edam.notestore.NotesMetadataResultSpec;
+import com.evernote.edam.notestore.SyncChunk;
+import com.evernote.edam.notestore.SyncChunkFilter;
+import com.evernote.edam.notestore.SyncState;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Notebook;
@@ -80,6 +85,10 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState)
   {
+    ActionBar abs = getSherlockActivity().getSupportActionBar();
+    // abs.setTitle("Outfit");
+    abs.setDisplayHomeAsUpEnabled(true);
+    setHasOptionsMenu(true);
     View view = inflater.inflate(R.layout.fragment_snippet, container, false);
     mBtnAuth = (Button) view.findViewById(R.id.auth_button);
     mBtnAuth.setOnClickListener(this);
@@ -122,7 +131,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       b.setVisibility(View.GONE);
 
       // checkForTravelNotebook();
-      listViewCreate();
+      // syncCheck();
     }
     else
     {
@@ -186,127 +195,256 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
   }
 
-  public void listViewCreate()
+  public void fullSync()
   {
-    if (mEvernoteSession.isLoggedIn())
+    System.out.println("full sync");
+    SyncChunkFilter filter1 = new SyncChunkFilter();
+    filter1.setIncludeNotebooks(true);
+    filter1.setIncludeNotes(true);
+    filter1.setRequireNoteContentClass("com.souvenir.android");
+
+    NoteFilter filter = new NoteFilter();
+    filter.setOrder(NoteSortOrder.UPDATED.getValue());
+    filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
+
+    try
     {
-      int pageSize = SNIPPET_PAGE_SIZE;
+      mEvernoteSession
+          .getClientFactory()
+          .createNoteStoreClient()
+          .getFilteredSyncChunk(0, 10, filter1,
+              new OnClientCallback<SyncChunk>()
+              {
 
-      NoteFilter filter = new NoteFilter();
-      filter.setOrder(NoteSortOrder.UPDATED.getValue());
-      filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
-
-      NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
-      spec.setIncludeTitle(true);
-
-      try
-      {
-        mEvernoteSession
-            .getClientFactory()
-            .createNoteStoreClient()
-            .findNotesMetadata(filter, 0, pageSize, spec,
-                new OnClientCallback<NotesMetadataList>()
+                @Override
+                public void onSuccess(SyncChunk data)
                 {
-                  @Override
-                  public void onSuccess(NotesMetadataList notes)
+                  if (data == null || data.getNotes() == null)
+                    return;
+                  // TODO Auto-generated method stub
+                  System.out.println(data.getNotesSize());
+                  for (Note note : data.getNotes())
                   {
-                    for (int i = 0; i < notes.getNotesSize(); i++)
+
+                    try
                     {
-                      NoteMetadata snippetEntry = notes.getNotes().get(i);
-                      final int position = i;
-                      try
-                      {
-                        mEvernoteSession
-                            .getClientFactory()
-                            .createNoteStoreClient()
-                            .getNote(snippetEntry.getGuid(), true, false,
-                                false, false, new OnClientCallback<Note>()
+                      mEvernoteSession
+                          .getClientFactory()
+                          .createNoteStoreClient()
+                          .getNote(note.getGuid(), true, false, false, false,
+                              new OnClientCallback<Note>()
+                              {
+                                @Override
+                                public void onSuccess(Note note)
                                 {
-                                  @Override
-                                  public void onSuccess(Note note)
+                                  ContentValues values = new ContentValues();
+                                  values
+                                      .put(
+                                          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
+                                          note.getGuid());
+                                  values
+                                      .put(
+                                          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
+                                          note.getTitle());
+                                  values
+                                      .put(
+                                          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+                                          note.getContent());
+                                  String location = note.getAttributes()
+                                      .getPlaceName();
+                                  if (location == null)
                                   {
-                                    ContentValues values = new ContentValues();
-                                    values
-                                        .put(
-                                            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
-                                            note.getGuid());
-                                    values
-                                        .put(
-                                            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
-                                            note.getTitle());
-                                    values
-                                        .put(
-                                            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
-                                            note.getContent());
-                                    String location = note.getAttributes()
-                                        .getPlaceName();
-                                    if (location == null)
-                                    {
-                                      location = String.valueOf((note
-                                          .getAttributes().getLatitude())
-                                          + String.valueOf(note.getAttributes()
-                                              .getLongitude()));
-                                    }
-                                    values
-                                        .put(
-                                            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
-                                            location);
-                                    SnippetFragment.this
-                                        .getActivity()
-                                        .getContentResolver()
-                                        .insert(
-                                            Uri.parse(SouvenirContentProvider.CONTENT_URI
-                                                + "/apps"), values);
-                                    adapter.notifyDataSetChanged();
+                                    location = String.valueOf((note
+                                        .getAttributes().getLatitude())
+                                        + String.valueOf(note.getAttributes()
+                                            .getLongitude()));
                                   }
+                                  values
+                                      .put(
+                                          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
+                                          location);
+                                  SnippetFragment.this
+                                      .getActivity()
+                                      .getContentResolver()
+                                      .insert(
+                                          Uri.parse(SouvenirContentProvider.CONTENT_URI
+                                              + "/apps"), values);
+                                  adapter.notifyDataSetChanged();
+                                  prefs
+                                      .edit()
+                                      .putInt("lastUpdateCount",
+                                          serverlastUpdateCount).commit();
+                                  prefs
+                                      .edit()
+                                      .putLong("lastSyncTime",
+                                          serverLastSyncTime).commit();
+                                }
 
-                                  @Override
-                                  public void onException(Exception exception)
-                                  {
+                                @Override
+                                public void onException(Exception exception)
+                                {
 
-                                  }
-                                });
-                      }
-                      catch (Exception e)
-                      {
-                        e.printStackTrace();
-                      }
-
+                                }
+                              });
                     }
-
-                    /*
-                     * listView.setOnItemClickListener(new OnItemClickListener()
-                     * {
-                     * 
-                     * @Override public void onItemClick(AdapterView<?> parent,
-                     * View view, int position, long id) { String item =
-                     * entries.get(position).getTitle();
-                     * System.out.println("Clicked" + item);
-                     * 
-                     * Toast.makeText(SnippetFragment.this.getActivity().
-                     * getBaseContext(), item, Toast.LENGTH_LONG).show(); //
-                     * Intent i = new
-                     * Intent(this.getActivity().getApplicationContext(), //
-                     * JournalEntry.class); // startActivityForResult(i, 100); }
-                     * });
-                     */
+                    catch (TTransportException e)
+                    {
+                      // TODO Auto-generated catch block
+                      e.printStackTrace();
+                    }
                   }
+                }
 
-                  @Override
-                  public void onException(Exception exception)
-                  {
-                    // Log.e(LOGTAG, "Error saving note", exception);
-                    // Toast.makeText(getApplicationContext(),
-                    // R.string.error_saving_note, Toast.LENGTH_LONG).show();
-                    // removeDialog(DIALOG_PROGRESS);
-                  }
-                });
-      }
-      catch (TTransportException e)
-      {
-        e.printStackTrace();
-      }
+                @Override
+                public void onException(Exception exception)
+                {
+                  // TODO Auto-generated method stub
+
+                }
+              });
     }
+    catch (TTransportException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
+  SharedPreferences prefs;
+  protected int serverlastUpdateCount;
+  protected long serverLastSyncTime;
+
+  public void syncCheck()
+  {
+    prefs = getActivity().getSharedPreferences(getActivity().getPackageName(),
+        Context.MODE_PRIVATE);
+
+    final int lastUpdateCount = prefs.getInt("lastUpdateCount", 0);
+    final long lastSyncTime = prefs.getLong("lastSyncTime", 0);
+
+    if (lastSyncTime == 0)
+    {
+      fullSync();
+      return;
+    }
+
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .getSyncState(new OnClientCallback<SyncState>()
+          {
+
+            @Override
+            public void onSuccess(SyncState ss)
+            {
+              // TODO Auto-generated method stub
+              System.out.println("" + lastSyncTime + " " + lastUpdateCount);
+              System.out.println("" + ss.getFullSyncBefore() + " "
+                  + ss.getUpdateCount());
+              serverLastSyncTime = ss.getFullSyncBefore();
+              serverlastUpdateCount = ss.getUpdateCount();
+              if (serverLastSyncTime > lastSyncTime)
+              {
+                fullSync();
+              }
+              else if (serverlastUpdateCount == lastUpdateCount)
+              {
+                // Send changes
+              }
+              else
+              {
+                // incrementalSync();
+                // return;
+              }
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+              // TODO Auto-generated method stub
+
+            }
+          });
+
+    }
+    catch (TTransportException e1)
+    {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+
+    // if (mEvernoteSession.isLoggedIn())
+    // {
+    //
+    // int pageSize = SNIPPET_PAGE_SIZE;
+    //
+    // NoteFilter filter = new NoteFilter();
+    // filter.setOrder(NoteSortOrder.UPDATED.getValue());
+    // filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
+    //
+    // NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
+    // spec.setIncludeTitle(true);
+    //
+    // try
+    // {
+    // mEvernoteSession
+    // .getClientFactory()
+    // .createNoteStoreClient()
+    // .findNotesMetadata(filter, 0, pageSize, spec,
+    // new OnClientCallback<NotesMetadataList>()
+    // {
+    // @Override
+    // public void onSuccess(NotesMetadataList notes)
+    // {
+    // for (int i = 0; i < notes.getNotesSize(); i++)
+    // {
+    // NoteMetadata snippetEntry = notes.getNotes().get(i);
+    // final int position = i;
+    // try
+    // {
+    //
+    // }
+    // catch (Exception e)
+    // {
+    // e.printStackTrace();
+    // }
+    //
+    // }
+    //
+    // /*
+    // * listView.setOnItemClickListener(new OnItemClickListener()
+    // * {
+    // *
+    // * @Override public void onItemClick(AdapterView<?> parent,
+    // * View view, int position, long id) { String item =
+    // * entries.get(position).getTitle();
+    // * System.out.println("Clicked" + item);
+    // *
+    // * Toast.makeText(SnippetFragment.this.getActivity().
+    // * getBaseContext(), item, Toast.LENGTH_LONG).show(); //
+    // * Intent i = new
+    // * Intent(this.getActivity().getApplicationContext(), //
+    // * JournalEntry.class); // startActivityForResult(i, 100); }
+    // * });
+    // */
+    // }
+    //
+    // @Override
+    // public void onException(Exception exception)
+    // {
+    // // Log.e(LOGTAG, "Error saving note", exception);
+    // // Toast.makeText(getApplicationContext(),
+    // // R.string.error_saving_note, Toast.LENGTH_LONG).show();
+    // // removeDialog(DIALOG_PROGRESS);
+    // }
+    // });
+    // }
+    // catch (TTransportException e)
+    // {
+    // e.printStackTrace();
+    // }
+    // }
   }
 
   @Override
@@ -571,5 +709,42 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   public void onLoaderReset(Loader<Cursor> loader)
   {
     this.adapter.swapCursor(null);
+  }
+
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+  {
+    inflater.inflate(R.menu.main_menu, menu);
+    super.onCreateOptionsMenu(menu, inflater);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    switch (item.getItemId())
+    {
+    case android.R.id.home:
+      // This ID represents the Home or Up button. In the case of this
+      // activity, the Up button is shown. Use NavUtils to allow users
+      // to navigate up one level in the application structure. For
+      // more details, see the Navigation pattern on Android Design:
+      //
+      // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+      //
+      syncCheck();
+      return true;
+    case R.id.menu_add_note:
+      startActivity(new Intent(getActivity(), NoteActivity.class));
+      break;
+
+    case R.id.menu_search:
+      break;
+
+    case R.id.facebook_login:
+      startActivity(new Intent(getActivity(), OtherActivity.class));
+      break;
+
+    }
+    return super.onOptionsItemSelected(item);
   }
 }
