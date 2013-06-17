@@ -27,7 +27,6 @@ package com.souvenir.android;
 
 import java.util.List;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -212,7 +211,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       mEvernoteSession
           .getClientFactory()
           .createNoteStoreClient()
-          .getFilteredSyncChunk(0, 10, filter1,
+          .getFilteredSyncChunk(0, 15, filter1,
               new OnClientCallback<SyncChunk>()
               {
 
@@ -222,7 +221,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                   if (data == null || data.getNotes() == null)
                     return;
                   // TODO Auto-generated method stub
-                  System.out.println(data.getNotesSize());
+                  System.out.println(data.getChunkHighUSN() + " "
+                      + serverlastUpdateCount);
                   for (Note note : data.getNotes())
                   {
                     Cursor cursor;
@@ -237,22 +237,19 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
                     if ((cursor = getActivity().getContentResolver().query(
                         Uri.parse(SouvenirContentProvider.CONTENT_URI
-                            + "/apps/" + note.getGuid()), projection, null,
-                        null, null)) != null
+                            + "/apps/" + note.getGuid()), null, null, null,
+                        null)) != null
                         && cursor.getCount() > 0)
                     {
-                      System.out.println("This GUID already exists "
-                          + cursor.getCount());
+                      // System.out.println("This GUID already exists "
+                      // + cursor.getCount());
                       cursor.moveToFirst();
-                      SNote oldNote = new SNote(cursor.getString(1), cursor
-                          .getString(2), cursor.getString(3), cursor
-                          .getString(4), cursor.getString(0), cursor
-                          .getString(4));
+                      SNote oldNote = new SNote(cursor);
                       int syncnum = cursor.getInt(cursor
                           .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM));
                       int dirty = cursor.getInt(cursor
                           .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY));
-                      System.out.println("syncnumber: " + syncnum);
+                      // System.out.println("syncnumber: " + syncnum);
                       continue;
                     }
 
@@ -267,38 +264,40 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                                 @Override
                                 public void onSuccess(Note note)
                                 {
-                                  ContentValues values = new ContentValues();
-                                  values
-                                      .put(
-                                          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
-                                          note.getGuid());
-                                  values
-                                      .put(
-                                          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
-                                          note.getTitle());
-                                  values
-                                      .put(
-                                          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
-                                          note.getContent());
-                                  String location = note.getAttributes()
-                                      .getPlaceName();
-                                  if (location == null)
-                                  {
-                                    location = String.valueOf((note
-                                        .getAttributes().getLatitude())
-                                        + String.valueOf(note.getAttributes()
-                                            .getLongitude()));
-                                  }
-                                  values
-                                      .put(
-                                          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
-                                          location);
+                                  SNote insertNote = new SNote(note);
+                                  // ContentValues values = new ContentValues();
+                                  // values
+                                  // .put(
+                                  // SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
+                                  // note.getGuid());
+                                  // values
+                                  // .put(
+                                  // SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
+                                  // note.getTitle());
+                                  // values
+                                  // .put(
+                                  // SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+                                  // note.getContent());
+                                  // String location = note.getAttributes()
+                                  // .getPlaceName();
+                                  // if (location == null)
+                                  // {
+                                  // location = String.valueOf((note
+                                  // .getAttributes().getLatitude())
+                                  // + String.valueOf(note.getAttributes()
+                                  // .getLongitude()));
+                                  // }
+                                  // values
+                                  // .put(
+                                  // SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
+                                  // location);
                                   SnippetFragment.this
                                       .getActivity()
                                       .getContentResolver()
                                       .insert(
                                           Uri.parse(SouvenirContentProvider.CONTENT_URI
-                                              + "/apps"), values);
+                                              + "/apps"),
+                                          insertNote.toContentValues());
                                   adapter.notifyDataSetChanged();
                                   lastUpdateCount = serverlastUpdateCount;
                                   lastSyncTime = serverLastSyncTime;
@@ -475,17 +474,16 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
     prefs = getActivity().getSharedPreferences(getActivity().getPackageName(),
         Context.MODE_PRIVATE);
-    fullSync();
-    if (true)
-      return;
+    // fullSync();
+
     lastUpdateCount = prefs.getInt("lastUpdateCount", 0);
     lastSyncTime = prefs.getLong("lastSyncTime", 0);
 
-    if (lastSyncTime == 0)
-    {
-      fullSync();
-      return;
-    }
+    // if (lastSyncTime == 0)
+    // {
+    // fullSync();
+    // return;
+    // }
 
     try
     {
@@ -502,6 +500,11 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                   + ss.getUpdateCount());
               serverLastSyncTime = ss.getFullSyncBefore();
               serverlastUpdateCount = ss.getUpdateCount();
+              if (true)
+              {
+                fullSync();
+                return;
+              }
               if (serverLastSyncTime > lastSyncTime)
               {
                 fullSync();
@@ -750,9 +753,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     @Override
     public void bindView(View view, Context context, Cursor cursor)
     {
-      SNote note = new SNote(cursor.getString(1), cursor.getString(2),
-          cursor.getString(3), cursor.getString(4), cursor.getString(0),
-          cursor.getString(4));
+      SNote note = new SNote(cursor);
 
       // ((AppView) view).setOnAppChangeListener(null);
       ((SnippetView) view).setSNote(note);
@@ -762,9 +763,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
-      SNote note = new SNote(cursor.getString(1), cursor.getString(2),
-          cursor.getString(3), cursor.getString(4), cursor.getString(0),
-          cursor.getString(4));
+      SNote note = new SNote(cursor);
       SnippetView sv = new SnippetView(context, note);
       return sv;
     }
@@ -850,8 +849,9 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
     Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps");
 
-    CursorLoader cursorLoader = new CursorLoader(getActivity(), uri,
-        projection, null, null, "");
+    CursorLoader cursorLoader = new CursorLoader(getActivity(), uri, null,
+        null, null, SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE
+            + " DESC");
     return cursorLoader;
     // return null;
   }

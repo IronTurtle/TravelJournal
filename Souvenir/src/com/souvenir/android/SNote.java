@@ -1,9 +1,9 @@
 package com.souvenir.android;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentValues;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,23 +11,37 @@ import android.os.Parcelable;
 import com.evernote.edam.type.LazyMap;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteAttributes;
+import com.evernote.edam.type.Resource;
 import com.souvenir.database.SouvenirContract;
 
 public class SNote implements Parcelable
 {
-  int id = -1;
-  String title = null;
+  public static final Parcelable.Creator<SNote> CREATOR = new Parcelable.Creator<SNote>()
+  {
+    public SNote createFromParcel(Parcel in)
+    {
+      return new SNote(in);
+    }
+
+    public SNote[] newArray(int size)
+    {
+      return new SNote[size];
+    }
+  };
   String content = null;
-  String location = null;
-  String modifyDate = null;
-  String createDate = null;
-  String evernoteGUID = null;
-  ArrayList<Resources> resources = null;
-  ArrayList<String> tags = null;
-  String trophyNumber = null;
-  String tripID = null;
-  int syncNum = -1;
+  long createDate = -1;
   boolean dirty = false;
+  String evernoteGUID = null;
+  int id = -1;
+  String location = null;
+  long modifyDate = -1;
+  List<Resource> resources = null;
+  int syncNum = -1;
+  ArrayList<String> tags = null;
+  String title = null;
+  String tripID = null;
+
+  String trophyNumber = null;
 
   public SNote(Cursor cursor)
   {
@@ -48,6 +62,47 @@ public class SNote implements Parcelable
     this.dirty = cursor
         .getInt(cursor
             .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY)) == 1;
+    this.createDate = cursor
+        .getLong(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CREATE_DATE));
+    this.modifyDate = cursor
+        .getLong(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE));
+    // this.content = ""
+    // + cursor
+    // .getLong(cursor
+    // .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE));
+  }
+
+  public SNote(Note note)
+  {
+    this.title = note.getTitle();
+    this.content = note.getContent();
+    // this.location = note.getAttributes().ge;
+    this.modifyDate = note.getUpdated();
+    this.createDate = note.getCreated();
+    this.evernoteGUID = note.getGuid();
+    this.resources = note.getResources();
+    // this.tags = null;
+    // this.trophyNumber = trophyNumber;
+    // this.tripID = tripID;
+  }
+
+  @SuppressWarnings("unchecked")
+  public SNote(Parcel in)
+  {
+    super();
+    this.id = in.readInt();
+    this.title = in.readString();
+    this.content = in.readString();
+    this.location = in.readString();
+    this.modifyDate = in.readLong();
+    this.createDate = in.readLong();
+    this.evernoteGUID = in.readString();
+    in.readList(this.resources, Resource.class.getClassLoader());
+    this.tags = in.readArrayList(String.class.getClassLoader());
+    this.trophyNumber = in.readString();
+    this.tripID = in.readString();
   }
 
   public SNote(String title, String content, String location)
@@ -70,10 +125,9 @@ public class SNote implements Parcelable
     this.tripID = tripID;
   }
 
-  public SNote(String title, String content, String location,
-      String modifyDate, String createDate, String evernoteGUID,
-      ArrayList<Resources> resources, ArrayList<String> tags,
-      String trophyNumber, String tripID)
+  public SNote(String title, String content, String location, long modifyDate,
+      long createDate, String evernoteGUID, ArrayList<Resource> resources,
+      ArrayList<String> tags, String trophyNumber, String tripID)
   {
     super();
     this.title = title;
@@ -94,100 +148,14 @@ public class SNote implements Parcelable
     return 0;
   }
 
-  @Override
-  public void writeToParcel(Parcel dest, int flags)
-  {
-    dest.writeInt(id);
-    dest.writeString(this.title);
-    dest.writeString(this.content);
-    dest.writeString(this.location);
-    dest.writeString(this.modifyDate);
-    dest.writeString(this.createDate);
-    dest.writeString(this.evernoteGUID);
-    dest.writeList(this.resources);
-    dest.writeList(this.tags);
-    dest.writeString(this.trophyNumber);
-    dest.writeString(this.tripID);
-  }
-
-  public static final Parcelable.Creator<SNote> CREATOR = new Parcelable.Creator<SNote>()
-  {
-    public SNote createFromParcel(Parcel in)
-    {
-      return new SNote(in);
-    }
-
-    public SNote[] newArray(int size)
-    {
-      return new SNote[size];
-    }
-  };
-
-  @SuppressWarnings("unchecked")
-  public SNote(Parcel in)
-  {
-    super();
-    this.id = in.readInt();
-    this.title = in.readString();
-    this.content = in.readString();
-    this.location = in.readString();
-    this.modifyDate = in.readString();
-    this.createDate = in.readString();
-    this.evernoteGUID = in.readString();
-    this.resources = in.readArrayList(String.class.getClassLoader());
-    this.tags = in.readArrayList(String.class.getClassLoader());
-    this.trophyNumber = in.readString();
-    this.tripID = in.readString();
-  }
-
-  public String getTitle()
-  {
-    return title;
-  }
-
-  public void setTitle(String title)
-  {
-    this.title = title;
-  }
-
   public String getContent()
   {
     return content;
   }
 
-  public void setContent(String content)
-  {
-    this.content = content;
-  }
-
-  public String getLocation()
-  {
-    return location;
-  }
-
-  public void setLocation(String location)
-  {
-    this.location = location;
-  }
-
-  public String getModifyDate()
-  {
-    return modifyDate;
-  }
-
-  public void setModifyDate(String modifyDate)
-  {
-    this.modifyDate = modifyDate;
-  }
-
-  public String getCreateDate()
+  public long getCreateDate()
   {
     return createDate;
-  }
-
-  public void setCreateDate(String createDate)
-  {
-    this.createDate = createDate;
   }
 
   public String getEvernoteGUID()
@@ -195,49 +163,24 @@ public class SNote implements Parcelable
     return evernoteGUID;
   }
 
-  public void setEvernoteGUID(String evernoteGUID)
+  public int getId()
   {
-    this.evernoteGUID = evernoteGUID;
+    return id;
   }
 
-  public ArrayList<Resources> getResources()
+  public String getLocation()
+  {
+    return location;
+  }
+
+  public long getModifyDate()
+  {
+    return modifyDate;
+  }
+
+  public List<Resource> getResource()
   {
     return resources;
-  }
-
-  public void setResources(ArrayList<Resources> resources)
-  {
-    this.resources = resources;
-  }
-
-  public ArrayList<String> getTags()
-  {
-    return tags;
-  }
-
-  public void setTags(ArrayList<String> tags)
-  {
-    this.tags = tags;
-  }
-
-  public String getTrophyNumber()
-  {
-    return trophyNumber;
-  }
-
-  public void setTrophyNumber(String trophyNumber)
-  {
-    this.trophyNumber = trophyNumber;
-  }
-
-  public String getTripID()
-  {
-    return tripID;
-  }
-
-  public void setTripID(String tripID)
-  {
-    this.tripID = tripID;
   }
 
   public int getSyncNum()
@@ -245,19 +188,115 @@ public class SNote implements Parcelable
     return syncNum;
   }
 
-  public void setSyncNum(int syncNum)
+  public ArrayList<String> getTags()
   {
-    this.syncNum = syncNum;
+    return tags;
   }
 
-  public int getId()
+  public String getTitle()
   {
-    return id;
+    return title;
+  }
+
+  public String getTripID()
+  {
+    return tripID;
+  }
+
+  public String getTrophyNumber()
+  {
+    return trophyNumber;
+  }
+
+  public boolean isDirty()
+  {
+    return dirty;
+  }
+
+  public void setContent(String content)
+  {
+    this.content = content;
+  }
+
+  public void setCreateDate(long createDate)
+  {
+    this.createDate = createDate;
+  }
+
+  public void setDirty(boolean dirty)
+  {
+    this.dirty = dirty;
+  }
+
+  public void setEvernoteGUID(String evernoteGUID)
+  {
+    this.evernoteGUID = evernoteGUID;
   }
 
   public void setId(int id)
   {
     this.id = id;
+  }
+
+  public void setLocation(String location)
+  {
+    this.location = location;
+  }
+
+  public void setModifyDate(long modifyDate)
+  {
+    this.modifyDate = modifyDate;
+  }
+
+  public void setResource(ArrayList<Resource> resources)
+  {
+    this.resources = resources;
+  }
+
+  public void setSyncNum(int syncNum)
+  {
+    this.syncNum = syncNum;
+  }
+
+  public void setTags(ArrayList<String> tags)
+  {
+    this.tags = tags;
+  }
+
+  public void setTitle(String title)
+  {
+    this.title = title;
+  }
+
+  public void setTripID(String tripID)
+  {
+    this.tripID = tripID;
+  }
+
+  public void setTrophyNumber(String trophyNumber)
+  {
+    this.trophyNumber = trophyNumber;
+  }
+
+  public ContentValues toContentValues()
+  {
+    ContentValues values = new ContentValues();
+
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE, title);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT, content);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
+        location);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY,
+        dirty == true ? 1 : 0);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
+        evernoteGUID);
+    values
+        .put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM, syncNum);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CREATE_DATE,
+        createDate);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE,
+        modifyDate);
+    return values;
   }
 
   public Note toNote()
@@ -271,6 +310,8 @@ public class SNote implements Parcelable
       note.setGuid(this.evernoteGUID);
     note.setTitle(this.title);
     note.setContent(this.content);
+    note.setCreated(this.createDate);
+    note.setUpdated(this.modifyDate);
     NoteAttributes attr = new NoteAttributes();
     LazyMap map = new LazyMap();
 
@@ -300,30 +341,19 @@ public class SNote implements Parcelable
     return note;
   }
 
-  public ContentValues toContentValues()
+  @Override
+  public void writeToParcel(Parcel dest, int flags)
   {
-    ContentValues values = new ContentValues();
-
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE, title);
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT, content);
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
-        location);
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY,
-        dirty == true ? 1 : 0);
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
-        evernoteGUID);
-    values
-        .put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM, syncNum);
-    return values;
-  }
-
-  public boolean isDirty()
-  {
-    return dirty;
-  }
-
-  public void setDirty(boolean dirty)
-  {
-    this.dirty = dirty;
+    dest.writeInt(id);
+    dest.writeString(this.title);
+    dest.writeString(this.content);
+    dest.writeString(this.location);
+    dest.writeLong(this.modifyDate);
+    dest.writeLong(this.createDate);
+    dest.writeString(this.evernoteGUID);
+    dest.writeList(this.resources);
+    dest.writeList(this.tags);
+    dest.writeString(this.trophyNumber);
+    dest.writeString(this.tripID);
   }
 }
