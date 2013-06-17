@@ -887,7 +887,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
    */
   public void saveNote(View view)
   {
-
     String content = mEntry.getText().toString();
     String location = mLocation.getText().toString();
 
@@ -971,54 +970,75 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
      * now.toString();//mTitle.getText().toString();
      */
 
-    try
+    ContentValues values = new ContentValues();
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
+        note.getGuid());
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
+        note.getTitle());
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+        note.getContent());
+    String location2 = note.getAttributes().getPlaceName();
+    if (location == null)
     {
-
-      mEvernoteSession.getClientFactory().createNoteStoreClient()
-          .createNote(note, new OnClientCallback<Note>()
-          {
-
-            @Override
-            public void onSuccess(Note data)
-            {
-              mNote.setSyncNum(data.getUpdateSequenceNum());
-              mNote.setEvernoteGUID(data.getGuid());
-              update(mNote);
-              NoteFragment.this.clearForm(NoteFragment.this.getView());
-              Toast.makeText(getActivity(), R.string.success_creating_note,
-                  Toast.LENGTH_LONG).show();
-
-              ((NoteActivity) getActivity()).finishNote(getActivity()
-                  .getIntent().getStringExtra("ITINERARY_DATA"));
-              getFragmentManager().popBackStack();
-            }
-
-            @Override
-            public void onException(Exception exception)
-            {
-              NoteFragment.this.clearForm(NoteFragment.this.getView());
-              if (exception instanceof java.lang.reflect.InvocationTargetException)
-              {
-                Toast.makeText(getActivity(),
-                // You may have reached Evernote usage limit.
-                    "Error: CHECK LOGCAT!!", Toast.LENGTH_LONG).show();
-              }
-              exception.printStackTrace();
-              Toast.makeText(getActivity(), R.string.err_creating_note,
-                  Toast.LENGTH_LONG).show();
-              ((NoteActivity) getActivity()).finish();
-              getFragmentManager().popBackStack();
-            }
-          });
+      location = String.valueOf((note.getAttributes().getLatitude())
+          + String.valueOf(note.getAttributes().getLongitude()));
     }
-    catch (TTransportException exception)
-    {
-      exception.printStackTrace();
-      ((NoteActivity) getActivity()).finish();
-      getFragmentManager().popBackStack();
-    }
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
+        location2);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY, 1);
+
+    getActivity().getContentResolver().insert(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"), values);
+    getActivity().finish();
+    //
+    // try
+    // {
+    //
+    // mEvernoteSession.getClientFactory().createNoteStoreClient()
+    // .createNote(note, new OnClientCallback<Note>()
+    // {
+    //
+    // @Override
+    // public void onSuccess(Note data)
+    // {
+    // mNote.setSyncNum(data.getUpdateSequenceNum());
+    // mNote.setEvernoteGUID(data.getGuid());
+    // update(mNote);
+    // NoteFragment.this.clearForm(NoteFragment.this.getView());
+    // Toast.makeText(getActivity(), R.string.success_creating_note,
+    // Toast.LENGTH_LONG).show();
+    //
+    // ((NoteActivity) getActivity()).finishNote(getActivity()
+    // .getIntent().getStringExtra("ITINERARY_DATA"));
+    // getFragmentManager().popBackStack();
+    // }
+    //
+    // @Override
+    // public void onException(Exception exception)
+    // {
+    // NoteFragment.this.clearForm(NoteFragment.this.getView());
+    // if (exception instanceof java.lang.reflect.InvocationTargetException)
+    // {
+    // Toast.makeText(getActivity(),
+    // // You may have reached Evernote usage limit.
+    // "Error: CHECK LOGCAT!!", Toast.LENGTH_LONG).show();
+    // }
+    // exception.printStackTrace();
+    // Toast.makeText(getActivity(), R.string.err_creating_note,
+    // Toast.LENGTH_LONG).show();
     // ((NoteActivity) getActivity()).finish();
     // getFragmentManager().popBackStack();
+    // }
+    // });
+    // }
+    // catch (TTransportException exception)
+    // {
+    // exception.printStackTrace();
+    // ((NoteActivity) getActivity()).finish();
+    // getFragmentManager().popBackStack();
+    // }
+    // // ((NoteActivity) getActivity()).finish();
+    // // getFragmentManager().popBackStack();
   }
 
   protected void update(SNote mNote2)

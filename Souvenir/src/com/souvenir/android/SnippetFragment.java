@@ -253,7 +253,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                       int dirty = cursor.getInt(cursor
                           .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY));
                       System.out.println("syncnumber: " + syncnum);
-                      break;
+                      continue;
                     }
 
                     try
@@ -300,14 +300,15 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                                           Uri.parse(SouvenirContentProvider.CONTENT_URI
                                               + "/apps"), values);
                                   adapter.notifyDataSetChanged();
+                                  lastUpdateCount = serverlastUpdateCount;
+                                  lastSyncTime = serverLastSyncTime;
                                   prefs
                                       .edit()
                                       .putInt("lastUpdateCount",
-                                          serverlastUpdateCount).commit();
-                                  prefs
-                                      .edit()
-                                      .putLong("lastSyncTime",
-                                          serverLastSyncTime).commit();
+                                          lastUpdateCount).commit();
+                                  prefs.edit()
+                                      .putLong("lastSyncTime", lastSyncTime)
+                                      .commit();
                                 }
 
                                 @Override
@@ -338,12 +339,136 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    sendChanges();
+  }
 
+  public void sendChanges()
+  {
+    String[] projection = { SouvenirContract.SouvenirNote._ID,
+        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
+        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
+        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
+        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
+        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM,
+        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY };
+    Cursor cursor;
+
+    // Dirty
+    if ((cursor = getActivity().getContentResolver().query(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"), null,
+        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY, null, null)) != null
+        && cursor.getCount() > 0)
+    {
+      while (cursor.moveToNext())
+      {
+        System.out
+            .println(cursor.getString(cursor
+                .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE)));
+        SNote snote = new SNote(cursor);
+        if (snote.getSyncNum() == -1)
+        {
+          saveNote(snote);
+        }
+        else
+        {
+          updateNote(snote);
+        }
+      }
+    }
+  }
+
+  public void saveNote(final SNote snote)
+  {
+    Note note = snote.toNote();
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .createNote(note, new OnClientCallback<Note>()
+          {
+            @Override
+            public void onSuccess(Note data)
+            {
+              snote.setSyncNum(data.getUpdateSequenceNum());
+              snote.setDirty(false);
+              update(snote);
+              Toast.makeText(getActivity(), R.string.success_creating_note,
+                  Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+              Toast.makeText(getActivity(), R.string.err_creating_note,
+                  Toast.LENGTH_LONG).show();
+            }
+          });
+    }
+    catch (TTransportException exception)
+    {
+      exception.printStackTrace();
+    }
+  }
+
+  public void updateNote(final SNote snote)
+  {
+    Note note = snote.toNote();
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .updateNote(note, new OnClientCallback<Note>()
+          {
+            @Override
+            public void onSuccess(Note data)
+            {
+              snote.setSyncNum(data.getUpdateSequenceNum());
+              snote.setDirty(false);
+              update(snote);
+              if (snote.getSyncNum() == lastUpdateCount + 1)
+              {
+                // still in sync
+                prefs.edit().putInt("lastUpdateCount", lastUpdateCount)
+                    .commit();
+              }
+              else if (snote.getSyncNum() > lastUpdateCount + 1)
+              {
+                // incremental
+              }
+              else
+              {
+                System.out.println("uh oh!");
+              }
+              Toast.makeText(getActivity(), R.string.success_creating_note,
+                  Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+              Toast.makeText(getActivity(), R.string.err_creating_note,
+                  Toast.LENGTH_LONG).show();
+            }
+          });
+    }
+    catch (TTransportException exception)
+    {
+      exception.printStackTrace();
+    }
+  }
+
+  public void update(SNote mNote2)
+  {
+    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps/"
+        + mNote2.getId());
+
+    getActivity().getContentResolver().update(uri, mNote2.toContentValues(),
+        null, null);
   }
 
   SharedPreferences prefs;
   protected int serverlastUpdateCount;
   protected long serverLastSyncTime;
+  int lastUpdateCount;
+  long lastSyncTime;
 
   public void syncCheck()
   {
@@ -353,8 +478,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     fullSync();
     if (true)
       return;
-    final int lastUpdateCount = prefs.getInt("lastUpdateCount", 0);
-    final long lastSyncTime = prefs.getLong("lastSyncTime", 0);
+    lastUpdateCount = prefs.getInt("lastUpdateCount", 0);
+    lastSyncTime = prefs.getLong("lastSyncTime", 0);
 
     if (lastSyncTime == 0)
     {

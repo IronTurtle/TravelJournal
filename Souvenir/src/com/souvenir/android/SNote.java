@@ -2,24 +2,53 @@ package com.souvenir.android;
 
 import java.util.ArrayList;
 
+import android.content.ContentValues;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.evernote.edam.type.LazyMap;
+import com.evernote.edam.type.Note;
+import com.evernote.edam.type.NoteAttributes;
+import com.souvenir.database.SouvenirContract;
+
 public class SNote implements Parcelable
 {
-  int id;
-  String title;
-  String content;
-  String location;
-  String modifyDate;
-  String createDate;
-  String evernoteGUID;
-  ArrayList<Resources> resources;
-  ArrayList<String> tags;
-  String trophyNumber;
-  String tripID;
-  int syncNum;
+  int id = -1;
+  String title = null;
+  String content = null;
+  String location = null;
+  String modifyDate = null;
+  String createDate = null;
+  String evernoteGUID = null;
+  ArrayList<Resources> resources = null;
+  ArrayList<String> tags = null;
+  String trophyNumber = null;
+  String tripID = null;
+  int syncNum = -1;
+  boolean dirty = false;
+
+  public SNote(Cursor cursor)
+  {
+    this.id = cursor.getInt(cursor
+        .getColumnIndexOrThrow(SouvenirContract.SouvenirNote._ID));
+    this.title = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE));
+    this.content = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT));
+    this.location = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION));
+    this.evernoteGUID = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID));
+    this.dirty = cursor
+        .getInt(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY)) == 1;
+  }
 
   public SNote(String title, String content, String location)
   {
@@ -231,4 +260,70 @@ public class SNote implements Parcelable
     this.id = id;
   }
 
+  public Note toNote()
+  {
+    Note note = new Note();
+    // if (NOTEBOOK_GUID != null)
+    // {
+    // note.setNotebookGuid(NOTEBOOK_GUID);
+    // }
+    if (this.evernoteGUID != null)
+      note.setGuid(this.evernoteGUID);
+    note.setTitle(this.title);
+    note.setContent(this.content);
+    NoteAttributes attr = new NoteAttributes();
+    LazyMap map = new LazyMap();
+
+    map.putToFullMap("LOCATION", location);
+    // if (longitude != 0 && latitude != 0)
+    // {
+    // attr.setLongitude(longitude);
+    // attr.setLatitude(latitude);
+    // }
+    // else
+    // {
+    // attr.setLatitudeIsSet(false);
+    // attr.setLongitudeIsSet(false);
+    // if (!selectedPlace)
+    // {
+    // attr.setPlaceName(LOCATION_NOT_SPECIFIED);
+    // }
+    // }
+    //
+    // if (selectedPlace)
+    // {
+    // attr.setPlaceName(location);
+    // }
+    attr.setSourceApplication("Souvenir App (Android)");
+    attr.setContentClass("com.souvenir.android");
+    note.setAttributes(attr);
+    return note;
+  }
+
+  public ContentValues toContentValues()
+  {
+    ContentValues values = new ContentValues();
+
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE, title);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT, content);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
+        location);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY,
+        dirty == true ? 1 : 0);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
+        evernoteGUID);
+    values
+        .put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM, syncNum);
+    return values;
+  }
+
+  public boolean isDirty()
+  {
+    return dirty;
+  }
+
+  public void setDirty(boolean dirty)
+  {
+    this.dirty = dirty;
+  }
 }
