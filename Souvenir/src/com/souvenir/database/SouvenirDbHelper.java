@@ -27,9 +27,27 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + INTEGER_TYPE + COMMA_SEP
       + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CREATE_DATE
       + INTEGER_TYPE + " )";
+  public static final String SQL_CREATE_RESOURCE_TABLE = "CREATE TABLE "
+      + SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE + " ("
+      + SouvenirContract.SouvenirResource._ID + INTEGER_TYPE + " PRIMARY KEY,"
+      + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_CAPTION
+      + TEXT_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_GUID + TEXT_TYPE
+      + COMMA_SEP + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH
+      + TEXT_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_LOCATION
+      + TEXT_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_MIME + TEXT_TYPE
+      + COMMA_SEP
+      + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID
+      + INTEGER_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_PATH + TEXT_TYPE
+      + COMMA_SEP + " )";
 
   public static final String SQL_DELETE_NOTE_TABLE = "DROP TABLE IF EXISTS "
       + SouvenirContract.SouvenirNote.TABLE_NAME_NOTE;
+  public static final String SQL_DELETE_RESOURCE_TABLE = "DROP TABLE IF EXISTS "
+      + SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE;
 
   // If you change the database schema, you must increment the database version.
   public static final int DATABASE_VERSION = 1;

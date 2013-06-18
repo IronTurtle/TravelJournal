@@ -1,7 +1,6 @@
 package com.souvenir.android;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -59,13 +58,8 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
-import com.evernote.client.conn.mobile.FileData;
-import com.evernote.edam.type.LazyMap;
-import com.evernote.edam.type.Note;
-import com.evernote.edam.type.NoteAttributes;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Resource;
-import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.thrift.transport.TTransportException;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -120,7 +114,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   TextView mLocation;
   EditText mEntry;
 
-  Note note = new Note();
+  // Note note = new Note();
   SNote mNote;
   Resource resource = new Resource();
   private EditText mCaption;
@@ -324,7 +318,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       }
       else
       {
-        this.updateNote(this.getView());
+        // this.updateNote(this.getView());
       }
       break;
     case R.id.create_note_menu_camera:
@@ -370,7 +364,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       System.out.println("Save pressed");
       // Toast.makeText(getActivity(), "Save Button clicked",
       // Toast.LENGTH_SHORT).show();
-      updateNote(this.getView());
+      // updateNote(this.getView());
       break;
     case R.id.viewedit_note_menu_fbshare:
       System.out.println("FACEBOOK SHARING");
@@ -660,176 +654,177 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   // }
   // }
   // }
-
-  public void updateNote(View view)
-  {
-    try
-    {
-      /*
-       * note.setTitle(mTitle.getText().toString());
-       * System.out.println("Note Title: " + note.getTitle());
-       * 
-       * // Trying to add locations to data resources NoteAttributes attr = new
-       * NoteAttributes(); LazyMap map = new LazyMap();
-       * 
-       * map.putToFullMap("LOCATION", mLocation.getText().toString());
-       * attr.setApplicationData(map); note.setAttributes(attr);
-       * 
-       * System.out.println(note.getAttributes().getApplicationData().toString())
-       * ;
-       * 
-       * note.addToResources(resource);
-       * 
-       * note.setTitle(mTitle.getText().toString());
-       * note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" +
-       * mEntry.getText().toString() + "</p>" +
-       * EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
-       */
-
-      String content;
-      System.out.println("curContent: " + mEntry.getText().toString() + "\n"
-          + ((note.getContent().split("<p>")[1]).split("</p>")[0]));
-      if (mEntry.getText().toString()
-          .equals(((note.getContent().split("<p>")[1]).split("</p>")[0])))
-      {
-        content = note.getContent().replace(EvernoteUtil.NOTE_SUFFIX, "");
-      }
-      else
-      {
-        String contentRes = (note.getContent().split("</p>")[1]).replace(
-            EvernoteUtil.NOTE_SUFFIX, "");
-        content = EvernoteUtil.NOTE_PREFIX + "<p>"
-            + mEntry.getText().toString() + "</p>" + contentRes;
-
-        contentChanged = true;
-
-      }
-
-      String location = mLocation.getText().toString();
-
-      // final Note note = new Note();
-      if (NOTEBOOK_GUID != null)
-      {
-        note.setNotebookGuid(NOTEBOOK_GUID);
-      }
-      // note.setTitle(title);
-      note.setTitle(mTitle.getText().toString());
-      System.out.println("Note Title: " + note.getTitle());
-
-      // Trying to add locations to data resources
-      NoteAttributes attr = new NoteAttributes();
-      LazyMap map = new LazyMap();
-
-      map.putToFullMap("LOCATION", location);
-      if (longitude != 0 && latitude != 0)
-      {
-        attr.setLongitude(longitude);
-        attr.setLatitude(latitude);
-      }
-      else
-      {
-        attr.setLatitudeIsSet(false);
-        attr.setLongitudeIsSet(false);
-        if (!selectedPlace)
-        {
-          attr.setPlaceName(LOCATION_NOT_SPECIFIED);
-        }
-      }
-
-      if (selectedPlace)
-      {
-        attr.setPlaceName(location);
-      }
-
-      attr.setSourceApplication("Souvenir App (Android)");
-
-      note.setAttributes(attr);
-
-      // System.out.println(note.getAttributes().getApplicationData().toString());
-
-      // content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
-      boolean newImages = false;
-      for (ImageData imageData : images)
-      {
-
-        if (imageData.isNew)
-        {
-          newImages = true;
-          // ImageData imageData = mImageData;
-          // ImageData imageData = images.get(images.size() - 1);
-          String f = imageData.filePath;
-
-          Resource resource = new Resource();
-          InputStream in;
-          try
-          {
-            System.out.println("f: " + f);
-            in = new BufferedInputStream(new FileInputStream(f));
-
-            FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
-            in.close();
-
-            resource.setData(data);
-            resource.setMime(imageData.mimeType);
-            ResourceAttributes attributes = new ResourceAttributes();
-            attributes.setFileName(imageData.fileName);
-            resource.setAttributes(attributes);
-
-          }
-          catch (Exception e)
-          {
-            e.printStackTrace();
-          }
-          System.out.println("Resource size: " + note.getResourcesSize());
-          note.addToResources(resource);
-          System.out.println("Resource size: " + note.getResourcesSize());
-
-          String enmedia = EvernoteUtil.createEnMediaTag(resource)
-              .replaceFirst(" ", " title=\"" + imageData.caption + "\" ");
-          content += enmedia;
-
-        }
-      }
-      if (contentChanged || newImages)
-      {
-        note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
-      }
-      System.out.println(note.getContent());
-      /*
-       * Time now = new Time(); now.setToNow(); String title =
-       * now.toString();//mTitle.getText().toString();
-       */
-
-      mEvernoteSession.getClientFactory().createNoteStoreClient()
-          .updateNote(note, new OnClientCallback<Note>()
-          {
-
-            @Override
-            public void onSuccess(Note data)
-            {
-              Toast.makeText(getActivity(), R.string.success_creating_note,
-                  Toast.LENGTH_LONG).show();
-              getActivity().finish();
-              getFragmentManager().popBackStack();
-            }
-
-            @Override
-            public void onException(Exception exception)
-            {
-              exception.printStackTrace();
-              Toast.makeText(getActivity(), R.string.err_update_note,
-                  Toast.LENGTH_LONG).show();
-              getActivity().finish();
-              getFragmentManager().popBackStack();
-            }
-
-          });
-    }
-    catch (TTransportException e)
-    {
-      e.printStackTrace();
-    }
-  }
+  //
+  // public void updateNote(View view)
+  // {
+  // try
+  // {
+  // /*
+  // * note.setTitle(mTitle.getText().toString());
+  // * System.out.println("Note Title: " + note.getTitle());
+  // *
+  // * // Trying to add locations to data resources NoteAttributes attr = new
+  // * NoteAttributes(); LazyMap map = new LazyMap();
+  // *
+  // * map.putToFullMap("LOCATION", mLocation.getText().toString());
+  // * attr.setApplicationData(map); note.setAttributes(attr);
+  // *
+  // * System.out.println(note.getAttributes().getApplicationData().toString())
+  // * ;
+  // *
+  // * note.addToResources(resource);
+  // *
+  // * note.setTitle(mTitle.getText().toString());
+  // * note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" +
+  // * mEntry.getText().toString() + "</p>" +
+  // * EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
+  // */
+  //
+  // String content;
+  // System.out.println("curContent: " + mEntry.getText().toString() + "\n"
+  // + ((note.getContent().split("<p>")[1]).split("</p>")[0]));
+  // if (mEntry.getText().toString()
+  // .equals(((note.getContent().split("<p>")[1]).split("</p>")[0])))
+  // {
+  // content = note.getContent().replace(EvernoteUtil.NOTE_SUFFIX, "");
+  // }
+  // else
+  // {
+  // String contentRes = (note.getContent().split("</p>")[1]).replace(
+  // EvernoteUtil.NOTE_SUFFIX, "");
+  // content = EvernoteUtil.NOTE_PREFIX + "<p>"
+  // + mEntry.getText().toString() + "</p>" + contentRes;
+  //
+  // contentChanged = true;
+  //
+  // }
+  //
+  // String location = mLocation.getText().toString();
+  //
+  // // final Note note = new Note();
+  // if (NOTEBOOK_GUID != null)
+  // {
+  // note.setNotebookGuid(NOTEBOOK_GUID);
+  // }
+  // // note.setTitle(title);
+  // note.setTitle(mTitle.getText().toString());
+  // System.out.println("Note Title: " + note.getTitle());
+  //
+  // // Trying to add locations to data resources
+  // NoteAttributes attr = new NoteAttributes();
+  // LazyMap map = new LazyMap();
+  //
+  // map.putToFullMap("LOCATION", location);
+  // if (longitude != 0 && latitude != 0)
+  // {
+  // attr.setLongitude(longitude);
+  // attr.setLatitude(latitude);
+  // }
+  // else
+  // {
+  // attr.setLatitudeIsSet(false);
+  // attr.setLongitudeIsSet(false);
+  // if (!selectedPlace)
+  // {
+  // attr.setPlaceName(LOCATION_NOT_SPECIFIED);
+  // }
+  // }
+  //
+  // if (selectedPlace)
+  // {
+  // attr.setPlaceName(location);
+  // }
+  //
+  // attr.setSourceApplication("Souvenir App (Android)");
+  //
+  // note.setAttributes(attr);
+  //
+  // //
+  // System.out.println(note.getAttributes().getApplicationData().toString());
+  //
+  // // content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
+  // boolean newImages = false;
+  // for (ImageData imageData : images)
+  // {
+  //
+  // if (imageData.isNew)
+  // {
+  // newImages = true;
+  // // ImageData imageData = mImageData;
+  // // ImageData imageData = images.get(images.size() - 1);
+  // String f = imageData.filePath;
+  //
+  // Resource resource = new Resource();
+  // InputStream in;
+  // try
+  // {
+  // System.out.println("f: " + f);
+  // in = new BufferedInputStream(new FileInputStream(f));
+  //
+  // FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
+  // in.close();
+  //
+  // resource.setData(data);
+  // resource.setMime(imageData.mimeType);
+  // ResourceAttributes attributes = new ResourceAttributes();
+  // attributes.setFileName(imageData.fileName);
+  // resource.setAttributes(attributes);
+  //
+  // }
+  // catch (Exception e)
+  // {
+  // e.printStackTrace();
+  // }
+  // System.out.println("Resource size: " + note.getResourcesSize());
+  // note.addToResources(resource);
+  // System.out.println("Resource size: " + note.getResourcesSize());
+  //
+  // String enmedia = EvernoteUtil.createEnMediaTag(resource)
+  // .replaceFirst(" ", " title=\"" + imageData.caption + "\" ");
+  // content += enmedia;
+  //
+  // }
+  // }
+  // if (contentChanged || newImages)
+  // {
+  // note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
+  // }
+  // System.out.println(note.getContent());
+  // /*
+  // * Time now = new Time(); now.setToNow(); String title =
+  // * now.toString();//mTitle.getText().toString();
+  // */
+  //
+  // mEvernoteSession.getClientFactory().createNoteStoreClient()
+  // .updateNote(note, new OnClientCallback<Note>()
+  // {
+  //
+  // @Override
+  // public void onSuccess(Note data)
+  // {
+  // Toast.makeText(getActivity(), R.string.success_creating_note,
+  // Toast.LENGTH_LONG).show();
+  // getActivity().finish();
+  // getFragmentManager().popBackStack();
+  // }
+  //
+  // @Override
+  // public void onException(Exception exception)
+  // {
+  // exception.printStackTrace();
+  // Toast.makeText(getActivity(), R.string.err_update_note,
+  // Toast.LENGTH_LONG).show();
+  // getActivity().finish();
+  // getFragmentManager().popBackStack();
+  // }
+  //
+  // });
+  // }
+  // catch (TTransportException e)
+  // {
+  // e.printStackTrace();
+  // }
+  // }
 
   private void setDefaultTitle()
   {
@@ -889,46 +884,47 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
     String content = mEntry.getText().toString();
     String location = mLocation.getText().toString();
-
-    final Note note = new Note();
-    if (NOTEBOOK_GUID != null)
-    {
-      note.setNotebookGuid(NOTEBOOK_GUID);
-    }
+    String title = mTitle.getText().toString();
+    // final Note note = new Note();
+    // if (NOTEBOOK_GUID != null)
+    // {
+    // note.setNotebookGuid(NOTEBOOK_GUID);
+    // }
     // note.setTitle(title);
-    note.setTitle(mTitle.getText().toString());
-    System.out.println("Note Title: " + note.getTitle());
+    // note.setTitle(mTitle.getText().toString());
+    // System.out.println("Note Title: " + note.getTitle());
 
     // Trying to add locations to data resources
-    NoteAttributes attr = new NoteAttributes();
-    LazyMap map = new LazyMap();
+    // NoteAttributes attr = new NoteAttributes();
+    //
+    // if (longitude != 0 && latitude != 0)
+    // {
+    // attr.setLongitude(longitude);
+    // attr.setLatitude(latitude);
+    // }
+    // else
+    // {
+    // attr.setLatitudeIsSet(false);
+    // attr.setLongitudeIsSet(false);
+    // if (!selectedPlace)
+    // {
+    // attr.setPlaceName(LOCATION_NOT_SPECIFIED);
+    // }
+    // }
+    //
+    // if (selectedPlace)
+    // {
+    // attr.setPlaceName(location);
+    // }
 
-    map.putToFullMap("LOCATION", location);
-    if (longitude != 0 && latitude != 0)
-    {
-      attr.setLongitude(longitude);
-      attr.setLatitude(latitude);
-    }
-    else
-    {
-      attr.setLatitudeIsSet(false);
-      attr.setLongitudeIsSet(false);
-      if (!selectedPlace)
-      {
-        attr.setPlaceName(LOCATION_NOT_SPECIFIED);
-      }
-    }
-
-    if (selectedPlace)
-    {
-      attr.setPlaceName(location);
-    }
-
-    attr.setSourceApplication("Souvenir App (Android)");
-    attr.setContentClass("com.souvenir.android");
-    note.setAttributes(attr);
+    // attr.setSourceApplication("Souvenir App (Android)");
+    // attr.setContentClass("com.souvenir.android");
+    // note.setAttributes(attr);
 
     // System.out.println(note.getAttributes().getApplicationData().toString());
+
+    SNote snote = new SNote(title, content, location);
+    snote.setDirty(true);
 
     content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
     for (ImageData imageData : images)
@@ -943,52 +939,25 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       {
         in = new BufferedInputStream(new FileInputStream(f));
 
-        FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
-        in.close();
+        String enmedia = EvernoteUtil.createEnMediaTag(resource).replaceFirst(
+            " ", " title=\"" + imageData.caption + "\" ");
+        content += enmedia;
 
-        resource.setData(data);
-        resource.setMime(imageData.mimeType);
-        ResourceAttributes attributes = new ResourceAttributes();
-        attributes.setFileName(imageData.fileName);
-        resource.setAttributes(attributes);
+        snote.addResource(new SResource(imageData.caption, EvernoteUtil
+            .hash(in), imageData.mimeType, imageData.filePath));
+        in.close();
 
       }
       catch (Exception e)
       {
         e.printStackTrace();
       }
-
-      note.addToResources(resource);
-      String enmedia = EvernoteUtil.createEnMediaTag(resource).replaceFirst(
-          " ", " title=\"" + imageData.caption + "\" ");
-      content += enmedia;
     }
-    note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
-    System.out.println(note.getContent());
-    /*
-     * Time now = new Time(); now.setToNow(); String title =
-     * now.toString();//mTitle.getText().toString();
-     */
-
-    ContentValues values = new ContentValues();
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
-        note.getGuid());
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
-        note.getTitle());
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
-        note.getContent());
-    String location2 = note.getAttributes().getPlaceName();
-    if (location == null)
-    {
-      location = String.valueOf((note.getAttributes().getLatitude())
-          + String.valueOf(note.getAttributes().getLongitude()));
-    }
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
-        location2);
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY, 1);
-
+    content += EvernoteUtil.NOTE_SUFFIX;
+    snote.setContent(content);
     getActivity().getContentResolver().insert(
-        Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"), values);
+        Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"),
+        snote.toContentValues());
     getActivity().finish();
     //
     // try

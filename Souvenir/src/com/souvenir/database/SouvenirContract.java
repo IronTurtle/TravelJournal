@@ -21,4 +21,16 @@ public class SouvenirContract
     public static final String COLUMN_NAME_NOTE_END_DATE = "note_end_date";
   }
 
+  public static abstract class SouvenirResource implements BaseColumns
+  {
+    public static final String TABLE_NAME_RESOURCE = "resource";
+    public static final String COLUMN_NAME_RESOURCE_GUID = "resource_id";
+    public static final String COLUMN_NAME_RESOURCE_CAPTION = "resource_caption";
+    public static final String COLUMN_NAME_RESOURCE_HASH = "resource_hash";
+    public static final String COLUMN_NAME_RESOURCE_LOCATION = "resource_location";
+    public static final String COLUMN_NAME_RESOURCE_MIME = "resource_mime";
+    public static final String COLUMN_NAME_RESOURCE_NOTE_ID = "resource_note_id";
+    public static final String COLUMN_NAME_RESOURCE_PATH = "resource_path";
+  }
+
 }
