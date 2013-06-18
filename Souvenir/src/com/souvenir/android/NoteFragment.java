@@ -1,6 +1,7 @@
 package com.souvenir.android;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -56,8 +57,13 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
+import com.evernote.client.conn.mobile.FileData;
+import com.evernote.edam.type.LazyMap;
+import com.evernote.edam.type.Note;
+import com.evernote.edam.type.NoteAttributes;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Resource;
+import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.thrift.transport.TTransportException;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -134,6 +140,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       Bundle savedInstanceState)
   {
     View view = inflater.inflate(R.layout.fragment_note, container, false);
+    super.onCreateView(inflater, container, savedInstanceState);
     setHasOptionsMenu(true);
 
     // mImageView = (ImageView) view.findViewById(R.id.entry_image);
@@ -197,9 +204,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       }
     });
 
+    System.out.println("savedInstanceState is not null: "
+        + (savedInstanceState != null));
+
     Bundle bundle = this.getActivity().getIntent().getExtras();
     if (bundle != null && bundle.containsKey("note"))
     {
+      Log.i("souvenir", "Loading note...");
       getActivity().getWindow().setSoftInputMode(
           WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
       // getMetadata();
@@ -209,11 +220,27 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // note.setGuid(guid);
       // String title = (String) bundle.get("title");
       displayNote();
+
+    }
+    else if (savedInstanceState != null)
+    {
+      Log.i("souvenir", "Loading data...");
+      System.out
+          .println("LOCATION:"
+              + savedInstanceState.getCharSequence("SAVED_STATE_NOTE_LOCATION",
+                  ""));
+      mTitle.setText(savedInstanceState.getCharSequence(
+          "SAVED_STATE_NOTE_TITLE", ""));
+      mLocation.setText(savedInstanceState.getCharSequence(
+          "SAVED_STATE_NOTE_LOCATION", ""));
+      mEntry.setText(savedInstanceState.getCharSequence(
+          "SAVED_STATE_NOTE_ENTRY", ""));
     }
     else
     {
       // CameraOperation c = new CameraOperation();
       // c.execute("");/
+      Log.i("souvenir", "New note...");
       openCamera();
       // setup locationManager for GPS request
       mlocManager = (LocationManager) getActivity().getSystemService(
@@ -231,6 +258,56 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     getTravelNotebook();
 
     return view;
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState)
+  {
+    super.onSaveInstanceState(outState);
+    Log.i("souvenir", "Saving state...");
+    outState.putString("SAVED_STATE_NOTE_TITLE", mTitle.getText().toString());
+    outState.putString("SAVED_STATE_NOTE_LOCATION", mLocation.getText()
+        .toString());
+    outState.putString("SAVED_STATE_NOTE_ENTRY", mEntry.getText().toString());
+  }
+
+  @Override
+  public void onStop()
+  {
+    super.onStop();
+    Log.i("souvenir", "Onstopped");
+    onSaveInstanceState(new Bundle());
+  }
+
+  @Override
+  public void onPause()
+  {
+    super.onPause();
+    Log.i("souvenir", "Onpaused");
+    onSaveInstanceState(new Bundle());
+  }
+
+  @Override
+  public void onActivityCreated(Bundle savedInstanceState)
+  {
+    super.onActivityCreated(savedInstanceState);
+    // TODO: add value in fields
+
+    Log.i("souvenir", "Loading data...");
+    if (savedInstanceState != null)
+    {
+      System.out
+          .println("LOCATION:"
+              + savedInstanceState.getCharSequence("SAVED_STATE_NOTE_LOCATION",
+                  ""));
+      mTitle.setText(savedInstanceState.getCharSequence(
+          "SAVED_STATE_NOTE_TITLE", ""));
+      mLocation.setText(savedInstanceState.getCharSequence(
+          "SAVED_STATE_NOTE_LOCATION", ""));
+      mEntry.setText(savedInstanceState.getCharSequence(
+          "SAVED_STATE_NOTE_ENTRY", ""));
+    }
+
   }
 
   private void getTravelNotebook()
