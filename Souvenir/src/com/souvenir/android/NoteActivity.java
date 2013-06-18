@@ -32,12 +32,14 @@ public class NoteActivity extends SherlockFragmentActivity implements
 
     final ActionBar bar = getSupportActionBar();
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-
-    NoteFragment mEntryFragment = new NoteFragment();
-    FragmentTransaction fragmentTransaction = getSupportFragmentManager()
-        .beginTransaction();
-    fragmentTransaction.add(android.R.id.content, mEntryFragment);
-    fragmentTransaction.commit();
+    if (savedInstanceState == null)
+    {
+      NoteFragment mEntryFragment = new NoteFragment();
+      FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+          .beginTransaction();
+      fragmentTransaction.add(android.R.id.content, mEntryFragment);
+      fragmentTransaction.commit();
+    }
   }
 
   @Override

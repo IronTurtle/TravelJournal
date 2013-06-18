@@ -22,8 +22,8 @@ public class DatabaseActivity extends Activity
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT };
 
     Cursor c = this.getContentResolver().query(
-        Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"), projection,
-        null, null, null);
+        Uri.parse(SouvenirContentProvider.CONTENT_URI + "/note/new"),
+        projection, null, null, null);
     String resultString1 = "";
     c.moveToFirst();
     for (int i = 0; i < c.getCount(); i++)
@@ -39,24 +39,6 @@ public class DatabaseActivity extends Activity
     // textView1 = (TextView)findViewById(R.id.db_result);
     // textView1.setText(resultString1);
 
-  }
-
-  public Cursor queryNotes()
-  {
-    // Columns you want to query from table
-    String[] projection = { SouvenirContract.SouvenirNote._ID,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT };
-    // How you want the results sorted in the resulting Cursor
-    String sortOrder = SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID
-        + " ASC";
-    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps");
-
-    Cursor c = this.getContentResolver().query(uri, projection, null, null,
-        sortOrder);
-
-    return c;
   }
 
   @Override

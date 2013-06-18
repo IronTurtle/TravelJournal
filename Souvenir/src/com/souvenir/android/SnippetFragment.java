@@ -235,10 +235,12 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM,
                         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY };
 
-                    if ((cursor = getActivity().getContentResolver().query(
-                        Uri.parse(SouvenirContentProvider.CONTENT_URI
-                            + "/apps/" + note.getGuid()), null, null, null,
-                        null)) != null
+                    if ((cursor = getActivity()
+                        .getContentResolver()
+                        .query(
+                            Uri.parse(SouvenirContentProvider.CONTENT_URI
+                                + SouvenirContentProvider.DatabaseConstants.GET_NOTE
+                                + note.getGuid()), null, null, null, null)) != null
                         && cursor.getCount() > 0)
                     {
                       // System.out.println("This GUID already exists "
@@ -296,7 +298,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                                       .getContentResolver()
                                       .insert(
                                           Uri.parse(SouvenirContentProvider.CONTENT_URI
-                                              + "/apps"),
+                                              + SouvenirContentProvider.DatabaseConstants.NOTE),
                                           insertNote.toContentValues());
                                   adapter.notifyDataSetChanged();
                                   lastUpdateCount = serverlastUpdateCount;
@@ -354,7 +356,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
     // Dirty
     if ((cursor = getActivity().getContentResolver().query(
-        Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"), null,
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.NOTE), null,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY, null, null)) != null
         && cursor.getCount() > 0)
     {
@@ -456,8 +459,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
   public void update(SNote mNote2)
   {
-    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps/"
-        + mNote2.getId());
+    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI
+        + SouvenirContentProvider.DatabaseConstants.GET_NOTE + mNote2.getId());
 
     getActivity().getContentResolver().update(uri, mNote2.toContentValues(),
         null, null);
@@ -847,7 +850,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
         SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID };
 
-    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps");
+    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI
+        + SouvenirContentProvider.DatabaseConstants.NOTE);
 
     CursorLoader cursorLoader = new CursorLoader(getActivity(), uri, null,
         null, null, SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE

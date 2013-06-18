@@ -25,6 +25,12 @@ import android.text.TextUtils;
  */
 public class SouvenirContentProvider extends ContentProvider
 {
+  public static class DatabaseConstants
+  {
+    public static String NOTE = "note/";
+    public static String GET_NOTE = "note/#";
+    public static String NOTE_RESOURCES = "res/#";
+  }
 
   /*****************/
   /** STATIC DATA **/
@@ -34,9 +40,9 @@ public class SouvenirContentProvider extends ContentProvider
   private SouvenirDbHelper database;
 
   /** Values for the URIMatcher. */
-  private static final int ALL_APPS = 1;
-  private static final int APP_ID = ALL_APPS + 1;
-  private static final int APP_NAME = ALL_APPS + 2;
+  public static final int NOTE = 1;
+  public static final int GET_NOTE = NOTE + 1;
+  public static final int NOTE_RES = NOTE + 2;
 
   /** The authority for this content provider. */
   private static final String AUTHORITY = "com.souvenir.database";
@@ -55,7 +61,7 @@ public class SouvenirContentProvider extends ContentProvider
    * on the database.
    */
   public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-      + "/" + BASE_PATH);
+      + "/");
 
   /**
    * Matches content URIs requested by accessing applications with possible
@@ -65,9 +71,9 @@ public class SouvenirContentProvider extends ContentProvider
   static
   {
     s_URIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    s_URIMatcher.addURI(AUTHORITY, BASE_PATH + "/apps", ALL_APPS);
-    s_URIMatcher.addURI(AUTHORITY, BASE_PATH + "/apps/#", APP_ID);
-    s_URIMatcher.addURI(AUTHORITY, BASE_PATH + "/apps/*", APP_NAME);
+    s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.NOTE, NOTE);
+    s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.GET_NOTE, GET_NOTE);
+    s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.NOTE_RESOURCES, NOTE_RES);
   }
 
   /**
@@ -122,7 +128,7 @@ public class SouvenirContentProvider extends ContentProvider
 
     switch (uriType)
     {
-    case ALL_APPS:
+    case NOTE:
 
       // Default sort order if none specified
       if (sortOrder == null || TextUtils.isEmpty(sortOrder))
@@ -137,7 +143,7 @@ public class SouvenirContentProvider extends ContentProvider
 
       break;
 
-    case APP_NAME:
+    case NOTE_RES:
       // Note the escaped '"' needed when adding a String to the whereclause.
       queryBuilder
           .appendWhere(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID
@@ -194,7 +200,7 @@ public class SouvenirContentProvider extends ContentProvider
     // IMPORTANT: App ID cannot be set to -1 in passed-in URI; -1 is not
     // interpreted
     // as a numerical value by the URIMatcher.
-    case ALL_APPS:
+    case NOTE:
 
       // Perform the database insert, placing the app at the bottom of the
       // table.
@@ -215,7 +221,7 @@ public class SouvenirContentProvider extends ContentProvider
       getContext().getContentResolver().notifyChange(uri, null);
     }
 
-    return Uri.parse(BASE_PATH + "/" + id);
+    return Uri.parse("/" + id);
   }
 
   /**
@@ -247,7 +253,7 @@ public class SouvenirContentProvider extends ContentProvider
     {
 
     // Remove all rows from the app table with the matching ID.
-    case ALL_APPS:
+    case NOTE:
       rowsDeleted = sqlDB.delete(SouvenirContract.SouvenirNote.TABLE_NAME_NOTE,
           null, null);
       break;
@@ -298,7 +304,7 @@ public class SouvenirContentProvider extends ContentProvider
     {
 
     // Update a row in the app table with the matching ID.
-    case APP_ID:
+    case GET_NOTE:
       String id = uri.getLastPathSegment();
 
       // Perform the actual update in the table.

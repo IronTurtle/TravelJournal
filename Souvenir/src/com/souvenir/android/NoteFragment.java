@@ -39,8 +39,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -149,30 +147,31 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mLocation = (TextView) view.findViewById(R.id.note_location);
     mEntry = (EditText) view.findViewById(R.id.note_entry);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
-    mCaption.addTextChangedListener(new TextWatcher()
-    {
-
-      @Override
-      public void afterTextChanged(Editable s)
-      {
-        images.get(pager.getCurrentItem()).caption = s.toString();
-
-      }
-
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count,
-          int after)
-      {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count)
-      {
-      }
-
-    });
+    // mCaption.addTextChangedListener(new TextWatcher()
+    // {
+    //
+    // @Override
+    // public void afterTextChanged(Editable s)
+    // {
+    // images.get(pager.getCurrentItem()).caption = s.toString();
+    //
+    // }
+    //
+    // @Override
+    // public void beforeTextChanged(CharSequence s, int start, int count,
+    // int after)
+    // {
+    // // TODO Auto-generated method stub
+    //
+    // }
+    //
+    // @Override
+    // public void onTextChanged(CharSequence s, int start, int before, int
+    // count)
+    // {
+    // }
+    //
+    // });
     pager = (ViewPager) view.findViewById(R.id.pager);
 
     options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()
@@ -374,19 +373,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       break;
     case R.id.viewedit_note_menu_fbshare:
       System.out.println("FACEBOOK SHARING");
-      /*
-       * getActivity().startActivityForResult(new Intent(getActivity(),
-       * ShareActivity.class), FACEBOOK_SHARE);
-       * 
-       * getActivity().startActivityForResult(new Intent(getActivity(),
-       * ShareActivity.class).putExtra("TITLE", mTitle.getText().toString()),
-       * FACEBOOK_SHARE); getActivity().startActivityForResult(new
-       * Intent(getActivity(), ShareActivity.class).putExtra("LOCATION",
-       * mLocation.getText().toString()), FACEBOOK_SHARE);
-       * getActivity().startActivityForResult(new Intent(getActivity(),
-       * ShareActivity.class).putExtra("ENTRY", mEntry.getText().toString()),
-       * FACEBOOK_SHARE);
-       */
 
       String[] noteContent = { mTitle.getText().toString(),
           mLocation.getText().toString(), mEntry.getText().toString() };
@@ -988,7 +974,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY, 1);
 
     getActivity().getContentResolver().insert(
-        Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps"), values);
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.NOTE), values);
     getActivity().finish();
     //
     // try
@@ -1043,8 +1030,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
   protected void update(SNote mNote2)
   {
-    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI + "/apps/"
-        + mNote2.getId());
+    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI
+        + SouvenirContentProvider.DatabaseConstants.GET_NOTE + mNote2.getId());
 
     ContentValues values = new ContentValues();
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
