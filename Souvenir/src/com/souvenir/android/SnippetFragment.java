@@ -27,6 +27,7 @@ package com.souvenir.android;
 
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -260,7 +261,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                       mEvernoteSession
                           .getClientFactory()
                           .createNoteStoreClient()
-                          .getNote(note.getGuid(), true, false, false, false,
+                          .getNote(note.getGuid(), true, true, false, false,
                               new OnClientCallback<Note>()
                               {
                                 @Override
@@ -300,6 +301,16 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                                           Uri.parse(SouvenirContentProvider.CONTENT_URI
                                               + SouvenirContentProvider.DatabaseConstants.NOTE),
                                           insertNote.toContentValues());
+                                  for (ContentValues cv : insertNote
+                                      .getResourcesContentValues())
+                                  {
+                                    SnippetFragment.this
+                                        .getActivity()
+                                        .getContentResolver()
+                                        .insert(
+                                            Uri.parse(SouvenirContentProvider.CONTENT_URI
+                                                + "/pics"), cv);
+                                  }
                                   adapter.notifyDataSetChanged();
                                   lastUpdateCount = serverlastUpdateCount;
                                   lastSyncTime = serverLastSyncTime;

@@ -1,17 +1,29 @@
 package com.souvenir.android;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.evernote.client.android.EvernoteUtil;
+import com.evernote.client.conn.mobile.FileData;
 import com.evernote.edam.type.LazyMap;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteAttributes;
 import com.evernote.edam.type.Resource;
+import com.evernote.edam.type.ResourceAttributes;
 import com.souvenir.database.SouvenirContract;
 
 public class SNote implements Parcelable
@@ -35,7 +47,7 @@ public class SNote implements Parcelable
   int id = -1;
   String location = null;
   long modifyDate = -1;
-  List<Resource> resources = null;
+  List<SResource> resources = null;
   int syncNum = -1;
   ArrayList<String> tags = null;
   String title = null;
@@ -82,10 +94,27 @@ public class SNote implements Parcelable
     this.modifyDate = note.getUpdated();
     this.createDate = note.getCreated();
     this.evernoteGUID = note.getGuid();
-    this.resources = note.getResources();
+    // this.resources = note.getSResources();
     // this.tags = null;
     // this.trophyNumber = trophyNumber;
     // this.tripID = tripID;
+    Document doc = Jsoup.parse(this.content);
+
+    Elements divs = doc.getElementsByAttribute("hash");
+    // System.out.println("Images");
+    for (final Element div : divs)
+    {
+      for (Resource resource : note.getResources())
+      {
+        if (div.attr("hash").equals(
+            SResource.bytesToHex(resource.getData().getBodyHash())))
+        {
+          this.addResource(new SResource(resource, div.attr("title")));
+          break;
+        }
+      }
+    }
+
   }
 
   @SuppressWarnings("unchecked")
@@ -99,7 +128,7 @@ public class SNote implements Parcelable
     this.modifyDate = in.readLong();
     this.createDate = in.readLong();
     this.evernoteGUID = in.readString();
-    in.readList(this.resources, Resource.class.getClassLoader());
+    in.readList(this.resources, SResource.class.getClassLoader());
     this.tags = in.readArrayList(String.class.getClassLoader());
     this.trophyNumber = in.readString();
     this.tripID = in.readString();
@@ -126,7 +155,7 @@ public class SNote implements Parcelable
   }
 
   public SNote(String title, String content, String location, long modifyDate,
-      long createDate, String evernoteGUID, ArrayList<Resource> resources,
+      long createDate, String evernoteGUID, ArrayList<SResource> resources,
       ArrayList<String> tags, String trophyNumber, String tripID)
   {
     super();
@@ -178,7 +207,7 @@ public class SNote implements Parcelable
     return modifyDate;
   }
 
-  public List<Resource> getResource()
+  public List<SResource> getSResource()
   {
     return resources;
   }
@@ -248,7 +277,7 @@ public class SNote implements Parcelable
     this.modifyDate = modifyDate;
   }
 
-  public void setResource(ArrayList<Resource> resources)
+  public void setSResource(ArrayList<SResource> resources)
   {
     this.resources = resources;
   }
@@ -299,6 +328,20 @@ public class SNote implements Parcelable
     return values;
   }
 
+  public ArrayList<ContentValues> getResourcesContentValues()
+  {
+    if (resources.isEmpty())
+    {
+      return null;
+    }
+    ArrayList<ContentValues> returnArr = new ArrayList<ContentValues>();
+    for (SResource sresource : resources)
+    {
+      returnArr.add(sresource.toContentValues());
+    }
+    return returnArr;
+  }
+
   public Note toNote()
   {
     Note note = new Note();
@@ -338,6 +381,31 @@ public class SNote implements Parcelable
     attr.setSourceApplication("Souvenir App (Android)");
     attr.setContentClass("com.souvenir.android");
     note.setAttributes(attr);
+
+    for (SResource imageData : resources)
+    {
+      try
+      {
+        String f = imageData.getPath();
+        Resource resource = new Resource();
+        InputStream in;
+        // System.out.println("f: " + f);
+        in = new BufferedInputStream(new FileInputStream(f));
+        FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
+        in.close();
+        resource.setData(data);
+        resource.setMime(imageData.getMime());
+        ResourceAttributes attributes = new ResourceAttributes();
+        // attributes.setFileName(imageData.getFileName);
+        resource.setAttributes(attributes);
+        note.addToResources(resource);
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+    }
+
     return note;
   }
 
@@ -355,5 +423,11 @@ public class SNote implements Parcelable
     dest.writeList(this.tags);
     dest.writeString(this.trophyNumber);
     dest.writeString(this.tripID);
+  }
+
+  public void addResource(SResource resource)
+  {
+    resource.setNoteId(this.id);
+    resources.add(resource);
   }
 }
