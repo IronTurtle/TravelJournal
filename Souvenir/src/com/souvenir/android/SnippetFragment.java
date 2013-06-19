@@ -120,6 +120,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   {
     super.onResume();
     updateUi();
+    getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+    adapter.notifyDataSetChanged();
   }
 
   private void updateUi()
@@ -267,6 +269,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                                 @Override
                                 public void onSuccess(Note note)
                                 {
+                                  if (!note.isActive())
+                                    return;
                                   SNote insertNote = new SNote(note);
 
                                   Uri uri = SnippetFragment.this
@@ -451,7 +455,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   public void update(SNote mNote2)
   {
     Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI
-        + SouvenirContentProvider.DatabaseConstants.GET_NOTE + mNote2.getId());
+        + SouvenirContentProvider.DatabaseConstants.GET_NOTE.replace("#", ""
+            + mNote2.getId()));
 
     getActivity().getContentResolver().update(uri, mNote2.toContentValues(),
         null, null);
