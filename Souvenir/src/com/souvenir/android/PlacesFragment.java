@@ -237,15 +237,13 @@ public class PlacesFragment extends ParentFragment
         @Override
         public void onClick(View v)
         {
-          // EditText selected = (EditText) getActivity().findViewById(
-          // R.id.selectedPlace);
-          // System.out.println(curPlace.getName());
-          // selected.setText(curPlace.getName() + ", " +
-          // curPlace.getAddress());
-          // ((PlacesActivity) getActivity()).setLocationData(curPlace.getName()
-          // + ", " + curPlace.getAddress());
-          //
-          // getFragmentManager().popBackStack();
+          EditText selected = (EditText) getActivity().findViewById(
+              R.id.selectedPlace);
+          System.out.println(curPlace.getName());
+          selected.setText(curPlace.getName() + ", " + curPlace.getAddress());
+          ((NoteActivity) getActivity()).sendLocationData(curPlace.getName()
+              + ", " + curPlace.getAddress());
+
         }
       });
       return snippetView;

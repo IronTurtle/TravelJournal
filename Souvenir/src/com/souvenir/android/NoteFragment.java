@@ -45,7 +45,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -142,6 +141,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mLocation = (TextView) view.findViewById(R.id.note_location);
     mEntry = (EditText) view.findViewById(R.id.note_entry);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
+
     // mCaption.addTextChangedListener(new TextWatcher()
     // {
     //
@@ -205,8 +205,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     if (bundle != null && bundle.containsKey("note"))
     {
       Log.i("souvenir", "Loading note...");
-      getActivity().getWindow().setSoftInputMode(
-          WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+      // getActivity().getWindow().setSoftInputMode(
+      // WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
       // getMetadata();
       oldNote = true;
       mNote = (SNote) bundle.get("note");
@@ -218,6 +218,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     else if (savedInstanceState != null)
     {
+
       Log.i("souvenir", "Loading data...");
       System.out
           .println("LOCATION:"
@@ -225,10 +226,21 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
                   ""));
       mTitle.setText(savedInstanceState.getCharSequence(
           "SAVED_STATE_NOTE_TITLE", ""));
-      mLocation.setText(savedInstanceState.getCharSequence(
-          "SAVED_STATE_NOTE_LOCATION", ""));
+      if (((NoteActivity) getActivity()).location != null)
+      {
+        mLocation.setText(((NoteActivity) getActivity()).location);
+      }
+      else
+      {
+        mLocation.setText(savedInstanceState.getCharSequence(
+            "SAVED_STATE_NOTE_LOCATION", ""));
+      }
       mEntry.setText(savedInstanceState.getCharSequence(
           "SAVED_STATE_NOTE_ENTRY", ""));
+    }
+    else if (((NoteActivity) getActivity()).location != null)
+    {
+      mLocation.setText(((NoteActivity) getActivity()).location);
     }
     else
     {
@@ -236,13 +248,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // c.execute("");/
       Log.i("souvenir", "New note...");
       openCamera();
-      // setup locationManager for GPS request
-      mlocManager = (LocationManager) getActivity().getSystemService(
-          Context.LOCATION_SERVICE);
-      mlocListener = new AppLocationListener();
-      mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
-          mlocListener, null);
-      setDefaultTitle();
+      // // setup locationManager for GPS request
+      // mlocManager = (LocationManager) getActivity().getSystemService(
+      // Context.LOCATION_SERVICE);
+      // mlocListener = new AppLocationListener();
+      // mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+      // mlocListener, null);
+      // setDefaultTitle();
 
     }
 
@@ -507,6 +519,19 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
         }
 
         new ImageSelector().execute(data);
+        // setup locationManager for GPS request
+        if (mLocation.getText().length() == 0)
+        {
+          mlocManager = (LocationManager) getActivity().getSystemService(
+              Context.LOCATION_SERVICE);
+          mlocListener = new AppLocationListener();
+          mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+              mlocListener, null);
+        }
+        if (mTitle.getText().length() == 0)
+        {
+          setDefaultTitle();
+        }
       }
 
       break;
@@ -528,8 +553,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
 
     mEntry.requestFocus();
-    getActivity().getWindow().setSoftInputMode(
-        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    // getActivity().getWindow().setSoftInputMode(
+    // WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
   }
 
   // public void getMetadata()
@@ -1486,50 +1511,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
   }
 
-  private class CameraOperation extends AsyncTask<String, Void, String>
-  {
-
-    @Override
-    protected String doInBackground(String... params)
-    {
-      try
-      {
-
-        // Open Camera app first automatically
-        openCamera();
-        /*
-         * mlocManager = (LocationManager)
-         * getActivity().getSystemService(Context.LOCATION_SERVICE);
-         * 
-         * mlocListener = new AppLocationListener();
-         * mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
-         * mlocListener, null);
-         */
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-      }
-
-      return null;
-    }
-
-    @Override
-    protected void onPostExecute(String result)
-    {
-    }
-
-    @Override
-    protected void onPreExecute()
-    {
-    }
-
-    @Override
-    protected void onProgressUpdate(Void... values)
-    {
-    }
-  }
-
   /*
    * @Override protected void onSaveInstanceState(Bundle outState) {
    * super.onSaveInstanceState(outState); if (mImageUri != null) {
@@ -1540,6 +1521,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
    * (savedInstanceState.containsKey("cameraImageUri")) { mImageUri =
    * Uri.parse(savedInstanceState.getString("cameraImageUri")); } }
    */
+
+  public void setLocationData(String loc)
+  {
+    mLocation.setText(loc);
+  }
 
   /* Class My Location Listener */
   public class AppLocationListener implements LocationListener
@@ -1555,8 +1541,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       String Text = "My current location is: " + "Latitude = "
           + loc.getLatitude() + " Longitude = " + loc.getLongitude();
 
-      Toast.makeText(getActivity().getApplicationContext(), Text,
-          Toast.LENGTH_SHORT).show();
+      // Toast.makeText(getActivity().getApplicationContext(), Text,
+      // Toast.LENGTH_SHORT).show();
 
       // setText of coordinates to mLocation field
       mLocation.setText(loc.getLatitude() + ", " + loc.getLongitude());
