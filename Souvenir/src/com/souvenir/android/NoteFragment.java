@@ -38,6 +38,8 @@ import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -144,31 +146,30 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mEntry = (EditText) view.findViewById(R.id.note_entry);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
 
-    // mCaption.addTextChangedListener(new TextWatcher()
-    // {
-    //
-    // @Override
-    // public void afterTextChanged(Editable s)
-    // {
-    // images.get(pager.getCurrentItem()).caption = s.toString();
-    //
-    // }
-    //
-    // @Override
-    // public void beforeTextChanged(CharSequence s, int start, int count,
-    // int after)
-    // {
-    // // TODO Auto-generated method stub
-    //
-    // }
-    //
-    // @Override
-    // public void onTextChanged(CharSequence s, int start, int before, int
-    // count)
-    // {
-    // }
-    //
-    // });
+    mCaption.addTextChangedListener(new TextWatcher()
+    {
+
+      @Override
+      public void afterTextChanged(Editable s)
+      {
+        images.get(pager.getCurrentItem()).caption = s.toString();
+
+      }
+
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count,
+          int after)
+      {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count)
+      {
+      }
+
+    });
     pager = (ViewPager) view.findViewById(R.id.pager);
 
     options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()
@@ -1109,10 +1110,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     content += EvernoteUtil.NOTE_SUFFIX;
     snote.setContent(content);
-    getActivity().getContentResolver().insert(
+    Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.NOTE),
         snote.toContentValues());
+    int id = Integer.valueOf(uri.getLastPathSegment());
+    snote.setId(id);
+    // snote.processResources(note);
     for (ContentValues cv : snote.getResourcesContentValues())
     {
       getActivity().getContentResolver().insert(

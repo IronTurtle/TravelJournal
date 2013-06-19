@@ -124,36 +124,39 @@ public class SNote implements Parcelable
     this.title = title;
     this.content = content;
     this.location = location;
+    this.createDate = System.currentTimeMillis();
+    this.modifyDate = System.currentTimeMillis();
   }
 
-  public SNote(String title, String content, String location,
-      String evernoteGUID, String trophyNumber, String tripID)
-  {
-    super();
-    this.title = title;
-    this.content = content;
-    this.location = location;
-    this.evernoteGUID = evernoteGUID;
-    this.trophyNumber = trophyNumber;
-    this.tripID = tripID;
-  }
+  // public SNote(String title, String content, String location,
+  // String evernoteGUID, String trophyNumber, String tripID)
+  // {
+  // super();
+  // this.title = title;
+  // this.content = content;
+  // this.location = location;
+  // this.evernoteGUID = evernoteGUID;
+  // this.trophyNumber = trophyNumber;
+  // this.tripID = tripID;
+  // }
 
-  public SNote(String title, String content, String location, long modifyDate,
-      long createDate, String evernoteGUID, ArrayList<SResource> resources,
-      ArrayList<String> tags, String trophyNumber, String tripID)
-  {
-    super();
-    this.title = title;
-    this.content = content;
-    this.location = location;
-    this.modifyDate = modifyDate;
-    this.createDate = createDate;
-    this.evernoteGUID = evernoteGUID;
-    this.resources = resources;
-    this.tags = tags;
-    this.trophyNumber = trophyNumber;
-    this.tripID = tripID;
-  }
+  // public SNote(String title, String content, String location, long
+  // modifyDate,
+  // long createDate, String evernoteGUID, ArrayList<SResource> resources,
+  // ArrayList<String> tags, String trophyNumber, String tripID)
+  // {
+  // super();
+  // this.title = title;
+  // this.content = content;
+  // this.location = location;
+  // this.modifyDate = modifyDate;
+  // this.createDate = createDate;
+  // this.evernoteGUID = evernoteGUID;
+  // this.resources = resources;
+  // this.tags = tags;
+  // this.trophyNumber = trophyNumber;
+  // this.tripID = tripID;
+  // }
 
   public void processResources(Note note)
   {
