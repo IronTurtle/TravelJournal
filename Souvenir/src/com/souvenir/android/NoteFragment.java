@@ -45,6 +45,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -121,6 +122,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
   private static final int CAMERA_PIC_REQUEST = 1313;
   private static final int LOCATION_REQUEST = 1034;
+  private static final int GPS_REQUEST = 695;
   // UI elements that we update
 
   Button btnTakePhoto;
@@ -224,8 +226,16 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           .println("LOCATION:"
               + savedInstanceState.getCharSequence("SAVED_STATE_NOTE_LOCATION",
                   ""));
-      mTitle.setText(savedInstanceState.getCharSequence(
-          "SAVED_STATE_NOTE_TITLE", ""));
+
+      // mTitle.setText(savedInstanceState.getCharSequence(
+      // "SAVED_STATE_NOTE_TITLE", ""));
+      /*
+       * System.out.println("General Location:" + ((NoteActivity)
+       * getActivity()).generalLocation); if (((NoteActivity)
+       * getActivity()).generalLocation != null) {
+       * mTitle.setText((mTitle.getText().toString()).split("at")[0] + " at " +
+       * ((NoteActivity) getActivity()).generalLocation); }
+       */
       if (((NoteActivity) getActivity()).location != null)
       {
         mLocation.setText(((NoteActivity) getActivity()).location);
@@ -241,6 +251,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     else if (((NoteActivity) getActivity()).location != null)
     {
       mLocation.setText(((NoteActivity) getActivity()).location);
+      System.out.println("General Location:"
+          + ((NoteActivity) getActivity()).generalLocation);
+
+      mTitle.setText("Souvenir Note on " + getDateTime() + " at "
+          + ((NoteActivity) getActivity()).generalLocation);
+      // TODO: something happens to redo the title after the call above
     }
     else
     {
@@ -262,7 +278,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mEntry.setOnKeyListener(new NoteEntryField());
 
     getTravelNotebook();
-
+    System.out.println(mTitle.getText());
     return view;
   }
 
@@ -271,10 +287,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
     super.onSaveInstanceState(outState);
     Log.i("souvenir", "Saving state...");
-    outState.putString("SAVED_STATE_NOTE_TITLE", mTitle.getText().toString());
-    outState.putString("SAVED_STATE_NOTE_LOCATION", mLocation.getText()
-        .toString());
-    outState.putString("SAVED_STATE_NOTE_ENTRY", mEntry.getText().toString());
+    if (mTitle.getText().toString() != null)
+      outState.putString("SAVED_STATE_NOTE_TITLE", mTitle.getText().toString());
+    if (mLocation.getText().toString() != null)
+      outState.putString("SAVED_STATE_NOTE_LOCATION", mLocation.getText()
+          .toString());
+    if (mEntry.getText().toString() != null)
+      outState.putString("SAVED_STATE_NOTE_ENTRY", mEntry.getText().toString());
   }
 
   @Override
@@ -296,23 +315,32 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   @Override
   public void onActivityCreated(Bundle savedInstanceState)
   {
-    super.onActivityCreated(savedInstanceState);
+    super.onActivityCreated(null);
     // TODO: add value in fields
 
     Log.i("souvenir", "Loading data...");
-    if (savedInstanceState != null)
-    {
-      System.out
-          .println("LOCATION:"
-              + savedInstanceState.getCharSequence("SAVED_STATE_NOTE_LOCATION",
-                  ""));
-      mTitle.setText(savedInstanceState.getCharSequence(
-          "SAVED_STATE_NOTE_TITLE", ""));
-      mLocation.setText(savedInstanceState.getCharSequence(
-          "SAVED_STATE_NOTE_LOCATION", ""));
-      mEntry.setText(savedInstanceState.getCharSequence(
-          "SAVED_STATE_NOTE_ENTRY", ""));
-    }
+    System.out.println(mTitle.getText());
+    /*
+     * if (savedInstanceState != null) { System.out .println("LOCATION:" +
+     * savedInstanceState.getCharSequence("SAVED_STATE_NOTE_LOCATION", ""));
+     * mTitle.setText(savedInstanceState.getCharSequence(
+     * "SAVED_STATE_NOTE_TITLE", ""));
+     * mLocation.setText(savedInstanceState.getCharSequence(
+     * "SAVED_STATE_NOTE_LOCATION", ""));
+     * mEntry.setText(savedInstanceState.getCharSequence(
+     * "SAVED_STATE_NOTE_ENTRY", "")); }
+     */
+
+  }
+
+  @Override
+  public void onViewStateRestored(Bundle savedInstanceState)
+  {
+    System.out.println(mTitle.getText());
+
+    // TODO Auto-generated method stub
+    super.onViewStateRestored(null);
+    System.out.println(mTitle.getText());
 
   }
 
@@ -524,9 +552,19 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
         {
           mlocManager = (LocationManager) getActivity().getSystemService(
               Context.LOCATION_SERVICE);
-          mlocListener = new AppLocationListener();
-          mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
-              mlocListener, null);
+          if (!mlocManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+              && !mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+          {
+            GPSDialogFragment d = new GPSDialogFragment();
+            d.show(getFragmentManager(), GPS_TAG);
+          }
+          else
+          {
+            mlocListener = new AppNetworkLocationListener();
+
+            mlocManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER,
+                mlocListener, null);
+          }
         }
         if (mTitle.getText().length() == 0)
         {
@@ -549,6 +587,14 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           Log.e("Intent is null", "yep it is.");
         }
       }
+      break;
+
+    case GPS_REQUEST:
+      System.out.println("GPS_REQUEST RETURNED");
+      mlocListener = new AppNetworkLocationListener();
+
+      mlocManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER,
+          mlocListener, null);
       break;
     }
 
@@ -912,7 +958,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
     Time now = new Time();
     now.setToNow();
-    String title = "Photo taken on " + getDateTime();
+    String title = "Souvenir Note on " + getDateTime();
     if (getActivity().getIntent().hasExtra("ITINERARY_SELECT"))
     {
       mTitle.setText(title + ", at "
@@ -929,9 +975,14 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     Calendar cal = Calendar.getInstance();
     return String.valueOf(cal.get(Calendar.MONTH) + 1) + "/"
         + String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + "/"
-        + String.valueOf(cal.get(Calendar.YEAR)) + ", "
-        + String.valueOf(cal.get(Calendar.HOUR_OF_DAY)) + ":"
-        + String.valueOf(cal.get(Calendar.MINUTE));
+        + String.valueOf(cal.get(Calendar.YEAR)) /*
+                                                  * + ", " +
+                                                  * String.valueOf(cal.get
+                                                  * (Calendar.HOUR_OF_DAY)) +
+                                                  * ":" +
+                                                  * String.valueOf(cal.get(
+                                                  * Calendar.MINUTE))
+                                                  */;
   }
 
   private void openCamera()
@@ -1152,6 +1203,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // new Intent(getActivity(), PlacesActivity.class).putExtra(
       // "PREV_LOC_DATA", mLocation.getText().toString()),
       // LOCATION_REQUEST);
+      getActivity().getWindow().setSoftInputMode(
+          WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
       mCallback.onArticleSelected(mLocation.getText().toString());
     }
   }
@@ -1224,8 +1277,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
               {
                 public void onClick(DialogInterface dialog, int id)
                 {
-                  startActivity(new Intent(
-                      android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                  startActivityForResult(
+                      new Intent(
+                          android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                      GPS_REQUEST);
                 }
               })
           .setNegativeButton(R.string.gps_no,
@@ -1494,9 +1549,52 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
    * Uri.parse(savedInstanceState.getString("cameraImageUri")); } }
    */
 
-  public void setLocationData(String loc)
+  /* Class My Location Listener */
+  public class AppNetworkLocationListener implements LocationListener
   {
-    mLocation.setText(loc);
+
+    @Override
+    public void onLocationChanged(Location loc)
+    {
+
+      latitude = loc.getLatitude();
+      longitude = loc.getLongitude();
+
+      String Text = "My current location is: " + "Latitude = "
+          + loc.getLatitude() + " Longitude = " + loc.getLongitude();
+
+      // Toast.makeText(getActivity().getApplicationContext(), Text,
+      // Toast.LENGTH_SHORT).show();
+
+      // setText of coordinates to mLocation field
+      mLocation.setText(loc.getLatitude() + ", " + loc.getLongitude());
+      if (!getActivity().getIntent().hasExtra("ITINERARY_SELECT"))
+      {
+        mTitle.setText(mTitle.getText().toString() + ", " + loc.getLatitude()
+            + ", " + loc.getLongitude());
+      }
+    }
+
+    @Override
+    public void onProviderDisabled(String provider)
+    {
+      mlocListener = new AppLocationListener();
+
+      mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+          mlocListener, null);
+    }
+
+    @Override
+    public void onProviderEnabled(String provider)
+    {
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras)
+    {
+
+    }
+
   }
 
   /* Class My Location Listener */
@@ -1518,29 +1616,30 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
       // setText of coordinates to mLocation field
       mLocation.setText(loc.getLatitude() + ", " + loc.getLongitude());
-      if (!getActivity().getIntent().hasExtra("ITINERARY_SELECT"))
+      if (getActivity() != null && getActivity().getIntent() != null
+          && !getActivity().getIntent().hasExtra("ITINERARY_SELECT"))
       {
-        mTitle.setText(mTitle.getText().toString() + ", at "
-            + loc.getLatitude() + ", " + loc.getLongitude());
+        mTitle.setText(mTitle.getText().toString() + ", " + loc.getLatitude()
+            + ", " + loc.getLongitude());
       }
     }
 
     @Override
     public void onProviderDisabled(String provider)
     {
-      Toast.makeText(getActivity().getApplicationContext(), "Gps Disabled",
-          Toast.LENGTH_SHORT).show();
+      // Toast.makeText(getActivity().getApplicationContext(), "Gps Disabled",
+      // Toast.LENGTH_SHORT).show();
       // create popup to ask if user wants to turn on GPS. If so, remind them to
       // press back to go back to App.
-      GPSDialogFragment d = new GPSDialogFragment();
-      d.show(getFragmentManager(), GPS_TAG);
+      // GPSDialogFragment d = new GPSDialogFragment();
+      // d.show(getFragmentManager(), GPS_TAG);
     }
 
     @Override
     public void onProviderEnabled(String provider)
     {
-      Toast.makeText(getActivity().getApplicationContext(), "Gps Enabled",
-          Toast.LENGTH_SHORT).show();
+      // Toast.makeText(getActivity().getApplicationContext(), "Gps Enabled",
+      // Toast.LENGTH_SHORT).show();
     }
 
     @Override

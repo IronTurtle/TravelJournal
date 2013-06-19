@@ -35,6 +35,8 @@ public class PlacesFragment extends ParentFragment
   int radiusRanges[] = { 50, 100, 150, 200 };
   private double longitude;
   private double latitude;
+  private String generalLocation = null;
+
   private LocationManager mlocManager;
   private LocationListener mlocListener;
 
@@ -103,7 +105,7 @@ public class PlacesFragment extends ParentFragment
     catch (Exception e)
     {
       // long and lat not obtained earlier, request coords
-      mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+      mlocManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER,
           mlocListener, null);
     }
 
@@ -138,6 +140,10 @@ public class PlacesFragment extends ParentFragment
           {
             System.out.println(placeList.get(i).getName());
             System.out.println("\t" + placeList.get(i).getAddress());
+            if (i == 0)
+            {
+              generalLocation = placeList.get(i).getAddress();
+            }
           }
         }
       }
@@ -157,6 +163,7 @@ public class PlacesFragment extends ParentFragment
           R.layout.place_snippet, placeList);
       listView.setAdapter(adapter);
       listView.setScrollingCacheEnabled(false);
+
     }
 
     @Override
@@ -206,6 +213,7 @@ public class PlacesFragment extends ParentFragment
 
       try
       {
+
         // Get the text boxes from the listitem.xml file
         snippetName = (TextView) snippetView.findViewById(R.id.placeName);
         snippetAddress = (TextView) snippetView.findViewById(R.id.placeAddress);
@@ -240,13 +248,58 @@ public class PlacesFragment extends ParentFragment
           EditText selected = (EditText) getActivity().findViewById(
               R.id.selectedPlace);
           System.out.println(curPlace.getName());
-          selected.setText(curPlace.getName() + ", " + curPlace.getAddress());
+          selected.setText(curPlace.getName() + "\n" + curPlace.getAddress());
           ((NoteActivity) getActivity()).sendLocationData(curPlace.getName()
-              + ", " + curPlace.getAddress());
+              + "\n" + curPlace.getAddress(), generalLocation);
 
         }
       });
       return snippetView;
+    }
+
+  }
+
+  /* Class My Location Listener */
+  public class AppNetworkLocationListener implements LocationListener
+  {
+
+    @Override
+    public void onLocationChanged(Location loc)
+    {
+
+      latitude = loc.getLatitude();
+      longitude = loc.getLongitude();
+
+      String text = "Current location is: " + "Latitude = " + loc.getLatitude()
+          + " Longitude = " + loc.getLongitude();
+
+      ((EditText) (getView().findViewById(R.id.selectedPlace)))
+          .setText(latitude + ", " + longitude);
+      // Toast.makeText(getActivity().getApplicationContext(), text,
+      // Toast.LENGTH_SHORT).show();
+      // query results from Google Places API
+      LongOperation l = new LongOperation();
+      l.execute("");
+    }
+
+    @Override
+    public void onProviderDisabled(String provider)
+    {
+      mlocListener = new AppLocationListener();
+
+      mlocManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+          mlocListener, null);
+    }
+
+    @Override
+    public void onProviderEnabled(String provider)
+    {
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras)
+    {
+
     }
 
   }
@@ -277,8 +330,8 @@ public class PlacesFragment extends ParentFragment
     @Override
     public void onProviderDisabled(String provider)
     {
-      Toast.makeText(getActivity().getApplicationContext(), "Gps Disabled",
-          Toast.LENGTH_SHORT).show();
+      // Toast.makeText(getActivity().getApplicationContext(), "Gps Disabled",
+      // Toast.LENGTH_SHORT).show();
       // create popup to ask if user wants to turn on GPS. If so, remind them to
       // press back to go back to App.
       GPSDialogFragment d = new GPSDialogFragment();
@@ -288,8 +341,8 @@ public class PlacesFragment extends ParentFragment
     @Override
     public void onProviderEnabled(String provider)
     {
-      Toast.makeText(getActivity().getApplicationContext(), "Gps Enabled",
-          Toast.LENGTH_SHORT).show();
+      // Toast.makeText(getActivity().getApplicationContext(), "Gps Enabled",
+      // Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -23,6 +23,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
   TextView tabxt;
 
   String location = null;
+  String generalLocation = null;
 
   NoteFragment mNoteFragment;
 
@@ -103,13 +104,14 @@ public class NoteActivity extends SherlockFragmentActivity implements
 
   }
 
-  public void sendLocationData(String data)
+  public void sendLocationData(String selectedLocation, String generalLocation)
   {
 
     // ((NoteFragment) getSupportFragmentManager().getBackStackEntryAt(
     // getSupportFragmentManager().getBackStackEntryCount() - 1))
     // .setLocationData(data);
-    location = data;
+    location = selectedLocation;
+    this.generalLocation = generalLocation;
     getSupportFragmentManager().popBackStack();
   }
 }
