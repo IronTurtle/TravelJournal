@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 //import com.actionbarsherlock.sample.styled.R;
 
@@ -32,7 +34,14 @@ public class TabActivity extends SherlockFragmentActivity
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-
+    if (!ImageLoader.getInstance().isInited())
+    {
+      ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+          this.getApplicationContext())
+          .threadPriority(Thread.NORM_PRIORITY - 2)
+          .denyCacheImageMultipleSizesInMemory()/* .enableLogging() */.build();
+      ImageLoader.getInstance().init(config);
+    }
     mViewPager = new ViewPager(this);
     mViewPager.setId(R.id.pager);
 

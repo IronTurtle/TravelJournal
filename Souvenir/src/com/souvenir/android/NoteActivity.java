@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class NoteActivity extends SherlockFragmentActivity implements
     NoteFragment.OnHeadlineSelectedListener
@@ -19,6 +21,10 @@ public class NoteActivity extends SherlockFragmentActivity implements
   ViewPager mViewPager;
   TextView tabCenter;
   TextView tabxt;
+
+  String location = null;
+
+  NoteFragment mNoteFragment;
 
   @SuppressWarnings("unused")
   private final Handler handler = new Handler();
@@ -29,24 +35,24 @@ public class NoteActivity extends SherlockFragmentActivity implements
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.fragment_standard);
-
+    if (!ImageLoader.getInstance().isInited())
+    {
+      ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+          this.getApplicationContext())
+          .threadPriority(Thread.NORM_PRIORITY - 2)
+          .denyCacheImageMultipleSizesInMemory()/* .enableLogging() */.build();
+      ImageLoader.getInstance().init(config);
+    }
     final ActionBar bar = getSupportActionBar();
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
     if (savedInstanceState == null)
     {
-      NoteFragment mEntryFragment = new NoteFragment();
+      mNoteFragment = new NoteFragment();
       FragmentTransaction fragmentTransaction = getSupportFragmentManager()
           .beginTransaction();
-      fragmentTransaction.add(android.R.id.content, mEntryFragment);
+      fragmentTransaction.add(android.R.id.content, mNoteFragment);
       fragmentTransaction.commit();
     }
-  }
-
-  @Override
-  public void onSaveInstanceState(Bundle savedInstanceState)
-  {
-    super.onSaveInstanceState(savedInstanceState);
-
   }
 
   @Override
@@ -95,5 +101,15 @@ public class NoteActivity extends SherlockFragmentActivity implements
     transaction.addToBackStack(null);
     transaction.commit();
 
+  }
+
+  public void sendLocationData(String data)
+  {
+
+    // ((NoteFragment) getSupportFragmentManager().getBackStackEntryAt(
+    // getSupportFragmentManager().getBackStackEntryCount() - 1))
+    // .setLocationData(data);
+    location = data;
+    getSupportFragmentManager().popBackStack();
   }
 }

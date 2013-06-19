@@ -66,4 +66,10 @@ public class ParentFragment extends SherlockFragment
         .imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
 
   }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState)
+  {
+    super.onSaveInstanceState(outState);
+  }
 }

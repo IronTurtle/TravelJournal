@@ -16,10 +16,14 @@ public class SplashActivity extends Activity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.splash);
 
-    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-        this.getApplicationContext()).threadPriority(Thread.NORM_PRIORITY - 2)
-        .denyCacheImageMultipleSizesInMemory()/* .enableLogging() */.build();
-    ImageLoader.getInstance().init(config);
+    if (!ImageLoader.getInstance().isInited())
+    {
+      ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+          this.getApplicationContext())
+          .threadPriority(Thread.NORM_PRIORITY - 2)
+          .denyCacheImageMultipleSizesInMemory()/* .enableLogging() */.build();
+      ImageLoader.getInstance().init(config);
+    }
 
     Thread splashThread = new Thread()
     {
