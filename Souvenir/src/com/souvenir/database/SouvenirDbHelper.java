@@ -42,7 +42,7 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID
       + INTEGER_TYPE + COMMA_SEP
       + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_PATH + TEXT_TYPE
-      + COMMA_SEP + " )";
+      + " NOT NULL " + " )";
 
   public static final String SQL_DELETE_NOTE_TABLE = "DROP TABLE IF EXISTS "
       + SouvenirContract.SouvenirNote.TABLE_NAME_NOTE;
@@ -63,6 +63,7 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
   public void onCreate(SQLiteDatabase db)
   {
     db.execSQL(SQL_CREATE_NOTE_TABLE);
+    db.execSQL(SQL_CREATE_RESOURCE_TABLE);
   }
 
   @Override

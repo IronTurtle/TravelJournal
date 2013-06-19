@@ -1,7 +1,6 @@
 package com.souvenir.android;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -57,13 +56,8 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
-import com.evernote.client.conn.mobile.FileData;
-import com.evernote.edam.type.LazyMap;
-import com.evernote.edam.type.Note;
-import com.evernote.edam.type.NoteAttributes;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Resource;
-import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.thrift.transport.TTransportException;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -81,7 +75,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   private static String NOTEBOOK_GUID;
   Boolean oldNote = false;
   ViewPager pager;
-  ArrayList<String> urls = new ArrayList<String>();
+  // ArrayList<String> urls = new ArrayList<String>();
   ArrayList<ImageData> images = new ArrayList<ImageData>();
 
   // The path to and MIME type of the currently selected image from the
@@ -181,7 +175,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     // mTitle.setText("LOREM IPSUM LROSDFSADFSDAFSAFDSDFSDFASFSAFSADF");
     // urls.add("http://www.joshuakennon.com/wp-content/uploads/2010/01/earnings-yield-stock-valuation.jpg");
     // urls.add("http://us.123rf.com/400wm/400/400/forwardcom/forwardcom0710/forwardcom071000126/1877196-parthenon-erechthion-herodion-and-lycabetus-the-main-landmarks-of-athens-greece.jpg");
-    pager.setAdapter(new ClothingPagerAdapter(urls));
+    pager.setAdapter(new ClothingPagerAdapter(images));
     pager.setOnPageChangeListener(new OnPageChangeListener()
     {
 
@@ -597,47 +591,64 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       System.out.println(div.attr("hash"));
       System.out.println(div.attr("title"));
 
+      for (SResource resource : mNote.resources)
+      {
+        if (div.attr("hash").equals(resource.getHash()))
+        {
+          ImageData imagedata = new ImageData();
+          imagedata.filePath = resource.getPath();
+          imagedata.caption = resource.getCaption();
+          images.add(imagedata);
+          pager.getAdapter().notifyDataSetChanged();
+
+        }
+      }
+
       mImageData.fileName = div.attr("hash");
-      try
-      {
-        mEvernoteSession
-            .getClientFactory()
-            .createNoteStoreClient()
-            .getResourceByHash(mNote.getEvernoteGUID(),
-                EvernoteUtil.hexToBytes(div.attr("hash")), false, true, false,
-                new OnClientCallback<Resource>()
-                {
-                  @Override
-                  public void onSuccess(Resource data)
-                  {
-                    resource = data;
-                    System.out.println(data.toString());
-                    urls.add(""
-                        + mEvernoteSession.getAuthenticationResult()
-                            .getWebApiUrlPrefix() + "res/" + data.getGuid()
-                        + "?auth=" + mEvernoteSession.getAuthToken());
-                    ImageData mImageData = new ImageData();
 
-                    mImageData.caption = div.attr("title");
-                    images.add(mImageData);
-                    pager.getAdapter().notifyDataSetChanged();
-                    mCaption.setText(images.get(pager.getCurrentItem()).caption);
-                  }
+      // urls.add("file://" + mNote);
 
-                  @Override
-                  public void onException(Exception exception)
-                  {
-                    exception.printStackTrace();
-
-                  }
-
-                });
-      }
-      catch (TTransportException e)
-      {
-        e.printStackTrace();
-      }
+      // try
+      // {
+      // mEvernoteSession
+      // .getClientFactory()
+      // .createNoteStoreClient()
+      // .getResourceByHash(mNote.getEvernoteGUID(),
+      // EvernoteUtil.hexToBytes(div.attr("hash")), false, true, false,
+      // new OnClientCallback<Resource>()
+      // {
+      // @Override
+      // public void onSuccess(Resource data)
+      // {
+      // resource = data;
+      // System.out.println(data.toString());
+      // urls.add(""
+      // + mEvernoteSession.getAuthenticationResult()
+      // .getWebApiUrlPrefix() + "res/" + data.getGuid()
+      // + "?auth=" + mEvernoteSession.getAuthToken());
+      // ImageData mImageData = new ImageData();
+      //
+      // mImageData.caption = div.attr("title");
+      // images.add(mImageData);
+      // pager.getAdapter().notifyDataSetChanged();
+      // mCaption.setText(images.get(pager.getCurrentItem()).caption);
+      // }
+      //
+      // @Override
+      // public void onException(Exception exception)
+      // {
+      // exception.printStackTrace();
+      //
+      // }
+      //
+      // });
+      // }
+      // catch (TTransportException e)
+      // {
+      // e.printStackTrace();
+      // }
     }
+
   }
 
   // public void displayNote()
@@ -1002,8 +1013,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       {
         in = new BufferedInputStream(new FileInputStream(f));
 
-        String enmedia = EvernoteUtil.createEnMediaTag(resource).replaceFirst(
-            " ", " title=\"" + imageData.caption + "\" ");
+        String enmedia = "<en-media hash=\"" + EvernoteUtil.hash(in)
+            + "\" type=\"" + imageData.mimeType + "\" title=\""
+            + imageData.caption + "\"/>";
+
+        // EvernoteUtil.createEnMediaTag(resource).replaceFirst(" ",
+        // " title=\"" + imageData.caption + "\" ");
         content += enmedia;
 
         snote.addResource(new SResource(imageData.caption, EvernoteUtil
@@ -1022,6 +1037,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.NOTE),
         snote.toContentValues());
+    for (ContentValues cv : snote.getResourcesContentValues())
+    {
+      getActivity().getContentResolver().insert(
+          Uri.parse(SouvenirContentProvider.CONTENT_URI
+              + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES),
+          snote.toContentValues());
+    }
     getActivity().finish();
     //
     // try
@@ -1452,9 +1474,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // }
 
       System.out.println("image filepath: " + image.filePath);
-      urls.add("file://" + image.filePath);
-      pager.getAdapter().notifyDataSetChanged();
+      // urls.add("file://" + image.filePath);
       images.add(image);
+      pager.getAdapter().notifyDataSetChanged();
       if (mEvernoteSession.isLoggedIn())
       {
         // mBtnSave.setEnabled(true);
@@ -1575,10 +1597,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       android.support.v4.view.PagerAdapter
   {
 
-    private ArrayList<String> clothing;
+    private ArrayList<ImageData> clothing;
     private LayoutInflater inflater;
 
-    ClothingPagerAdapter(ArrayList<String> clothing)
+    ClothingPagerAdapter(ArrayList<ImageData> clothing)
     {
       this.clothing = clothing;
       inflater = getActivity().getLayoutInflater();
@@ -1611,8 +1633,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);
 
-      imageLoader.displayImage(clothing.get(position), imageView, options,
-          new SimpleImageLoadingListener()
+      imageLoader.displayImage("file://" + clothing.get(position).filePath,
+          imageView, options, new SimpleImageLoadingListener()
           {
             @Override
             public void onLoadingStarted(String imageUri, View view)

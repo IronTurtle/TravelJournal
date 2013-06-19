@@ -47,7 +47,7 @@ public class SNote implements Parcelable
   int id = -1;
   String location = null;
   long modifyDate = -1;
-  List<SResource> resources = null;
+  List<SResource> resources = new ArrayList<SResource>();
   int syncNum = -1;
   ArrayList<String> tags = null;
   String title = null;
@@ -98,22 +98,6 @@ public class SNote implements Parcelable
     // this.tags = null;
     // this.trophyNumber = trophyNumber;
     // this.tripID = tripID;
-    Document doc = Jsoup.parse(this.content);
-
-    Elements divs = doc.getElementsByAttribute("hash");
-    // System.out.println("Images");
-    for (final Element div : divs)
-    {
-      for (Resource resource : note.getResources())
-      {
-        if (div.attr("hash").equals(
-            SResource.bytesToHex(resource.getData().getBodyHash())))
-        {
-          this.addResource(new SResource(resource, div.attr("title")));
-          break;
-        }
-      }
-    }
 
   }
 
@@ -169,6 +153,29 @@ public class SNote implements Parcelable
     this.tags = tags;
     this.trophyNumber = trophyNumber;
     this.tripID = tripID;
+  }
+
+  public void processResources(Note note)
+  {
+    Document doc = Jsoup.parse(this.content);
+
+    Elements divs = doc.getElementsByAttribute("hash");
+    // System.out.println("Images");
+    for (final Element div : divs)
+    {
+      if (note.getResources() != null)
+      {
+        for (Resource resource : note.getResources())
+        {
+          if (div.attr("hash").equals(
+              SResource.bytesToHex(resource.getData().getBodyHash())))
+          {
+            this.addResource(new SResource(resource, div.attr("title")));
+            break;
+          }
+        }
+      }
+    }
   }
 
   @Override
@@ -330,10 +337,6 @@ public class SNote implements Parcelable
 
   public ArrayList<ContentValues> getResourcesContentValues()
   {
-    if (resources.isEmpty())
-    {
-      return null;
-    }
     ArrayList<ContentValues> returnArr = new ArrayList<ContentValues>();
     for (SResource sresource : resources)
     {
