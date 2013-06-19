@@ -90,10 +90,22 @@ public class SnippetView extends RelativeLayout
         .displayer(new FadeInBitmapDisplayer(300))
         .imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
 
-    ImageLoader.getInstance().displayImage(
-        "" + mEvernoteSession.getAuthenticationResult().getWebApiUrlPrefix()
-            + "thm/note/" + note.getEvernoteGUID() + "?auth="
-            + mEvernoteSession.getAuthToken(), snippetPic, options);
+    // ImageLoader.getInstance().displayImage(
+    // "" + mEvernoteSession.getAuthenticationResult().getWebApiUrlPrefix()
+    // + "thm/note/" + note.getEvernoteGUID() + "?auth="
+    // + mEvernoteSession.getAuthToken(), snippetPic, options);
+    if (!mNote.resources.isEmpty())
+    {
+      System.out.println("file://" + mNote.resources.get(0).getPath());
+
+      ImageLoader.getInstance().displayImage(
+          "file://" + mNote.resources.get(0).getPath(), snippetPic, options);
+    }
+    else
+    {
+      ImageLoader.getInstance().displayImage(
+          "drawable://" + R.drawable.traveljournal, snippetPic, options);
+    }
   }
 
   public SNote getNote()

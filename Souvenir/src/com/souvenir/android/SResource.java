@@ -1,7 +1,15 @@
 package com.souvenir.android;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
+
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -51,7 +59,27 @@ public class SResource implements Parcelable
 
   public SResource(Cursor cursor)
   {
-
+    this.caption = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_CAPTION));
+    this.evernoteGUID = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_GUID));
+    this.hash = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH));
+    this.location = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_LOCATION));
+    this.mime = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_MIME));
+    this.noteId = cursor
+        .getInt(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID));
+    this.path = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_PATH));
   }
 
   public SResource(Parcel in)
@@ -74,7 +102,51 @@ public class SResource implements Parcelable
     // this.location = resource.getAttributes();
     this.mime = resource.getMime();
     // this.noteId = in.readInt();
-    // this.path = in.readString();
+
+    File mediaFile = null;
+    File mediaStorageDir = new File(
+        Environment
+            .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+        "WalkAbout");
+    if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs())
+    {
+    }
+    String timestamp = DateFormat.getDateTimeInstance().format(
+        new Date(System.currentTimeMillis()));
+
+    mediaFile = new File(mediaStorageDir.getPath() + File.separator
+        + resource.getAttributes().getFileName());
+
+    FileOutputStream fos = null;
+    try
+    {
+      fos = new FileOutputStream(mediaFile.getAbsoluteFile());
+    }
+    catch (FileNotFoundException e1)
+    {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    try
+    {
+      fos.write(resource.getData().getBody());
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    try
+    {
+      fos.close();
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    this.path = mediaFile.getAbsolutePath();
+
   }
 
   // Evernote java sdk

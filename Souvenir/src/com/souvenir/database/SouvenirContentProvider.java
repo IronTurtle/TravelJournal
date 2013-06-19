@@ -29,7 +29,7 @@ public class SouvenirContentProvider extends ContentProvider
   {
     public static String NOTE = "note/";
     public static String GET_NOTE = "note/#";
-    public static String NOTE_RESOURCES = "res/#";
+    public static String NOTE_RESOURCES = "res/";
   }
 
   /*****************/
@@ -118,7 +118,6 @@ public class SouvenirContentProvider extends ContentProvider
     checkColumns(projection);
 
     // Set up helper to query our app table.
-    queryBuilder.setTables(SouvenirContract.SouvenirNote.TABLE_NAME_NOTE);
 
     String orderBy = null;
 
@@ -129,6 +128,7 @@ public class SouvenirContentProvider extends ContentProvider
     switch (uriType)
     {
     case NOTE:
+      queryBuilder.setTables(SouvenirContract.SouvenirNote.TABLE_NAME_NOTE);
 
       // Default sort order if none specified
       if (sortOrder == null || TextUtils.isEmpty(sortOrder))
@@ -144,10 +144,13 @@ public class SouvenirContentProvider extends ContentProvider
       break;
 
     case NOTE_RES:
-      // Note the escaped '"' needed when adding a String to the whereclause.
       queryBuilder
-          .appendWhere(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID
-              + "= \"" + uri.getLastPathSegment() + "\"");
+          .setTables(SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE);
+
+      // Note the escaped '"' needed when adding a String to the whereclause.
+      // queryBuilder
+      // .appendWhere(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID
+      // + "= \"" + uri.getLastPathSegment() + "\"");
       break;
 
     default:
@@ -206,6 +209,14 @@ public class SouvenirContentProvider extends ContentProvider
       // table.
       id = sqlDB.insert(SouvenirContract.SouvenirNote.TABLE_NAME_NOTE, null,
           values);
+      break;
+
+    case NOTE_RES:
+
+      // Perform the database insert, placing the app at the bottom of the
+      // table.
+      id = sqlDB.insert(SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE,
+          null, values);
       break;
 
     default:

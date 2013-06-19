@@ -120,6 +120,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   {
     super.onResume();
     updateUi();
+    getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+    adapter.notifyDataSetChanged();
   }
 
   private void updateUi()
@@ -267,40 +269,21 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                                 @Override
                                 public void onSuccess(Note note)
                                 {
+                                  if (!note.isActive())
+                                    return;
                                   SNote insertNote = new SNote(note);
-                                  // ContentValues values = new ContentValues();
-                                  // values
-                                  // .put(
-                                  // SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
-                                  // note.getGuid());
-                                  // values
-                                  // .put(
-                                  // SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
-                                  // note.getTitle());
-                                  // values
-                                  // .put(
-                                  // SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
-                                  // note.getContent());
-                                  // String location = note.getAttributes()
-                                  // .getPlaceName();
-                                  // if (location == null)
-                                  // {
-                                  // location = String.valueOf((note
-                                  // .getAttributes().getLatitude())
-                                  // + String.valueOf(note.getAttributes()
-                                  // .getLongitude()));
-                                  // }
-                                  // values
-                                  // .put(
-                                  // SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
-                                  // location);
-                                  SnippetFragment.this
+
+                                  Uri uri = SnippetFragment.this
                                       .getActivity()
                                       .getContentResolver()
                                       .insert(
                                           Uri.parse(SouvenirContentProvider.CONTENT_URI
                                               + SouvenirContentProvider.DatabaseConstants.NOTE),
                                           insertNote.toContentValues());
+                                  int id = Integer.valueOf(uri
+                                      .getLastPathSegment());
+                                  insertNote.setId(id);
+                                  insertNote.processResources(note);
                                   for (ContentValues cv : insertNote
                                       .getResourcesContentValues())
                                   {
@@ -309,7 +292,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
                                         .getContentResolver()
                                         .insert(
                                             Uri.parse(SouvenirContentProvider.CONTENT_URI
-                                                + "/pics"), cv);
+                                                + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES),
+                                            cv);
                                   }
                                   adapter.notifyDataSetChanged();
                                   lastUpdateCount = serverlastUpdateCount;
@@ -471,7 +455,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   public void update(SNote mNote2)
   {
     Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI
-        + SouvenirContentProvider.DatabaseConstants.GET_NOTE + mNote2.getId());
+        + SouvenirContentProvider.DatabaseConstants.GET_NOTE.replace("#", ""
+            + mNote2.getId()));
 
     getActivity().getContentResolver().update(uri, mNote2.toContentValues(),
         null, null);
@@ -768,6 +753,21 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     public void bindView(View view, Context context, Cursor cursor)
     {
       SNote note = new SNote(cursor);
+      String[] args = { "" + note.getId() };
+      Cursor resCursor;
+      if ((resCursor = getActivity().getContentResolver().query(
+          Uri.parse(SouvenirContentProvider.CONTENT_URI
+              + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES),
+          null,
+          SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID + "="
+              + note.getId(), null, null)) != null
+          && resCursor.getCount() > 0)
+      {
+        while (resCursor.moveToNext())
+        {
+          note.addResource(new SResource(resCursor));
+        }
+      }
 
       // ((AppView) view).setOnAppChangeListener(null);
       ((SnippetView) view).setSNote(note);
@@ -778,6 +778,23 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
       SNote note = new SNote(cursor);
+      String[] args = { "" + note.getId() };
+      Cursor resCursor;
+      if ((resCursor = getActivity().getContentResolver().query(
+          Uri.parse(SouvenirContentProvider.CONTENT_URI
+              + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES),
+          null,
+          SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID + "="
+              + note.getId(), null, null)) != null
+          && resCursor.getCount() > 0)
+      {
+        while (resCursor.moveToNext())
+        {
+          SResource sc = new SResource(resCursor);
+          System.out.println(note.getId() + " " + sc.getNoteId());
+          note.addResource(sc);
+        }
+      }
       SnippetView sv = new SnippetView(context, note);
       return sv;
     }
@@ -905,6 +922,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       // http://developer.android.com/design/patterns/navigation.html#up-vs-back
       //
       syncCheck();
+      getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+      adapter.notifyDataSetChanged();
       return true;
     case R.id.menu_add_note:
       startActivity(new Intent(getActivity(), NoteActivity.class));
