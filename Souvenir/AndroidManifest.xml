@@ -84,7 +84,10 @@
             android:name="com.souvenir.android.ItineraryItemFragment"
             android:label="@string/title_fragment_itinerary_item" >
         </activity>
-
+        <activity
+            android:name="com.souvenir.android.DrawerActivity"
+            android:label="@string/app_name" >
+        </activity>
         <provider
             android:name="com.souvenir.database.SouvenirContentProvider"
             android:authorities="com.souvenir.database"
@@ -93,6 +96,7 @@
         <service
             android:name="com.souvenir.android.EvernoteSyncService"
             android:enabled="true" />
+        
     </application>
 
 </manifest>

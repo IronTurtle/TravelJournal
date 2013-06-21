@@ -351,7 +351,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
           note.addResource(new SResource(resCursor));
         }
       }
-
+      resCursor.close();
       // ((AppView) view).setOnAppChangeListener(null);
       ((SnippetView) view).setSNote(note);
       // ((AppView) view).setOnAppChangeListener(this.m_listener);
@@ -376,6 +376,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
           note.addResource(sc);
         }
       }
+      resCursor.close();
       SnippetView sv = new SnippetView(context, note);
       return sv;
     }
@@ -503,17 +504,18 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       // http://developer.android.com/design/patterns/navigation.html#up-vs-back
       //
       // syncCheck();
-      getActivity().startService(
-          new Intent(getActivity(), EvernoteSyncService.class));
-      getActivity().getSupportLoaderManager().restartLoader(1, null, this);
-      adapter.notifyDataSetChanged();
-      return true;
+      break;
+
     case R.id.menu_add_note:
       startActivity(new Intent(getActivity(), NoteActivity.class));
       break;
 
     case R.id.menu_search:
-      break;
+      getActivity().startService(
+          new Intent(getActivity(), EvernoteSyncService.class));
+      getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+      adapter.notifyDataSetChanged();
+      return true;
 
     case R.id.facebook_login:
       startActivity(new Intent(getActivity(), OtherActivity.class));

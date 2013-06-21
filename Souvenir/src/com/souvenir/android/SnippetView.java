@@ -50,7 +50,8 @@ public class SnippetView extends RelativeLayout
   {
     super(context);
     this.context = context;
-    View view = LayoutInflater.from(context).inflate(R.layout.snippet, this);
+    View view = LayoutInflater.from(context).inflate(R.layout.snippet_souvenir,
+        this);
     snippetEvent = (TextView) view.findViewById(R.id.snippetEvent);
     snippetLocation = (TextView) view.findViewById(R.id.snippetLocation);
     snippetText = (TextView) view.findViewById(R.id.snippetText);

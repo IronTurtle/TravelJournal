@@ -1740,6 +1740,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       View imageLayout = inflater.inflate(R.layout.item_pager_image, view,
           false);
       ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
+      mCaption.setText(clothing.get(position).caption);
 
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);

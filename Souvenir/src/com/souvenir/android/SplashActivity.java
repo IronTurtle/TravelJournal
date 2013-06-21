@@ -46,7 +46,7 @@ public class SplashActivity extends Activity
         finally
         {
           finish();
-          Intent i = new Intent(SplashActivity.this, TabActivity.class);
+          Intent i = new Intent(SplashActivity.this, DrawerActivity.class);
 
           startActivity(i);
         }

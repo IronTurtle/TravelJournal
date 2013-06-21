@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp"
+    android:padding="5dp"
     android:background="@android:color/white"
     android:orientation="vertical" >
 
     <ImageView
         android:id="@+id/snippetPic"
-        android:layout_width="fill_parent"
+        android:layout_width="100dp"
         android:layout_height="100dp"
-        android:gravity="center"
+        android:layout_alignParentLeft="true"
         android:scaleType="centerCrop" />
 
     <TextView
@@ -24,7 +24,8 @@
         android:textColor="@color/primaryOrange"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:typeface="sans" />
+        android:typeface="sans" 
+        android:layout_toRightOf="@id/snippetPic"/>
 
     <TextView
         android:id="@+id/snippetLocation"
@@ -35,7 +36,9 @@
         android:lines="1"
         android:scrollHorizontally="true"
         android:textAlignment="gravity"
-        android:textColor="@android:color/darker_gray" />
+        android:textColor="@android:color/darker_gray"
+        android:layout_below="@id/snippetEvent"
+        android:layout_toRightOf="@id/snippetPic" />
 
     <TextView
         android:id="@+id/snippetText"
@@ -44,7 +47,9 @@
         android:ellipsize="end"
         android:lines="2"
         android:scrollHorizontally="true"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black" 
+        android:layout_below="@id/snippetLocation"
+        android:layout_toRightOf="@id/snippetPic"/>
 
     <TextView
         android:id="@+id/snippetDate"
@@ -55,4 +60,4 @@
         android:scrollHorizontally="true"
         android:visibility="gone" />
 
-</LinearLayout>
+</RelativeLayout>

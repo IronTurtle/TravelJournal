@@ -80,7 +80,7 @@ public class EvernoteSyncService extends IntentService
 
   NoteStore.Client noteStore = null;
 
-  public void fullSync()
+  public void sync(int high)
   {
 
     System.out.println("full sync");
@@ -92,7 +92,7 @@ public class EvernoteSyncService extends IntentService
     NoteFilter filter = new NoteFilter();
     filter.setOrder(NoteSortOrder.UPDATED.getValue());
     filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
-    int high = 0;
+    // int high = 0;
     while (high != serverlastUpdateCount)
     {
 
@@ -143,6 +143,7 @@ public class EvernoteSyncService extends IntentService
             SNote oldNote = new SNote(cursor);
             // System.out.println(oldNote.getEvernoteGUID());
           }
+          cursor.close();
           // System.out.println("syncnumber: " + syncnum);
           continue;
         }
@@ -229,6 +230,7 @@ public class EvernoteSyncService extends IntentService
           {
             snote.addResource(new SResource(resCursor));
           }
+          resCursor.close();
         }
         if (snote.getSyncNum() == -1)
         {
@@ -239,6 +241,7 @@ public class EvernoteSyncService extends IntentService
           updateNote(snote);
         }
       }
+      cursor.close();
     }
   }
 
@@ -317,20 +320,11 @@ public class EvernoteSyncService extends IntentService
     }
     catch (TTransportException e1)
     {
-      // TODO Auto-generated catch block
       e1.printStackTrace();
     }
     prefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
-    // fullSync();
-
     lastUpdateCount = prefs.getInt("lastUpdateCount", 0);
     lastSyncTime = prefs.getLong("lastSyncTime", 0);
-
-    // if (lastSyncTime == 0)
-    // {
-    // fullSync();
-    // return;
-    // }
 
     try
     {
@@ -340,181 +334,23 @@ public class EvernoteSyncService extends IntentService
           + ss.getUpdateCount());
       serverLastSyncTime = ss.getFullSyncBefore();
       serverlastUpdateCount = ss.getUpdateCount();
-      if (true)
-      {
-        fullSync();
-        return;
-      }
       if (serverLastSyncTime > lastSyncTime)
       {
-        fullSync();
+        sync(0);
       }
       else if (serverlastUpdateCount == lastUpdateCount)
       {
-        // Send changes
+        sendChanges();
       }
       else
       {
-        // incrementalSync();
-        // return;
+        sync(lastUpdateCount);
       }
     }
     catch (Exception e1)
     {
-      // TODO Auto-generated catch block
       e1.printStackTrace();
     }
-
-    // if (mEvernoteSession.isLoggedIn())
-    // {
-    //
-    // int pageSize = SNIPPET_PAGE_SIZE;
-    //
-    // NoteFilter filter = new NoteFilter();
-    // filter.setOrder(NoteSortOrder.UPDATED.getValue());
-    // filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
-    //
-    // NotesMetadataResultSpec spec = new NotesMetadataResultSpec();
-    // spec.setIncludeTitle(true);
-    //
-    // try
-    // {
-    // mEvernoteSession
-    // .getClientFactory()
-    // .createNoteStoreClient()
-    // .findNotesMetadata(filter, 0, pageSize, spec,
-    // new OnClientCallback<NotesMetadataList>()
-    // {
-    // @Override
-    // public void onSuccess(NotesMetadataList notes)
-    // {
-    // for (int i = 0; i < notes.getNotesSize(); i++)
-    // {
-    // NoteMetadata snippetEntry = notes.getNotes().get(i);
-    // final int position = i;
-    // try
-    // {
-    //
-    // }
-    // catch (Exception e)
-    // {
-    // e.printStackTrace();
-    // }
-    //
-    // }
-    //
-    // /*
-    // * listView.setOnItemClickListener(new OnItemClickListener()
-    // * {
-    // *
-    // * @Override public void onItemClick(AdapterView<?> parent,
-    // * View view, int position, long id) { String item =
-    // * entries.get(position).getTitle();
-    // * System.out.println("Clicked" + item);
-    // *
-    // * Toast.makeText(SnippetFragment.this.getActivity().
-    // * getBaseContext(), item, Toast.LENGTH_LONG).show(); //
-    // * Intent i = new
-    // * Intent(this.getActivity().getApplicationContext(), //
-    // * JournalEntry.class); // startActivityForResult(i, 100); }
-    // * });
-    // */
-    // }
-    //
-    // @Override
-    // public void onException(Exception exception)
-    // {
-    // // Log.e(LOGTAG, "Error saving note", exception);
-    // // Toast.makeText(getApplicationContext(),
-    // // R.string.error_saving_note, Toast.LENGTH_LONG).show();
-    // // removeDialog(DIALOG_PROGRESS);
-    // }
-    // });
-    // }
-    // catch (TTransportException e)
-    // {
-    // e.printStackTrace();
-    // }
-    // }
-  }
-
-  // /**
-  // * This method downloads all of the Apps from the App server. For each App,
-  // it
-  // * checks the AppContentProvider to see if it has already been downloaded
-  // * before. If it is new, then it adds it to the AppContentProvider by
-  // calling
-  // * addNewApp.
-  // *
-  // * @throws MalformedURLException
-  // */
-  // private void getAppsFromServer()
-  // {
-  // try
-  // {
-  // URL url = new URL(GET_APPS_URL);
-  // BufferedReader in = new BufferedReader(new InputStreamReader(
-  // url.openStream()));
-  //
-  // StringBuffer sb = new StringBuffer();
-  // String s;
-  // while ((s = in.readLine()) != null)
-  // {
-  // sb.append(s);
-  // }
-  // in.close();
-  // String[] apps = sb.toString().split(";");
-  // for (String string : apps)
-  // {
-  // String[] split = string.split(",");
-  // addNewApp(new App(split[0], split[1]));
-  // }
-  //
-  // }
-  // catch (Exception e)
-  // {
-  // Log.e(getPackageName(), e.getMessage());
-  // }
-  //
-  // }
-  //
-  // /**
-  // * This method adds a new App to the AppContentProvider.
-  // *
-  // * @param app
-  // * The new App object to add to the ContentProvider.
-  // */
-  // private void addNewApp(App app)
-  // {
-  // Uri uri = Uri.parse(AppContentProvider.CONTENT_URI + "/apps/"
-  // + app.getName());
-  // Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-  // if (cursor.getCount() != 0)
-  // {
-  // return;
-  // }
-  // ContentValues cv = new ContentValues();
-  // cv.put(AppTable.APP_KEY_NAME, app.getName());
-  // cv.put(AppTable.APP_KEY_RATING, app.getRating());
-  // cv.put(AppTable.APP_KEY_INSTALLURI, app.getInstallURI());
-  // cv.put(AppTable.APP_KEY_INSTALLED, app.isInstalled() ? 1 : 0);
-  // Uri inUri = Uri.parse(AppContentProvider.CONTENT_URI + "/apps/"
-  // + app.getID());
-  // inUri = getContentResolver().insert(inUri, cv);
-  // app.setID(Long.valueOf(inUri.getLastPathSegment()));
-  // announceNewApp();
-  // cursor.close();
-  // }
-
-  /**
-   * This method broadcasts an intent with a specific Action String. This method
-   * should be called when a new App has been downloaded and added successfully.
-   */
-  private void announceNewApp()
-  {
-    // Intent intent = new
-    // Intent(AppRater.DownloadCompleteReceiver.ACTION_NEW_APP_TO_REVIEW).addCategory(Intent.CATEGORY_DEFAULT);
-    // sendBroadcast(intent);
   }
 
   @Override
