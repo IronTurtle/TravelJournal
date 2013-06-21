@@ -89,6 +89,10 @@
             android:name="com.souvenir.database.SouvenirContentProvider"
             android:authorities="com.souvenir.database"
             android:exported="false" />
+
+        <service
+            android:name="com.souvenir.android.EvernoteSyncService"
+            android:enabled="true" />
     </application>
 
 </manifest>

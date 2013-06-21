@@ -123,7 +123,7 @@ public class SouvenirContentProvider extends ContentProvider
 
     // Match the passed-in URI to an expected URI format.
     int uriType = s_URIMatcher.match(uri);
-    System.out.println("URI Type: " + uriType);
+    // System.out.println("URI Type: " + uriType);
 
     switch (uriType)
     {

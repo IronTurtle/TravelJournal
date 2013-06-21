@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.evernote.client.android.EvernoteUtil;
 import com.evernote.edam.type.Resource;
 import com.souvenir.database.SouvenirContract;
 
@@ -52,7 +53,7 @@ public class SResource implements Parcelable
   {
     super();
     this.caption = caption;
-    this.hash = bytesToHex(hash);
+    this.hash = EvernoteUtil.bytesToHex(hash);
     this.mime = mime;
     this.path = path;
   }
@@ -98,7 +99,7 @@ public class SResource implements Parcelable
   {
     this.caption = caption;
     this.evernoteGUID = resource.getGuid();
-    this.hash = bytesToHex(resource.getData().getBodyHash());
+    this.hash = EvernoteUtil.bytesToHex(resource.getData().getBodyHash());
     // this.location = resource.getAttributes();
     this.mime = resource.getMime();
     // this.noteId = in.readInt();
@@ -147,38 +148,6 @@ public class SResource implements Parcelable
     }
     this.path = mediaFile.getAbsolutePath();
 
-  }
-
-  // Evernote java sdk
-  // public static String bytesToHex(byte[] bytes)
-  // {
-  // StringBuilder sb = new StringBuilder();
-  // for (byte hashByte : bytes)
-  // {
-  // int intVal = 0xff & hashByte;
-  // if (intVal < 0x10)
-  // {
-  // sb.append('0');
-  // }
-  // sb.append(Integer.toHexString(intVal));
-  // }
-  // return sb.toString();
-  // }
-
-  final protected static char[] hexArray = { '0', '1', '2', '3', '4', '5', '6',
-      '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-
-  public static String bytesToHex(byte[] bytes)
-  {
-    char[] hexChars = new char[bytes.length * 2];
-    int v;
-    for (int j = 0; j < bytes.length; j++)
-    {
-      v = bytes[j] & 0xFF;
-      hexChars[j * 2] = hexArray[v >>> 4];
-      hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-    }
-    return new String(hexChars);
   }
 
   @Override

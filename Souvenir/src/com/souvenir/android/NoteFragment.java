@@ -1115,7 +1115,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
         // EvernoteUtil.createEnMediaTag(resource).replaceFirst(" ",
         // " title=\"" + imageData.caption + "\" ");
         content += enmedia;
-        snote.addResource(new SResource(imageData.caption, SResource
+        snote.addResource(new SResource(imageData.caption, EvernoteUtil
             .bytesToHex(hash), imageData.mimeType, imageData.filePath));
 
         System.out.println(content);
