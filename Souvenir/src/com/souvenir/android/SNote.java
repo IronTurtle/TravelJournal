@@ -170,8 +170,10 @@ public class SNote implements Parcelable
       {
         for (Resource resource : note.getResources())
         {
+          System.out.println(div.attr("hash") + " "
+              + EvernoteUtil.bytesToHex(resource.getData().getBodyHash()));
           if (div.attr("hash").equals(
-              SResource.bytesToHex(resource.getData().getBodyHash())))
+              EvernoteUtil.bytesToHex(resource.getData().getBodyHash())))
           {
             this.addResource(new SResource(resource, div.attr("title")));
             break;
@@ -323,8 +325,7 @@ public class SNote implements Parcelable
 
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE, title);
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT, content);
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
-        location);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION, "");
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY,
         dirty == true ? 1 : 0);
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,

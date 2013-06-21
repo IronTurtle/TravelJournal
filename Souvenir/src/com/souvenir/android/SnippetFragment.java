@@ -783,9 +783,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       if ((resCursor = getActivity().getContentResolver().query(
           Uri.parse(SouvenirContentProvider.CONTENT_URI
               + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES),
-          null,
-          SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID + "="
-              + note.getId(), null, null)) != null
+          null, null, null, null)) != null
           && resCursor.getCount() > 0)
       {
         while (resCursor.moveToNext())

@@ -1,6 +1,7 @@
 package com.souvenir.android;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -58,6 +59,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
+import com.evernote.client.conn.mobile.FileData;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Resource;
 import com.evernote.thrift.transport.TTransportException;
@@ -562,9 +564,16 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           else
           {
             mlocListener = new AppNetworkLocationListener();
+            try
+            {
 
-            mlocManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER,
-                mlocListener, null);
+              mlocManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER,
+                  mlocListener, null);
+            }
+            catch (Exception e)
+            {
+              e.printStackTrace();
+            }
           }
         }
         if (mTitle.getText().length() == 0)
@@ -665,6 +674,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
       for (SResource resource : mNote.resources)
       {
+        System.out.println("hash " + div.attr("hash") + " "
+            + resource.getHash() + " " + resource.getNoteId());
         if (div.attr("hash").equals(resource.getHash()))
         {
           ImageData imagedata = new ImageData();
@@ -1076,30 +1087,38 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     SNote snote = new SNote(title, content, location);
     snote.setDirty(true);
-
+    Uri uri = getActivity().getContentResolver().insert(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.NOTE),
+        snote.toContentValues());
+    int id = Integer.valueOf(uri.getLastPathSegment());
+    snote.setId(id);
     content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
     for (ImageData imageData : images)
     {
 
-      Resource resource = new Resource();
+      // Resource resource = new Resource();
 
       // ImageData imageData = mImageData;
       String f = imageData.filePath;
+      System.out.println(f);
       InputStream in;
       try
       {
         in = new BufferedInputStream(new FileInputStream(f));
-
-        String enmedia = "<en-media hash=\"" + EvernoteUtil.hash(in)
+        byte[] hash = EvernoteUtil.hash(in);
+        String enmedia = "<en-media hash=\"" + EvernoteUtil.bytesToHex(hash)
             + "\" type=\"" + imageData.mimeType + "\" title=\""
             + imageData.caption + "\"/>";
-
+        FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
+        System.out.println(EvernoteUtil.bytesToHex(hash));
         // EvernoteUtil.createEnMediaTag(resource).replaceFirst(" ",
         // " title=\"" + imageData.caption + "\" ");
         content += enmedia;
+        snote.addResource(new SResource(imageData.caption, SResource
+            .bytesToHex(hash), imageData.mimeType, imageData.filePath));
 
-        snote.addResource(new SResource(imageData.caption, EvernoteUtil
-            .hash(in), imageData.mimeType, imageData.filePath));
+        System.out.println(content);
         in.close();
 
       }
@@ -1110,19 +1129,22 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     content += EvernoteUtil.NOTE_SUFFIX;
     snote.setContent(content);
-    Uri uri = getActivity().getContentResolver().insert(
-        Uri.parse(SouvenirContentProvider.CONTENT_URI
-            + SouvenirContentProvider.DatabaseConstants.NOTE),
-        snote.toContentValues());
-    int id = Integer.valueOf(uri.getLastPathSegment());
+    Uri uri2 = Uri.parse(SouvenirContentProvider.CONTENT_URI
+        + SouvenirContentProvider.DatabaseConstants.GET_NOTE.replace("#", ""
+            + snote.getId()));
+
+    getActivity().getContentResolver().update(uri2, snote.toContentValues(),
+        null, null);
+    // int id = Integer.valueOf(uri.getLastPathSegment());
     snote.setId(id);
     // snote.processResources(note);
     for (ContentValues cv : snote.getResourcesContentValues())
     {
       getActivity().getContentResolver().insert(
           Uri.parse(SouvenirContentProvider.CONTENT_URI
-              + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES),
-          snote.toContentValues());
+              + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES), cv);
+      System.out.println(cv
+          .get(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH));
     }
     getActivity().finish();
     //
