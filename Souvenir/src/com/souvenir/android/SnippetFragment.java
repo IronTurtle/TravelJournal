@@ -56,8 +56,8 @@ import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Notebook;
 import com.evernote.thrift.transport.TTransportException;
-import com.souvenir.database.SouvenirContentProvider;
-import com.souvenir.database.SouvenirContract;
+import com.souvenir.android.database.SouvenirContentProvider;
+import com.souvenir.android.database.SouvenirContract;
 
 public class SnippetFragment extends ParentFragment implements OnClickListener,
     LoaderManager.LoaderCallbacks<Cursor>
@@ -372,7 +372,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
         while (resCursor.moveToNext())
         {
           SResource sc = new SResource(resCursor);
-          System.out.println(note.getId() + " " + sc.getNoteId());
+          // System.out.println(note.getId() + " " + sc.getNoteId());
           note.addResource(sc);
         }
       }

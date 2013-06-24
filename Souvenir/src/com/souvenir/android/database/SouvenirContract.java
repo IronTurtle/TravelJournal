@@ -1,4 +1,4 @@
-package com.souvenir.database;
+package com.souvenir.android.database;
 
 import android.provider.BaseColumns;
 

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -24,7 +25,7 @@ import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteAttributes;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
-import com.souvenir.database.SouvenirContract;
+import com.souvenir.android.database.SouvenirContract;
 
 public class SNote implements Parcelable
 {
@@ -40,20 +41,26 @@ public class SNote implements Parcelable
       return new SNote[size];
     }
   };
-  String content = null;
-  long createDate = -1;
+  String content = null;// 0
+  long createDate = -1;// 1
   boolean dirty = false;
   String evernoteGUID = null;
   int id = -1;
-  String location = null;
-  long modifyDate = -1;
-  List<SResource> resources = new ArrayList<SResource>();
+  String location = null;// 2
+  long modifyDate = -1;// 3
+  List<SResource> resources = new ArrayList<SResource>();// 4
   int syncNum = -1;
-  ArrayList<String> tags = null;
-  String title = null;
-  String tripID = null;
+  ArrayList<String> tags = null;// 5
+  String title = null;// 6
+  String tripID = null;//
+  String trophyNumber = null;//
+  Boolean[] issetVector = new Boolean[7];
+  EnumSet<isset> issetV = EnumSet.noneOf(isset.class);
 
-  String trophyNumber = null;
+  public enum isset
+  {
+    content, createDate, location, modifyDate, resources, tags, title
+  }
 
   public SNote(Cursor cursor)
   {

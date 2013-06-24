@@ -97,7 +97,7 @@ public class SnippetView extends RelativeLayout
     // + mEvernoteSession.getAuthToken(), snippetPic, options);
     if (!mNote.resources.isEmpty())
     {
-      System.out.println("file://" + mNote.resources.get(0).getPath());
+      // System.out.println("file://" + mNote.resources.get(0).getPath());
 
       ImageLoader.getInstance().displayImage(
           "file://" + mNote.resources.get(0).getPath(), snippetPic, options);

@@ -15,7 +15,7 @@ import android.os.Parcelable;
 
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.edam.type.Resource;
-import com.souvenir.database.SouvenirContract;
+import com.souvenir.android.database.SouvenirContract;
 
 public class SResource implements Parcelable
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Android Open Source Project
+` * Copyright 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ public class DrawerActivity extends SherlockFragmentActivity
 
     if (savedInstanceState == null)
     {
-      selectItem(0);
+      selectItem(2);
     }
   }
 
@@ -216,11 +216,26 @@ public class DrawerActivity extends SherlockFragmentActivity
 
   private void selectItem(int position)
   {
-    // update the main content by replacing fragments
-    Fragment fragment = new SnippetFragment();
-    Bundle args = new Bundle();
-    args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-    fragment.setArguments(args);
+    Fragment fragment = null;
+    switch (position)
+    {
+    case 0:
+      fragment = new PlanetFragment();
+      Bundle args = new Bundle();
+      args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+      fragment.setArguments(args);
+      break;
+    case 1:
+      fragment = new PlanetFragment();
+      Bundle args2 = new Bundle();
+      args2.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+      fragment.setArguments(args2);
+      break;
+    case 2:
+      // update the main content by replacing fragments
+      fragment = new SnippetFragment();
+      break;
+    }
 
     FragmentManager fragmentManager = getSupportFragmentManager();
     fragmentManager.beginTransaction().replace(R.id.content_frame, fragment)
@@ -230,6 +245,7 @@ public class DrawerActivity extends SherlockFragmentActivity
     mDrawerList.setItemChecked(position, true);
     setTitle(mPlanetTitles[position]);
     mDrawerLayout.closeDrawer(mDrawerList);
+
   }
 
   @Override

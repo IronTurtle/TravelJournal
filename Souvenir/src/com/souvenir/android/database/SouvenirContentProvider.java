@@ -1,4 +1,4 @@
-package com.souvenir.database;
+package com.souvenir.android.database;
 
 import java.util.Arrays;
 import java.util.HashSet;

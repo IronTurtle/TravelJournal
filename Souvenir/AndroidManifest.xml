@@ -89,7 +89,7 @@
             android:label="@string/app_name" >
         </activity>
         <provider
-            android:name="com.souvenir.database.SouvenirContentProvider"
+            android:name="com.souvenir.android.database.SouvenirContentProvider"
             android:authorities="com.souvenir.database"
             android:exported="false" />
 

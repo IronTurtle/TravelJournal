@@ -23,8 +23,8 @@ import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.thrift.TException;
 import com.evernote.thrift.transport.TTransportException;
-import com.souvenir.database.SouvenirContentProvider;
-import com.souvenir.database.SouvenirContract;
+import com.souvenir.android.database.SouvenirContentProvider;
+import com.souvenir.android.database.SouvenirContract;
 
 /**
  * The Service that performs app information downloading, performing the check
