@@ -42,6 +42,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.Time;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -109,12 +110,16 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   private final int FACEBOOK_SHARE = 6135;
   DisplayImageOptions options;
 
+  boolean isViewMode = true;
+
   // Note fields
   ImageView mImageView;
   ImageData mImageData = new ImageData();
   EditText mTitle;
   TextView mLocation;
   EditText mEntry;
+
+  KeyListener titleKeyListener;
 
   // Note note = new Note();
   SNote mNote;
@@ -144,6 +149,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     // mImageView = (ImageView) view.findViewById(R.id.entry_image);
     mTitle = (EditText) view.findViewById(R.id.note_title);
+    titleKeyListener = mTitle.getKeyListener();
     mLocation = (TextView) view.findViewById(R.id.note_location);
     mEntry = (EditText) view.findViewById(R.id.note_entry);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
@@ -263,10 +269,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     else
     {
-      // CameraOperation c = new CameraOperation();
-      // c.execute("");/
+
       Log.i("souvenir", "New note...");
-      openCamera();
       // // setup locationManager for GPS request
       // mlocManager = (LocationManager) getActivity().getSystemService(
       // Context.LOCATION_SERVICE);
@@ -413,6 +417,29 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
   }
 
+  // TODO: finish
+  public void setViewEditMode(View v)
+  {
+    if (isViewMode)
+    {
+      // is in view mode, switch to edit mode
+      Toast.makeText(getActivity().getApplicationContext(),
+          "Switching to Edit Mode", Toast.LENGTH_SHORT).show();
+      isViewMode = false;
+      // mTitle.setFocusable(true);
+      // mTitle.setKeyListener(titleKeyListener);
+    }
+    else
+    {
+      // is in edit mode, switch to view mode
+      Toast.makeText(getActivity().getApplicationContext(),
+          "Switching to View Mode", Toast.LENGTH_SHORT).show();
+      isViewMode = true;
+      // mTitle.setFocusable(false);
+      // mTitle.setKeyListener(null);
+    }
+  }
+
   @Override
   public boolean onOptionsItemSelected(MenuItem item)
   {
@@ -421,7 +448,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     // Toast.LENGTH_SHORT).show();
     switch (item.getItemId())
     {
-    case R.id.create_note_menu_save:
+    case R.id.menu_note_viewedit:
+      setViewEditMode(this.getView());
+      break;
+    case R.id.menu_note_save:
       System.out.println("Save pressed");
       Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
           .show();
@@ -434,7 +464,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
         updateNote(this.getView());
       }
       break;
-    case R.id.create_note_menu_camera:
+    case R.id.menu_note_camera:
       // startActivity(new Intent(this, NoteActivity.class));
 
       Intent cameraIntent = new Intent(
@@ -457,7 +487,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
       break;
 
-    case R.id.create_note_menu_select:
+    case R.id.menu_note_select:
       // startActivity(new Intent(this, EntryActivity.class));
 
       Intent intent = new Intent(Intent.ACTION_PICK,
@@ -465,7 +495,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       startActivityForResult(intent, SELECT_IMAGE);
       break;
 
-    case R.id.create_note_menu_trophy:
+    case R.id.menu_note_trophy:
       // startActivity(new Intent(this, EntryActivity.class));
       Toast
           .makeText(getActivity(), "Trophy Button clicked", Toast.LENGTH_SHORT)
@@ -479,7 +509,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // Toast.LENGTH_SHORT).show();
       updateNote(this.getView());
       break;
-    case R.id.viewedit_note_menu_fbshare:
+    case R.id.menu_note_fbshare:
       System.out.println("FACEBOOK SHARING");
 
       String[] noteContent = { mTitle.getText().toString(),
