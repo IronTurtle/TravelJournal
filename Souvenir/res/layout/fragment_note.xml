@@ -28,41 +28,98 @@
             android:paddingLeft="15dp"
             android:scrollHorizontally="true" />
 
-        <EditText
-            android:id="@+id/note_title"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:drawableTop="@color/primaryOrange"
-            android:ems="10"
-            android:gravity="bottom|left"
-            android:hint="@string/titlePlaceholder"
-            android:inputType="text"
-            android:paddingLeft="15dp"
-            android:scrollHorizontally="true" />
+        <ViewSwitcher
+        android:id="@+id/switcher_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+	        <TextView
+	            android:id="@+id/note_title"
+	            android:layout_width="match_parent"
+	            android:layout_height="50dp"
+	            android:drawableTop="@color/primaryOrange"
+	            android:ems="10"
+	            android:gravity="bottom|left"
+	            android:hint="@string/titlePlaceholder"
+	            android:inputType="text"
+	            android:paddingLeft="15dp"
+	            android:scrollHorizontally="true" />
+	        
+	        <EditText
+	            android:id="@+id/note_title_edit"
+	            android:layout_width="match_parent"
+	            android:layout_height="50dp"
+	            android:drawableTop="@color/primaryOrange"
+	            android:ems="10"
+	            android:gravity="bottom|left"
+	            android:hint="@string/titlePlaceholder"
+	            android:inputType="text"
+	            android:paddingLeft="15dp"
+	            android:scrollHorizontally="true" />
+        </ViewSwitcher>
 
-        <TextView
-            android:id="@+id/note_location"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:ems="10"
-            android:gravity="bottom|left"
-            android:hint="@string/locationPlaceholder"
-            android:inputType="textPostalAddress"
-            android:paddingLeft="15dp"
-            android:textColor="@android:color/primary_text_dark" />
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+	        <ViewSwitcher
+	        android:id="@+id/switcher_location"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+		    android:layout_weight="1" >
+		        <TextView
+		            android:id="@+id/note_location"
+		            android:layout_width="match_parent"
+		            android:layout_height="50dp"
+		            android:ems="10"
+		            android:gravity="bottom|left"
+		            android:hint="@string/locationPlaceholder"
+		            android:paddingLeft="15dp"
+		            android:textColor="@android:color/primary_text_dark" />
+		        <EditText
+		            android:id="@+id/note_location_edit"
+		            android:layout_width="match_parent"
+		            android:layout_height="50dp"
+		            android:ems="10"
+		            android:gravity="bottom|left"
+		            android:hint="@string/locationPlaceholder"
+		            android:inputType="textPostalAddress"
+		            android:paddingLeft="15dp"
+		            android:textColor="@android:color/primary_text_dark" />
+	        </ViewSwitcher>
+
+	        <Button
+	            android:id="@+id/select_location_btn"
+	            style="?android:attr/buttonStyleSmall"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="4"
+	            android:text="Sel" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/note_trophy"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
 
-        <EditText
+        <ViewSwitcher
+        android:id="@+id/switcher_entry"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+	        <TextView
             android:id="@+id/note_entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top|left"
-            android:hint="@string/entryPlaceholder"
-            android:inputType="textMultiLine" />
+            android:hint="@string/entryPlaceholder" />
+	        <EditText
+	            android:id="@+id/note_entry_edit"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:gravity="top|left"
+	            android:hint="@string/entryPlaceholder"
+	            android:inputType="textMultiLine" />
+        </ViewSwitcher>
     </LinearLayout>
 
 </ScrollView>

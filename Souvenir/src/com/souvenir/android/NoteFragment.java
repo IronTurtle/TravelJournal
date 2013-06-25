@@ -56,7 +56,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
@@ -115,9 +117,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   // Note fields
   ImageView mImageView;
   ImageData mImageData = new ImageData();
-  EditText mTitle;
+  TextView mTitle;
   TextView mLocation;
-  EditText mEntry;
+  TextView mEntry;
+
+  EditText mTitleEdit;
+  EditText mLocationEdit;
+  EditText mEntryEdit;
 
   KeyListener titleKeyListener;
 
@@ -148,10 +154,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     setHasOptionsMenu(true);
 
     // mImageView = (ImageView) view.findViewById(R.id.entry_image);
-    mTitle = (EditText) view.findViewById(R.id.note_title);
-    titleKeyListener = mTitle.getKeyListener();
+    mTitle = (TextView) view.findViewById(R.id.note_title);
+    mTitleEdit = (EditText) view.findViewById(R.id.note_title_edit);
     mLocation = (TextView) view.findViewById(R.id.note_location);
-    mEntry = (EditText) view.findViewById(R.id.note_entry);
+    mLocationEdit = (EditText) view.findViewById(R.id.note_location_edit);
+    mEntry = (TextView) view.findViewById(R.id.note_entry);
+    mEntryEdit = (EditText) view.findViewById(R.id.note_entry_edit);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
 
     mCaption.addTextChangedListener(new TextWatcher()
@@ -271,6 +279,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     {
 
       Log.i("souvenir", "New note...");
+      isViewMode = true;
+      setViewEditMode(view);
       // // setup locationManager for GPS request
       // mlocManager = (LocationManager) getActivity().getSystemService(
       // Context.LOCATION_SERVICE);
@@ -345,7 +355,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
     System.out.println(mTitle.getText());
 
-    // TODO Auto-generated method stub
     super.onViewStateRestored(null);
     System.out.println(mTitle.getText());
 
@@ -426,8 +435,23 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       Toast.makeText(getActivity().getApplicationContext(),
           "Switching to Edit Mode", Toast.LENGTH_SHORT).show();
       isViewMode = false;
-      // mTitle.setFocusable(true);
-      // mTitle.setKeyListener(titleKeyListener);
+      this.getSherlockActivity().invalidateOptionsMenu();
+
+      // title viewswitcher
+      ViewSwitcher switcher = (ViewSwitcher) v
+          .findViewById(R.id.switcher_title);
+      switcher.showNext(); // or switcher.showPrevious();
+      mTitleEdit.setText(mTitle.getText().toString());
+
+      // location view switcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_location);
+      switcher.showNext(); // or switcher.showPrevious();
+      mLocationEdit.setText(mLocation.getText().toString());
+
+      // entry view switcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_entry);
+      switcher.showNext(); // or switcher.showPrevious();
+      mEntryEdit.setText(mEntry.getText().toString());
     }
     else
     {
@@ -435,8 +459,38 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       Toast.makeText(getActivity().getApplicationContext(),
           "Switching to View Mode", Toast.LENGTH_SHORT).show();
       isViewMode = true;
-      // mTitle.setFocusable(false);
-      // mTitle.setKeyListener(null);
+      this.getSherlockActivity().invalidateOptionsMenu();
+
+      // title viewswitcher
+      ViewSwitcher switcher = (ViewSwitcher) v
+          .findViewById(R.id.switcher_title);
+      switcher.showPrevious();
+      mTitle.setText(mTitleEdit.getText().toString());
+
+      // location viewswitcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_location);
+      switcher.showPrevious();
+      mLocation.setText(mLocationEdit.getText().toString());
+
+      // entry viewswitcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_entry);
+      switcher.showPrevious();
+      mEntry.setText(mEntryEdit.getText().toString());
+    }
+  }
+
+  @Override
+  public void onPrepareOptionsMenu(final Menu menu)
+  {
+    super.onPrepareOptionsMenu(menu);
+    MenuItem viewEdit = menu.findItem(R.id.menu_note_viewedit);
+    if (isViewMode)
+    {
+      viewEdit.setTitle("Edit");
+    }
+    else
+    {
+      viewEdit.setTitle("View");
     }
   }
 
@@ -450,6 +504,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     {
     case R.id.menu_note_viewedit:
       setViewEditMode(this.getView());
+
       break;
     case R.id.menu_note_save:
       System.out.println("Save pressed");
