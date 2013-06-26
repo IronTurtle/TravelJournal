@@ -59,7 +59,7 @@ public class GenericActivity extends SherlockFragmentActivity
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
+    getSupportMenuInflater().inflate(R.menu.note_menu, menu);
     return super.onCreateOptionsMenu(menu);
   }
 

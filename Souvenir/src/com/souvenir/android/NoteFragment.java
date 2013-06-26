@@ -219,7 +219,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     System.out.println("savedInstanceState is not null: "
         + (savedInstanceState != null));
-
     Bundle bundle = this.getActivity().getIntent().getExtras();
     if (bundle != null && bundle.containsKey("note"))
     {
@@ -253,9 +252,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
        * mTitle.setText((mTitle.getText().toString()).split("at")[0] + " at " +
        * ((NoteActivity) getActivity()).generalLocation); }
        */
+
       if (((NoteActivity) getActivity()).location != null)
       {
         mLocation.setText(((NoteActivity) getActivity()).location);
+        mLocationEdit.setText(((NoteActivity) getActivity()).location);
       }
       else
       {
@@ -476,6 +477,17 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       switcher = (ViewSwitcher) v.findViewById(R.id.switcher_entry);
       switcher.showPrevious();
       mEntry.setText(mEntryEdit.getText().toString());
+      System.out.println("Save pressed");
+      Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
+          .show();
+      if (!oldNote)
+      {
+        saveNote(this.getView());
+      }
+      else
+      {
+        updateNote(this.getView());
+      }
     }
   }
 
@@ -506,19 +518,19 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       setViewEditMode(this.getView());
 
       break;
-    case R.id.menu_note_save:
-      System.out.println("Save pressed");
-      Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
-          .show();
-      if (!oldNote)
-      {
-        saveNote(this.getView());
-      }
-      else
-      {
-        updateNote(this.getView());
-      }
-      break;
+    // case R.id.menu_note_save:
+    // System.out.println("Save pressed");
+    // Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
+    // .show();
+    // if (!oldNote)
+    // {
+    // saveNote(this.getView());
+    // }
+    // else
+    // {
+    // updateNote(this.getView());
+    // }
+    // break;
     case R.id.menu_note_camera:
       // startActivity(new Intent(this, NoteActivity.class));
 
@@ -575,6 +587,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
       break;
     }
+
     return true;
   }
 
@@ -1231,7 +1244,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       System.out.println(cv
           .get(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH));
     }
-    getActivity().finish();
+    // getActivity().finish();
   }
 
   public void updateNote(View view)
@@ -1857,6 +1870,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     }
 
+  }
+
+  public void setLocationData(String data)
+  {
+    mLocation.setText(data);
+    mLocationEdit.setText(data);
   }
 
   private class ClothingPagerAdapter extends

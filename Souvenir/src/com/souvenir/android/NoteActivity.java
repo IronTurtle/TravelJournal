@@ -59,7 +59,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
+    getSupportMenuInflater().inflate(R.menu.note_menu, menu);
     return super.onCreateOptionsMenu(menu);
   }
 
@@ -106,7 +106,6 @@ public class NoteActivity extends SherlockFragmentActivity implements
 
   public void sendLocationData(String selectedLocation, String generalLocation)
   {
-
     // ((NoteFragment) getSupportFragmentManager().getBackStackEntryAt(
     // getSupportFragmentManager().getBackStackEntryCount() - 1))
     // .setLocationData(data);

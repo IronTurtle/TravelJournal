@@ -249,6 +249,7 @@ public class PlacesFragment extends ParentFragment
               R.id.selectedPlace);
           System.out.println(curPlace.getName());
           selected.setText(curPlace.getName() + "\n" + curPlace.getAddress());
+
           ((NoteActivity) getActivity()).sendLocationData(curPlace.getName()
               + "\n" + curPlace.getAddress(), generalLocation);
 
