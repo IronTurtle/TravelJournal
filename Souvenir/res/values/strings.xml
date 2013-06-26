@@ -71,10 +71,12 @@
     <string name="save_itinerary_item">Save</string>
     <string name="cancel_itinerary_item">Cancel</string>
 
-    <string-array name="planets_array">
+    <string-array name="drawer_array">
         <item>Explore</item>
         <item>Trips</item>
         <item>Completed</item>
+        <item>Facebook</item>
+        <!-- <item>Settings</item>-->
     </string-array>
     
     <string name="drawer_open">Open navigation drawer</string>

@@ -486,7 +486,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
   {
-    inflater.inflate(R.menu.main_menu, menu);
+    // inflater.inflate(R.menu.main_menu, menu);
     super.onCreateOptionsMenu(menu, inflater);
   }
 
@@ -510,16 +510,16 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       startActivity(new Intent(getActivity(), NoteActivity.class));
       break;
 
-    case R.id.menu_search:
+    case R.id.menu_refresh:
       getActivity().startService(
           new Intent(getActivity(), EvernoteSyncService.class));
       getActivity().getSupportLoaderManager().restartLoader(1, null, this);
       adapter.notifyDataSetChanged();
       return true;
 
-    case R.id.facebook_login:
-      startActivity(new Intent(getActivity(), OtherActivity.class));
-      break;
+      // case R.id.facebook_login:
+      // startActivity(new Intent(getActivity(), OtherActivity.class));
+      // break;
 
     }
     return super.onOptionsItemSelected(item);

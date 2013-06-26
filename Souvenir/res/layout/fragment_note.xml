@@ -72,7 +72,7 @@
 	        </ViewSwitcher>
 
 	        <Button
-	            android:id="@+id/select_location_btn"
+	            android:id="@+id/note_location_btn"
 	            style="?android:attr/buttonStyleSmall"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"

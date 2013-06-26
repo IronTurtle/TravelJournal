@@ -125,6 +125,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   EditText mLocationEdit;
   EditText mEntryEdit;
 
+  Button mLocationBtn;
+
   KeyListener titleKeyListener;
 
   // Note note = new Note();
@@ -161,6 +163,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mEntry = (TextView) view.findViewById(R.id.note_entry);
     mEntryEdit = (EditText) view.findViewById(R.id.note_entry_edit);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
+    mLocationBtn = (Button) view.findViewById(R.id.note_location_btn);
 
     mCaption.addTextChangedListener(new TextWatcher()
     {
@@ -292,7 +295,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     }
 
-    mLocation.setOnClickListener(new btnFindPlace());
+    // mLocation.setOnClickListener(new btnFindPlace());
+    mLocationBtn.setOnClickListener(new btnFindPlace());
     mEntry.setOnKeyListener(new NoteEntryField());
 
     getTravelNotebook();

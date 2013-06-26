@@ -81,7 +81,7 @@ public class DrawerActivity extends SherlockFragmentActivity
 
   private CharSequence mDrawerTitle;
   private CharSequence mTitle;
-  private String[] mPlanetTitles;
+  private String[] mDrawerTitles;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -97,7 +97,7 @@ public class DrawerActivity extends SherlockFragmentActivity
       ImageLoader.getInstance().init(config);
     }
     mTitle = mDrawerTitle = getTitle();
-    mPlanetTitles = getResources().getStringArray(R.array.planets_array);
+    mDrawerTitles = getResources().getStringArray(R.array.drawer_array);
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -106,7 +106,7 @@ public class DrawerActivity extends SherlockFragmentActivity
         .setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
     // set up the drawer's list view with items and click listener
     mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-        R.layout.drawer_list_item, mPlanetTitles));
+        R.layout.drawer_list_item, mDrawerTitles));
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
     // enable ActionBar app icon to behave as action to toggle nav drawer
@@ -235,6 +235,9 @@ public class DrawerActivity extends SherlockFragmentActivity
       // update the main content by replacing fragments
       fragment = new SnippetFragment();
       break;
+    case 3:
+      fragment = new FacebookLoginFragment();
+      break;
     }
 
     FragmentManager fragmentManager = getSupportFragmentManager();
@@ -243,7 +246,7 @@ public class DrawerActivity extends SherlockFragmentActivity
 
     // update selected item and title, then close the drawer
     mDrawerList.setItemChecked(position, true);
-    setTitle(mPlanetTitles[position]);
+    setTitle(mDrawerTitles[position]);
     mDrawerLayout.closeDrawer(mDrawerList);
 
   }
@@ -295,7 +298,7 @@ public class DrawerActivity extends SherlockFragmentActivity
       View rootView = inflater.inflate(R.layout.fragment_planet, container,
           false);
       int i = getArguments().getInt(ARG_PLANET_NUMBER);
-      String planet = getResources().getStringArray(R.array.planets_array)[i];
+      String planet = getResources().getStringArray(R.array.drawer_array)[i];
 
       int imageId = getResources().getIdentifier(
           planet.toLowerCase(Locale.getDefault()), "drawable",
