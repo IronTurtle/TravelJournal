@@ -83,5 +83,8 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="create_dialog">Would you like to create a Trip or a Souvenir?</string>
+    <string name="create_dialog_trip">Trip</string>
+    <string name="create_dialog_souvenir">Souvenir</string>
     
 </resources>

@@ -113,7 +113,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   DisplayImageOptions options;
 
   boolean isViewMode = true;
-
+  boolean fromAnotherFragment = false;
   // Note fields
   ImageView mImageView;
   ImageData mImageData = new ImageData();
@@ -164,6 +164,14 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mEntryEdit = (EditText) view.findViewById(R.id.note_entry_edit);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
     mLocationBtn = (Button) view.findViewById(R.id.note_location_btn);
+
+    if (savedInstanceState != null
+        && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
+    {
+      isViewMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
+          isViewMode);
+      this.setViewEditMode(view);
+    }
 
     mCaption.addTextChangedListener(new TextWatcher()
     {
@@ -278,6 +286,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       mTitle.setText("Souvenir Note on " + getDateTime() + " at "
           + ((NoteActivity) getActivity()).generalLocation);
       // TODO: something happens to redo the title after the call above
+
+      fromAnotherFragment = true;
+      isViewMode = ((NoteActivity) getActivity()).isViewMode;
+      setViewEditMode(view);
+      fromAnotherFragment = false;
     }
     else
     {
@@ -316,6 +329,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           .toString());
     if (mEntry.getText().toString() != null)
       outState.putString("SAVED_STATE_NOTE_ENTRY", mEntry.getText().toString());
+
+    outState.putBoolean("SAVED_STATE_NOTE_VIEW", this.isViewMode);
   }
 
   @Override
@@ -340,8 +355,15 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     super.onActivityCreated(null);
     // TODO: add value in fields
 
-    Log.i("souvenir", "Loading data...");
+    Log.i("souvenir", "onActivityCreated Loading data...");
     System.out.println(mTitle.getText());
+    if (savedInstanceState != null
+        && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
+    {
+      isViewMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
+          isViewMode);
+      this.setViewEditMode(getView());
+    }
     /*
      * if (savedInstanceState != null) { System.out .println("LOCATION:" +
      * savedInstanceState.getCharSequence("SAVED_STATE_NOTE_LOCATION", ""));
@@ -440,7 +462,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       Toast.makeText(getActivity().getApplicationContext(),
           "Switching to Edit Mode", Toast.LENGTH_SHORT).show();
       isViewMode = false;
-      this.getSherlockActivity().invalidateOptionsMenu();
+      if (!fromAnotherFragment)
+        this.getSherlockActivity().invalidateOptionsMenu();
 
       // title viewswitcher
       ViewSwitcher switcher = (ViewSwitcher) v
@@ -464,7 +487,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       Toast.makeText(getActivity().getApplicationContext(),
           "Switching to View Mode", Toast.LENGTH_SHORT).show();
       isViewMode = true;
-      this.getSherlockActivity().invalidateOptionsMenu();
+      if (!fromAnotherFragment)
+        this.getSherlockActivity().invalidateOptionsMenu();
 
       // title viewswitcher
       ViewSwitcher switcher = (ViewSwitcher) v
@@ -500,6 +524,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
     super.onPrepareOptionsMenu(menu);
     MenuItem viewEdit = menu.findItem(R.id.menu_note_viewedit);
+
     if (isViewMode)
     {
       viewEdit.setTitle("Edit");
@@ -508,6 +533,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     {
       viewEdit.setTitle("View");
     }
+
   }
 
   @Override
@@ -1431,7 +1457,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // LOCATION_REQUEST);
       getActivity().getWindow().setSoftInputMode(
           WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-      mCallback.onArticleSelected(mLocation.getText().toString());
+      mCallback.onArticleSelected(mLocation.getText().toString(), isViewMode);
     }
   }
 
@@ -1458,7 +1484,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   public interface OnHeadlineSelectedListener
   {
     /** Called by HeadlinesFragment when a list item is selected */
-    public void onArticleSelected(String location);
+    public void onArticleSelected(String location, boolean isViewMode);
   }
 
   public void clearForm(View view)

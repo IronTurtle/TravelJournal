@@ -35,7 +35,6 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -142,13 +141,13 @@ public class DrawerActivity extends SherlockFragmentActivity
     }
   }
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu)
-  {
-    MenuInflater inflater = getSupportMenuInflater();
-    inflater.inflate(R.menu.main_menu, menu);
-    return super.onCreateOptionsMenu(menu);
-  }
+  // @Override
+  // public boolean onCreateOptionsMenu(Menu menu)
+  // {
+  // MenuInflater inflater = getSupportMenuInflater();
+  // // inflater.inflate(R.menu.main_menu, menu);
+  // return super.onCreateOptionsMenu(menu);
+  // }
 
   /* Called whenever we call invalidateOptionsMenu() */
   @Override
@@ -226,10 +225,10 @@ public class DrawerActivity extends SherlockFragmentActivity
       fragment.setArguments(args);
       break;
     case 1:
-      fragment = new PlanetFragment();
+      fragment = new TripsFragment();
       Bundle args2 = new Bundle();
-      args2.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-      fragment.setArguments(args2);
+      // args2.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+      // fragment.setArguments(args2);
       break;
     case 2:
       // update the main content by replacing fragments
