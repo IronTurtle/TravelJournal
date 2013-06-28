@@ -4,8 +4,11 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -15,6 +18,7 @@ import org.jsoup.select.Elements;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -48,6 +52,8 @@ public class SNote implements Parcelable
   int id = -1;
   String location = null;// 2
   long modifyDate = -1;// 3
+  HashMap<String, SResource> r = new HashMap<String, SResource>();
+  Bundle bundle = new Bundle();
   List<SResource> resources = new ArrayList<SResource>();// 4
   int syncNum = -1;
   ArrayList<String> tags = null;// 5
@@ -59,7 +65,53 @@ public class SNote implements Parcelable
 
   public enum isset
   {
-    content, createDate, location, modifyDate, resources, tags, title
+    content, location, resources, tags, title
+  }
+
+  // From Adamski's answer
+  public static int encode(EnumSet<isset> set)
+  {
+    int ret = 0;
+
+    for (isset val : set)
+    {
+      ret |= 1 << val.ordinal();
+    }
+
+    return ret;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static EnumSet<isset> decode(int code, Class enumType)
+  {
+    try
+    {
+      isset[] values = (isset[]) enumType.getMethod("values").invoke(null);
+      EnumSet<isset> result = EnumSet.noneOf(enumType);
+      while (code != 0)
+      {
+        int ordinal = Integer.numberOfTrailingZeros(code);
+        code ^= Integer.lowestOneBit(code);
+        result.add(values[ordinal]);
+      }
+      return result;
+    }
+    catch (IllegalAccessException ex)
+    {
+      // Shouldn't happen
+      throw new RuntimeException(ex);
+    }
+    catch (InvocationTargetException ex)
+    {
+      // Probably a NullPointerException, caused by calling this method
+      // from within E's initializer.
+      throw (RuntimeException) ex.getCause();
+    }
+    catch (NoSuchMethodException ex)
+    {
+      // Shouldn't happen
+      throw new RuntimeException(ex);
+    }
   }
 
   public SNote(Cursor cursor)
@@ -87,6 +139,15 @@ public class SNote implements Parcelable
     this.modifyDate = cursor
         .getLong(cursor
             .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE));
+    this.issetV = decode(
+        cursor
+            .getInt(cursor
+                .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_ISSET)),
+        isset.class);
+    this.syncNum = cursor
+        .getInt(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM));
+
     // this.content = ""
     // + cursor
     // .getLong(cursor
@@ -101,6 +162,7 @@ public class SNote implements Parcelable
     this.modifyDate = note.getUpdated();
     this.createDate = note.getCreated();
     this.evernoteGUID = note.getGuid();
+    this.syncNum = note.getUpdateSequenceNum();
     // this.resources = note.getSResources();
     // this.tags = null;
     // this.trophyNumber = trophyNumber;
@@ -123,6 +185,9 @@ public class SNote implements Parcelable
     this.tags = in.readArrayList(String.class.getClassLoader());
     this.trophyNumber = in.readString();
     this.tripID = in.readString();
+    this.bundle = in.readBundle(SResource.class.getClassLoader());
+    this.syncNum = in.readInt();
+    this.r = in.readHashMap(SResource.class.getClassLoader());
   }
 
   public SNote(String title, String content, String location)
@@ -343,6 +408,8 @@ public class SNote implements Parcelable
         createDate);
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE,
         modifyDate);
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_ISSET,
+        encode(issetV));
     return values;
   }
 
@@ -359,16 +426,74 @@ public class SNote implements Parcelable
   public Note toNote()
   {
     Note note = new Note();
+    note.setTitle(this.getTitle());
+    if (syncNum == -1)
+    {
+      issetV = EnumSet.allOf(isset.class);
+    }
+    else
+    {
+      note.setGuid(this.getEvernoteGUID());
+    }
+    for (SNote.isset isset : issetV)
+    {
+      switch (isset)
+      {
+      case content:
+        note.setContent(this.content);
+        break;
+      case location:
+        // note.seta
+        break;
+      case resources:
+        for (SResource imageData : resources)
+        {
+          try
+          {
+            String f = imageData.getPath();
+            Resource resource = new Resource();
+            InputStream in;
+            // System.out.println("f: " + f);
+            in = new BufferedInputStream(new FileInputStream(f));
+            FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
+            in.close();
+            resource.setData(data);
+            resource.setMime(imageData.getMime());
+            ResourceAttributes attributes = new ResourceAttributes();
+            // attributes.setFileName(imageData.getFileName);
+            resource.setAttributes(attributes);
+            note.addToResources(resource);
+          }
+          catch (Exception e)
+          {
+            e.printStackTrace();
+          }
+        }
+        break;
+      case tags:
+        break;
+      case title:
+        break;
+      }
+    }
+
     // if (NOTEBOOK_GUID != null)
     // {
     // note.setNotebookGuid(NOTEBOOK_GUID);
     // }
-    if (this.evernoteGUID != null)
-      note.setGuid(this.evernoteGUID);
-    note.setTitle(this.title);
-    note.setContent(this.content);
+    // if (this.evernoteGUID != null)
+    // note.setGuid(this.evernoteGUID);
+    // note.setTitle(this.title);
+    // note.setContent(this.content);
     note.setCreated(this.createDate);
     note.setUpdated(this.modifyDate);
+    Calendar cal = Calendar.getInstance();
+
+    cal.setTimeInMillis(this.modifyDate);
+
+    java.util.Date date = cal.getTime();
+
+    System.out.println(date);
     NoteAttributes attr = new NoteAttributes();
     LazyMap map = new LazyMap();
 
@@ -396,37 +521,13 @@ public class SNote implements Parcelable
     attr.setContentClass("com.souvenir.android");
     note.setAttributes(attr);
 
-    for (SResource imageData : resources)
-    {
-      try
-      {
-        String f = imageData.getPath();
-        Resource resource = new Resource();
-        InputStream in;
-        // System.out.println("f: " + f);
-        in = new BufferedInputStream(new FileInputStream(f));
-        FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
-        in.close();
-        resource.setData(data);
-        resource.setMime(imageData.getMime());
-        ResourceAttributes attributes = new ResourceAttributes();
-        // attributes.setFileName(imageData.getFileName);
-        resource.setAttributes(attributes);
-        note.addToResources(resource);
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-      }
-    }
-
     return note;
   }
 
   @Override
   public void writeToParcel(Parcel dest, int flags)
   {
-    dest.writeInt(id);
+    dest.writeInt(this.id);
     dest.writeString(this.title);
     dest.writeString(this.content);
     dest.writeString(this.location);
@@ -437,11 +538,17 @@ public class SNote implements Parcelable
     dest.writeList(this.tags);
     dest.writeString(this.trophyNumber);
     dest.writeString(this.tripID);
+    dest.writeBundle(this.bundle);
+    dest.writeInt(this.syncNum);
+    dest.writeMap(r);
   }
 
   public void addResource(SResource resource)
   {
     resource.setNoteId(this.id);
     resources.add(resource);
+    r.put(resource.getHash(), resource);
+    bundle.putParcelable(resource.getHash(), resource);
   }
+
 }

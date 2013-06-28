@@ -29,7 +29,8 @@ public class SouvenirContentProvider extends ContentProvider
   {
     public static String NOTE = "note/";
     public static String GET_NOTE = "note/#";
-    public static String NOTE_RESOURCES = "res/";
+    public static String NOTE_RES = "res/";
+    public static String GET_RES = "res/#";
   }
 
   /*****************/
@@ -43,6 +44,7 @@ public class SouvenirContentProvider extends ContentProvider
   public static final int NOTE = 1;
   public static final int GET_NOTE = NOTE + 1;
   public static final int NOTE_RES = NOTE + 2;
+  public static final int GET_RES = NOTE + 3;
 
   /** The authority for this content provider. */
   private static final String AUTHORITY = "com.souvenir.database";
@@ -73,7 +75,8 @@ public class SouvenirContentProvider extends ContentProvider
     s_URIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.NOTE, NOTE);
     s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.GET_NOTE, GET_NOTE);
-    s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.NOTE_RESOURCES, NOTE_RES);
+    s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.NOTE_RES, NOTE_RES);
+    s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.GET_RES, GET_RES);
   }
 
   /**
@@ -331,6 +334,27 @@ public class SouvenirContentProvider extends ContentProvider
         rowsUpdated = sqlDB.update(
             SouvenirContract.SouvenirNote.TABLE_NAME_NOTE, values,
             SouvenirContract.SouvenirNote._ID + "=" + id, null);
+      }
+
+      break;
+
+    // Update a row in the app table with the matching ID.
+    case GET_RES:
+      String id2 = uri.getLastPathSegment();
+
+      // Perform the actual update in the table.
+      if (!TextUtils.isEmpty(selection))
+      {
+        rowsUpdated = sqlDB.update(
+            SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE, values,
+            SouvenirContract.SouvenirResource._ID + "=" + id2 + " AND "
+                + selection, null);
+      }
+      else
+      {
+        rowsUpdated = sqlDB.update(
+            SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE, values,
+            SouvenirContract.SouvenirResource._ID + "=" + id2, null);
       }
 
       break;

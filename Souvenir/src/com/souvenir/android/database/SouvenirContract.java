@@ -14,6 +14,7 @@ public class SouvenirContract
     public static final String COLUMN_NAME_NOTE_LOCATION = "note_location";
     public static final String COLUMN_NAME_NOTE_SYNC_NUM = "note_sync_num";
     public static final String COLUMN_NAME_NOTE_DIRTY = "note_dirty";
+    public static final String COLUMN_NAME_NOTE_ISSET = "note_isset";
     public static final String COLUMN_NAME_NOTE_TRIP_ID = "note_trip_id";
     public static final String COLUMN_NAME_NOTE_CREATE_DATE = "note_create_date";
     public static final String COLUMN_NAME_NOTE_MODIFY_DATE = "note_modify_date";

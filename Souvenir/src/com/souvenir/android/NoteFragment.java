@@ -90,6 +90,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     public String filePath;
     public String mimeType;
     public String fileName;
+    public String hash = "";
     protected String caption = "";
     public boolean isNew = false;
   }
@@ -681,9 +682,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           ImageData imagedata = new ImageData();
           imagedata.filePath = resource.getPath();
           imagedata.caption = resource.getCaption();
+          imagedata.mimeType = resource.getMime();
+          imagedata.hash = div.attr("hash");
           images.add(imagedata);
           pager.getAdapter().notifyDataSetChanged();
-
+          mCaption.setText(images.get(pager.getCurrentItem()).caption);
         }
       }
 
@@ -1047,44 +1050,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     String content = mEntry.getText().toString();
     String location = mLocation.getText().toString();
     String title = mTitle.getText().toString();
-    // final Note note = new Note();
-    // if (NOTEBOOK_GUID != null)
-    // {
-    // note.setNotebookGuid(NOTEBOOK_GUID);
-    // }
-    // note.setTitle(title);
-    // note.setTitle(mTitle.getText().toString());
-    // System.out.println("Note Title: " + note.getTitle());
-
-    // Trying to add locations to data resources
-    // NoteAttributes attr = new NoteAttributes();
-    //
-    // if (longitude != 0 && latitude != 0)
-    // {
-    // attr.setLongitude(longitude);
-    // attr.setLatitude(latitude);
-    // }
-    // else
-    // {
-    // attr.setLatitudeIsSet(false);
-    // attr.setLongitudeIsSet(false);
-    // if (!selectedPlace)
-    // {
-    // attr.setPlaceName(LOCATION_NOT_SPECIFIED);
-    // }
-    // }
-    //
-    // if (selectedPlace)
-    // {
-    // attr.setPlaceName(location);
-    // }
-
-    // attr.setSourceApplication("Souvenir App (Android)");
-    // attr.setContentClass("com.souvenir.android");
-    // note.setAttributes(attr);
-
-    // System.out.println(note.getAttributes().getApplicationData().toString());
-
     SNote snote = new SNote(title, content, location);
     snote.setDirty(true);
     Uri uri = getActivity().getContentResolver().insert(
@@ -1096,10 +1061,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
     for (ImageData imageData : images)
     {
-
-      // Resource resource = new Resource();
-
-      // ImageData imageData = mImageData;
       String f = imageData.filePath;
       System.out.println(f);
       InputStream in;
@@ -1111,16 +1072,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
             + "\" type=\"" + imageData.mimeType + "\" title=\""
             + imageData.caption + "\"/>";
         FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
-        System.out.println(EvernoteUtil.bytesToHex(hash));
-        // EvernoteUtil.createEnMediaTag(resource).replaceFirst(" ",
-        // " title=\"" + imageData.caption + "\" ");
+        // System.out.println(EvernoteUtil.bytesToHex(hash));
         content += enmedia;
         snote.addResource(new SResource(imageData.caption, EvernoteUtil
             .bytesToHex(hash), imageData.mimeType, imageData.filePath));
-
-        System.out.println(content);
+        // System.out.println(content);
         in.close();
-
       }
       catch (Exception e)
       {
@@ -1129,20 +1086,15 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     content += EvernoteUtil.NOTE_SUFFIX;
     snote.setContent(content);
-    Uri uri2 = Uri.parse(SouvenirContentProvider.CONTENT_URI
-        + SouvenirContentProvider.DatabaseConstants.GET_NOTE.replace("#", ""
-            + snote.getId()));
-
-    getActivity().getContentResolver().update(uri2, snote.toContentValues(),
-        null, null);
-    // int id = Integer.valueOf(uri.getLastPathSegment());
-    // snote.setId(id);
-    // snote.processResources(note);
+    getActivity().getContentResolver().update(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.GET_NOTE.replace("#",
+                "" + snote.getId())), snote.toContentValues(), null, null);
     for (ContentValues cv : snote.getResourcesContentValues())
     {
       getActivity().getContentResolver().insert(
           Uri.parse(SouvenirContentProvider.CONTENT_URI
-              + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES), cv);
+              + SouvenirContentProvider.DatabaseConstants.NOTE_RES), cv);
       System.out.println(cv
           .get(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH));
     }
@@ -1154,117 +1106,118 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     String content = mEntry.getText().toString();
     String location = mLocation.getText().toString();
     String title = mTitle.getText().toString();
-    // final Note note = new Note();
-    // if (NOTEBOOK_GUID != null)
-    // {
-    // note.setNotebookGuid(NOTEBOOK_GUID);
-    // }
-    // note.setTitle(title);
-    // note.setTitle(mTitle.getText().toString());
-    // System.out.println("Note Title: " + note.getTitle());
-
-    // Trying to add locations to data resources
-    // NoteAttributes attr = new NoteAttributes();
-    //
-    // if (longitude != 0 && latitude != 0)
-    // {
-    // attr.setLongitude(longitude);
-    // attr.setLatitude(latitude);
-    // }
-    // else
-    // {
-    // attr.setLatitudeIsSet(false);
-    // attr.setLongitudeIsSet(false);
-    // if (!selectedPlace)
-    // {
-    // attr.setPlaceName(LOCATION_NOT_SPECIFIED);
-    // }
-    // }
-    //
-    // if (selectedPlace)
-    // {
-    // attr.setPlaceName(location);
-    // }
-
-    // attr.setSourceApplication("Souvenir App (Android)");
-    // attr.setContentClass("com.souvenir.android");
-    // note.setAttributes(attr);
-
-    // System.out.println(note.getAttributes().getApplicationData().toString());
-
+    // TODO
+    // Ugly clone
     SNote snote = new SNote(title, content, location);
+    snote.setCreateDate(mNote.createDate);
+    snote.setModifyDate(System.currentTimeMillis());
+    snote.setEvernoteGUID(mNote.getEvernoteGUID());
+    snote.setSyncNum(mNote.syncNum);
+    snote.setId(mNote.getId());
     if (!title.equals(mNote.getTitle()))
     {
-
+      snote.issetV.add(SNote.isset.title);
     }
-    if (!content.equals(mNote.getContent()))
+    // System.out.println(mNote.getContent().substring(
+    // mNote.getContent().indexOf("<p>") + "<p>".length(),
+    // mNote.getContent().indexOf("</p>")));
+    if (!content.equals(mNote.getContent().substring(
+        mNote.getContent().indexOf("<p>"), mNote.getContent().indexOf("</p>"))))
     {
-
+      // content = mNote.getContent().replace(
+      // mNote.getContent().substring(
+      // mNote.getContent().indexOf("<p>") + "<p>".length(),
+      // mNote.getContent().indexOf("</p>")), content);
+      snote.issetV.add(SNote.isset.content);
     }
     if (!location.equals(mNote.getLocation()))
     {
-
+      snote.issetV.add(SNote.isset.location);
     }
+    // System.out.println(SNote.encode((EnumSet<SNote.isset>) snote.issetV));
     snote.setDirty(true);
-    Uri uri = getActivity().getContentResolver().insert(
-        Uri.parse(SouvenirContentProvider.CONTENT_URI
-            + SouvenirContentProvider.DatabaseConstants.NOTE),
-        snote.toContentValues());
-    int id = Integer.valueOf(uri.getLastPathSegment());
-    snote.setId(id);
+    // Uri uri = getActivity().getContentResolver().insert(
+    // Uri.parse(SouvenirContentProvider.CONTENT_URI
+    // + SouvenirContentProvider.DatabaseConstants.NOTE),
+    // snote.toContentValues());
+    // int id = Integer.valueOf(uri.getLastPathSegment());
+    // snote.setId(id);
     content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
+    // content.replace(EvernoteUtil.NOTE_SUFFIX, "");
     for (ImageData imageData : images)
     {
-
-      // Resource resource = new Resource();
-
-      // ImageData imageData = mImageData;
-      String f = imageData.filePath;
-      System.out.println(f);
-      InputStream in;
-      try
+      if (!imageData.hash.isEmpty())
       {
-        in = new BufferedInputStream(new FileInputStream(f));
-        byte[] hash = EvernoteUtil.hash(in);
-        String enmedia = "<en-media hash=\"" + EvernoteUtil.bytesToHex(hash)
-            + "\" type=\"" + imageData.mimeType + "\" title=\""
-            + imageData.caption + "\"/>";
-        FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
-        System.out.println(EvernoteUtil.bytesToHex(hash));
-        // EvernoteUtil.createEnMediaTag(resource).replaceFirst(" ",
-        // " title=\"" + imageData.caption + "\" ");
+        String enmedia = "<en-media hash=\"" + imageData.hash + "\" type=\""
+            + imageData.mimeType + "\" title=\"" + imageData.caption + "\"/>";
         content += enmedia;
-        snote.addResource(new SResource(imageData.caption, EvernoteUtil
-            .bytesToHex(hash), imageData.mimeType, imageData.filePath));
-
-        System.out.println(content);
-        in.close();
-
+        SResource sr = mNote.r.get(imageData.hash);
+        if (!sr.getCaption().equals(imageData.caption))
+        {
+          sr.caption = imageData.caption;
+          snote.issetV.add(SNote.isset.content);
+          getActivity().getContentResolver().update(
+              Uri.parse(SouvenirContentProvider.CONTENT_URI
+                  + SouvenirContentProvider.DatabaseConstants.GET_RES.replace(
+                      "#", "" + sr.id)), sr.toContentValues(), null, null);
+        }
       }
-      catch (Exception e)
+      else
       {
-        e.printStackTrace();
+        String f = imageData.filePath;
+        System.out.println(f);
+        InputStream in;
+        try
+        {
+          in = new BufferedInputStream(new FileInputStream(f));
+          byte[] hash = EvernoteUtil.hash(in);
+          String enmedia = "<en-media hash=\"" + EvernoteUtil.bytesToHex(hash)
+              + "\" type=\"" + imageData.mimeType + "\" title=\""
+              + imageData.caption + "\"/>";
+          content += enmedia;
+          SResource sr = new SResource(imageData.caption,
+              EvernoteUtil.bytesToHex(hash), imageData.mimeType,
+              imageData.filePath);
+          snote.addResource(sr);
+          getActivity().getContentResolver().insert(
+              Uri.parse(SouvenirContentProvider.CONTENT_URI
+                  + SouvenirContentProvider.DatabaseConstants.NOTE_RES),
+              sr.toContentValues());
+
+          // System.out.println(content);
+          in.close();
+          snote.issetV.add(SNote.isset.content);
+          snote.issetV.add(SNote.isset.resources);
+
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
       }
     }
     content += EvernoteUtil.NOTE_SUFFIX;
     snote.setContent(content);
-    Uri uri2 = Uri.parse(SouvenirContentProvider.CONTENT_URI
-        + SouvenirContentProvider.DatabaseConstants.GET_NOTE.replace("#", ""
-            + snote.getId()));
-
-    getActivity().getContentResolver().update(uri2, snote.toContentValues(),
-        null, null);
-    // int id = Integer.valueOf(uri.getLastPathSegment());
-    // snote.setId(id);
-    // snote.processResources(note);
-    for (ContentValues cv : snote.getResourcesContentValues())
+    if (!snote.issetV.isEmpty())
     {
-      getActivity().getContentResolver().insert(
-          Uri.parse(SouvenirContentProvider.CONTENT_URI
-              + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES), cv);
-      System.out.println(cv
-          .get(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH));
+      snote.setDirty(true);
+      System.out.println(SNote.decode(SNote.encode(snote.issetV),
+          SNote.isset.class));
+      Uri uri2 = Uri.parse(SouvenirContentProvider.CONTENT_URI
+          + SouvenirContentProvider.DatabaseConstants.GET_NOTE.replace("#", ""
+              + mNote.getId()));
+
+      getActivity().getContentResolver().update(uri2, snote.toContentValues(),
+          null, null);
     }
+    // for (ContentValues cv : snote.getResourcesContentValues())
+    // {
+    // getActivity().getContentResolver().insert(
+    // Uri.parse(SouvenirContentProvider.CONTENT_URI
+    // + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES), cv);
+    // System.out.println(cv
+    // .get(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH));
+    // }
     getActivity().finish();
   }
 
@@ -1653,6 +1606,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // urls.add("file://" + image.filePath);
       images.add(image);
       pager.getAdapter().notifyDataSetChanged();
+      mCaption.setText(images.get(pager.getCurrentItem()).caption);
       if (mEvernoteSession.isLoggedIn())
       {
         // mBtnSave.setEnabled(true);
@@ -1810,7 +1764,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       View imageLayout = inflater.inflate(R.layout.item_pager_image, view,
           false);
       ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
-      mCaption.setText(clothing.get(position).caption);
+      // mCaption.setText(clothing.get(position).caption);
 
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);

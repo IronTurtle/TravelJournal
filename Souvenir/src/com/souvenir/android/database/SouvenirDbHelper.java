@@ -23,7 +23,9 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + COMMA_SEP + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM
       + INTEGER_TYPE + COMMA_SEP
       + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY + " BOOLEAN"
-      + COMMA_SEP + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE
+      + COMMA_SEP + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_ISSET
+      + INTEGER_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE
       + INTEGER_TYPE + COMMA_SEP
       + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CREATE_DATE
       + INTEGER_TYPE + " )";

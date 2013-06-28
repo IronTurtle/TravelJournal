@@ -32,6 +32,7 @@ public class SResource implements Parcelable
     }
   };
 
+  int id;
   String caption;
   String evernoteGUID;
   String hash;
@@ -60,6 +61,8 @@ public class SResource implements Parcelable
 
   public SResource(Cursor cursor)
   {
+    this.id = cursor.getInt(cursor
+        .getColumnIndexOrThrow(SouvenirContract.SouvenirResource._ID));
     this.caption = cursor
         .getString(cursor
             .getColumnIndexOrThrow(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_CAPTION));
@@ -86,6 +89,7 @@ public class SResource implements Parcelable
   public SResource(Parcel in)
   {
     super();
+    this.id = in.readInt();
     this.caption = in.readString();
     this.evernoteGUID = in.readString();
     this.hash = in.readString();
@@ -160,6 +164,7 @@ public class SResource implements Parcelable
   @Override
   public void writeToParcel(Parcel dest, int flags)
   {
+    dest.writeInt(this.id);
     dest.writeString(this.caption);
     dest.writeString(this.evernoteGUID);
     dest.writeString(this.hash);

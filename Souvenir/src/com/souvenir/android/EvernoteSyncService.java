@@ -117,11 +117,15 @@ public class EvernoteSyncService extends IntentService
         // TODO Auto-generated catch block
         e1.printStackTrace();
       }
-
-      if (data == null || data.getNotes() == null)
-        continue;
+      if (!data.isSetChunkHighUSN())
+        break;
       high = data.getChunkHighUSN();
+
       System.out.println(data.getChunkHighUSN() + " " + serverlastUpdateCount);
+
+      if (data.getNotes() == null)
+        continue;
+
       for (Note note : data.getNotes())
       {
         // System.out.println(note.getGuid());
@@ -168,18 +172,13 @@ public class EvernoteSyncService extends IntentService
           insertNote.processResources(note2);
           for (ContentValues cv : insertNote.getResourcesContentValues())
           {
-            getContentResolver()
-                .insert(
-                    Uri.parse(SouvenirContentProvider.CONTENT_URI
-                        + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES),
-                    cv);
+            getContentResolver().insert(
+                Uri.parse(SouvenirContentProvider.CONTENT_URI
+                    + SouvenirContentProvider.DatabaseConstants.NOTE_RES), cv);
           }
           // TODO
           // adapter.notifyDataSetChanged();
-          lastUpdateCount = serverlastUpdateCount;
-          lastSyncTime = serverLastSyncTime;
-          prefs.edit().putInt("lastUpdateCount", lastUpdateCount).commit();
-          prefs.edit().putLong("lastSyncTime", lastSyncTime).commit();
+
         }
         catch (Exception e)
         {
@@ -187,6 +186,10 @@ public class EvernoteSyncService extends IntentService
         }
       }
     }
+    lastUpdateCount = serverlastUpdateCount;
+    lastSyncTime = serverLastSyncTime;
+    prefs.edit().putInt("lastUpdateCount", lastUpdateCount).commit();
+    prefs.edit().putLong("lastSyncTime", lastSyncTime).commit();
     sendChanges();
 
   }
@@ -220,7 +223,7 @@ public class EvernoteSyncService extends IntentService
         Cursor resCursor;
         if ((resCursor = getContentResolver().query(
             Uri.parse(SouvenirContentProvider.CONTENT_URI
-                + SouvenirContentProvider.DatabaseConstants.NOTE_RESOURCES),
+                + SouvenirContentProvider.DatabaseConstants.NOTE_RES),
             null,
             SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID
                 + "=" + snote.getId(), null, null)) != null
@@ -266,6 +269,7 @@ public class EvernoteSyncService extends IntentService
   public void updateNote(final SNote snote)
   {
     Note note = snote.toNote();
+    System.out.println(snote.issetV);
     try
     {
       Note data = noteStore.updateNote(mEvernoteSession.getAuthToken(), note);
@@ -276,10 +280,11 @@ public class EvernoteSyncService extends IntentService
       if (snote.getSyncNum() == lastUpdateCount + 1)
       {
         // still in sync
-        prefs.edit().putInt("lastUpdateCount", lastUpdateCount).commit();
+        prefs.edit().putInt("lastUpdateCount", snote.getSyncNum()).commit();
       }
       else if (snote.getSyncNum() > lastUpdateCount + 1)
       {
+        sync(snote.getSyncNum());
         // incremental
       }
       else
