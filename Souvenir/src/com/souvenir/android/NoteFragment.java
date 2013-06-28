@@ -787,7 +787,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
 
     mTitle.setText(mNote.getTitle().toUpperCase(Locale.US));
-    mLocation.setText(mNote.getLocation());
+    mLocation.setText("testerse");
     String contents = mNote.getContent();
     mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
 

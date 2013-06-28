@@ -45,14 +45,25 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + INTEGER_TYPE + COMMA_SEP
       + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_PATH + TEXT_TYPE
       + " NOT NULL " + " )";
+  public static final String SQL_CREATE_TRIP_TABLE = "CREATE TABLE "
+      + SouvenirContract.SouvenirTrip.TABLE_NAME_TRIP + " ("
+      + SouvenirContract.SouvenirTrip._ID + INTEGER_TYPE + " PRIMARY KEY,"
+      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID + TEXT_TYPE
+      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME
+      + TEXT_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM + INTEGER_TYPE
+      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_DIRTY
+      + INTEGER_TYPE + " BOOLEAN" + " )";
 
   public static final String SQL_DELETE_NOTE_TABLE = "DROP TABLE IF EXISTS "
       + SouvenirContract.SouvenirNote.TABLE_NAME_NOTE;
   public static final String SQL_DELETE_RESOURCE_TABLE = "DROP TABLE IF EXISTS "
       + SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE;
+  public static final String SQL_DELETE_TRIP_TABLE = "DROP TABLE IF EXISTS "
+      + SouvenirContract.SouvenirTrip.TABLE_NAME_TRIP;
 
   // If you change the database schema, you must increment the database version.
-  public static final int DATABASE_VERSION = 1;
+  public static final int DATABASE_VERSION = 2;
   public static final String DATABASE_NAME = "Souvenir.db";
 
   public SouvenirDbHelper(Context context, String DatabaseName,
@@ -66,6 +77,7 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
   {
     db.execSQL(SQL_CREATE_NOTE_TABLE);
     db.execSQL(SQL_CREATE_RESOURCE_TABLE);
+    db.execSQL(SQL_CREATE_TRIP_TABLE);
   }
 
   @Override
@@ -74,6 +86,8 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
     // This database is only a cache for online data, so its upgrade policy is
     // to simply to discard the data and start over
     db.execSQL(SQL_DELETE_NOTE_TABLE);
+    db.execSQL(SQL_DELETE_RESOURCE_TABLE);
+    db.execSQL(SQL_DELETE_TRIP_TABLE);
     onCreate(db);
   }
 

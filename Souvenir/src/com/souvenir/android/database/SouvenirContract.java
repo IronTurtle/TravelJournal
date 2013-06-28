@@ -34,4 +34,13 @@ public class SouvenirContract
     public static final String COLUMN_NAME_RESOURCE_PATH = "resource_path";
   }
 
+  public static abstract class SouvenirTrip implements BaseColumns
+  {
+    public static final String TABLE_NAME_TRIP = "trip";
+    public static final String COLUMN_NAME_TRIP_GUID = "trip_id";
+    public static final String COLUMN_NAME_TRIP_NAME = "trip_name";
+    public static final String COLUMN_NAME_TRIP_SYNC_NUM = "trip_sync_num";
+    public static final String COLUMN_NAME_TRIP_DIRTY = "trip_dirty";
+  }
+
 }

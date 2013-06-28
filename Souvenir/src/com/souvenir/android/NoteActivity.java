@@ -113,6 +113,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
     // .setLocationData(data);
     location = selectedLocation;
     this.generalLocation = generalLocation;
+    mNoteFragment.setLocationData("tester");
     getSupportFragmentManager().popBackStack();
   }
 }

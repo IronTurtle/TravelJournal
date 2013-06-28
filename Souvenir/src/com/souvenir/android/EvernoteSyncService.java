@@ -13,17 +13,15 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.evernote.client.android.EvernoteSession;
-import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
-import com.evernote.edam.notestore.NoteFilter;
 import com.evernote.edam.notestore.NoteStore;
 import com.evernote.edam.notestore.SyncChunk;
 import com.evernote.edam.notestore.SyncChunkFilter;
 import com.evernote.edam.notestore.SyncState;
 import com.evernote.edam.type.Note;
-import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Notebook;
+import com.evernote.edam.type.Tag;
 import com.evernote.thrift.TException;
 import com.evernote.thrift.transport.TTransportException;
 import com.souvenir.android.database.SouvenirContentProvider;
@@ -40,7 +38,7 @@ public class EvernoteSyncService extends IntentService
   static final String CONSUMER_SECRET = "e0441c112aab58f6";
   static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
   private static String TRAVEL_NOTEBOOK_NAME = "Travel Notebook";
-  private static String NOTEBOOK_GUID;
+  private static String NOTEBOOK_GUID = null;
 
   protected EvernoteSession mEvernoteSession = EvernoteSession.getInstance(
       this, CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
@@ -91,11 +89,12 @@ public class EvernoteSyncService extends IntentService
     SyncChunkFilter filter1 = new SyncChunkFilter();
     filter1.setIncludeNotebooks(true);
     filter1.setIncludeNotes(true);
+    filter1.setIncludeTags(true);
     filter1.setRequireNoteContentClass("com.souvenir.android");
 
-    NoteFilter filter = new NoteFilter();
-    filter.setOrder(NoteSortOrder.UPDATED.getValue());
-    filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
+    // NoteFilter filter = new NoteFilter();
+    // filter.setOrder(NoteSortOrder.UPDATED.getValue());
+    // filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
     // int high = 0;
     while (high != serverlastUpdateCount)
     {
@@ -105,6 +104,125 @@ public class EvernoteSyncService extends IntentService
       {
         data = noteStore.getFilteredSyncChunk(mEvernoteSession.getAuthToken(),
             high, 15, filter1);
+      }
+      catch (Exception e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+      if (!data.isSetChunkHighUSN())
+        break;
+      high = data.getChunkHighUSN();
+
+      System.out.println(data.getChunkHighUSN() + " " + serverlastUpdateCount);
+
+      if (data.isSetTags())
+      {
+        for (Tag tag : data.getTags())
+        {
+          System.out.println("tag " + tag.getName());
+        }
+      }
+
+      if (data.isSetNotebooks())
+      {
+        for (Notebook notebook : data.getNotebooks())
+        {
+          if ((notebook.getName().toString()).equals(TRAVEL_NOTEBOOK_NAME))
+          {
+            NOTEBOOK_GUID = notebook.getGuid();
+          }
+        }
+      }
+
+      if (data.isSetNotes())
+      {
+        for (Note note : data.getNotes())
+        {
+          // System.out.println(note.getGuid());
+          Cursor cursor;
+          String[] args = { note.getGuid() };
+          if ((cursor = getContentResolver().query(
+              Uri.parse(SouvenirContentProvider.CONTENT_URI
+                  + SouvenirContentProvider.DatabaseConstants.NOTE), null,
+              SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID + "=?", args,
+              null)) != null
+              && cursor.getCount() > 0)
+          {
+            // System.out.println("This GUID already exists "
+            // + cursor.getCount());
+            // System.out.println("old note");
+            while (cursor.moveToNext())
+            {
+
+              SNote oldNote = new SNote(cursor);
+              // System.out.println(oldNote.getEvernoteGUID());
+            }
+            cursor.close();
+            // System.out.println("syncnumber: " + syncnum);
+            continue;
+          }
+
+          try
+          {
+            // System.out.println("new note");
+            Note note2 = noteStore.getNote(mEvernoteSession.getAuthToken(),
+                note.getGuid(), true, true, false, false);
+            if (!note.isActive())
+            {
+              continue;
+            }
+            SNote insertNote = new SNote(note2);
+
+            Uri uri = getContentResolver().insert(
+                Uri.parse(SouvenirContentProvider.CONTENT_URI
+                    + SouvenirContentProvider.DatabaseConstants.NOTE),
+                insertNote.toContentValues());
+            int id = Integer.valueOf(uri.getLastPathSegment());
+            insertNote.setId(id);
+            insertNote.processResources(note2);
+            for (ContentValues cv : insertNote.getResourcesContentValues())
+            {
+              getContentResolver()
+                  .insert(
+                      Uri.parse(SouvenirContentProvider.CONTENT_URI
+                          + SouvenirContentProvider.DatabaseConstants.NOTE_RES),
+                      cv);
+            }
+            // TODO
+            // adapter.notifyDataSetChanged();
+
+          }
+          catch (Exception e)
+          {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+    lastUpdateCount = serverlastUpdateCount;
+    lastSyncTime = serverLastSyncTime;
+    prefs.edit().putInt("lastUpdateCount", lastUpdateCount).commit();
+    prefs.edit().putLong("lastSyncTime", lastSyncTime).commit();
+    sendChanges();
+
+  }
+
+  public void sendChanges()
+  {
+    if (NOTEBOOK_GUID == null)
+    {
+      try
+      {
+        List<Notebook> notebooks = noteStore.listNotebooks(mEvernoteSession
+            .getAuthToken());
+        for (Notebook notebook : notebooks)
+        {
+          if ((notebook.getName().toString()).equals(TRAVEL_NOTEBOOK_NAME))
+          {
+            NOTEBOOK_GUID = notebook.getGuid();
+          }
+        }
       }
       catch (EDAMUserException e1)
       {
@@ -121,92 +239,45 @@ public class EvernoteSyncService extends IntentService
         // TODO Auto-generated catch block
         e1.printStackTrace();
       }
-      if (!data.isSetChunkHighUSN())
-        break;
-      high = data.getChunkHighUSN();
+    }
 
-      System.out.println(data.getChunkHighUSN() + " " + serverlastUpdateCount);
-
-      if (data.getNotes() == null)
-        continue;
-
-      for (Note note : data.getNotes())
+    if (NOTEBOOK_GUID == null)
+    {
+      Notebook notebook = new Notebook();
+      notebook.setName(TRAVEL_NOTEBOOK_NAME);
+      try
       {
-        // System.out.println(note.getGuid());
-        Cursor cursor;
-        String[] args = { note.getGuid() };
-        if ((cursor = getContentResolver().query(
-            Uri.parse(SouvenirContentProvider.CONTENT_URI
-                + SouvenirContentProvider.DatabaseConstants.NOTE), null,
-            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID + "=?", args,
-            null)) != null
-            && cursor.getCount() > 0)
+        notebook = noteStore.createNotebook(mEvernoteSession.getAuthToken(),
+            notebook);
+        NOTEBOOK_GUID = notebook.getGuid();
+        if (notebook.getUpdateSequenceNum() == lastUpdateCount + 1)
         {
-          // System.out.println("This GUID already exists "
-          // + cursor.getCount());
-          // System.out.println("old note");
-          while (cursor.moveToNext())
-          {
-
-            SNote oldNote = new SNote(cursor);
-            // System.out.println(oldNote.getEvernoteGUID());
-          }
-          cursor.close();
-          // System.out.println("syncnumber: " + syncnum);
-          continue;
+          // still in sync
+          lastUpdateCount++;
+          prefs.edit().putInt("lastUpdateCount", lastUpdateCount).commit();
         }
-
-        try
+        else if (notebook.getUpdateSequenceNum() > lastUpdateCount + 1)
         {
-          // System.out.println("new note");
-          Note note2 = noteStore.getNote(mEvernoteSession.getAuthToken(),
-              note.getGuid(), true, true, false, false);
-          if (!note.isActive())
-          {
-            continue;
-          }
-          SNote insertNote = new SNote(note2);
-
-          Uri uri = getContentResolver().insert(
-              Uri.parse(SouvenirContentProvider.CONTENT_URI
-                  + SouvenirContentProvider.DatabaseConstants.NOTE),
-              insertNote.toContentValues());
-          int id = Integer.valueOf(uri.getLastPathSegment());
-          insertNote.setId(id);
-          insertNote.processResources(note2);
-          for (ContentValues cv : insertNote.getResourcesContentValues())
-          {
-            getContentResolver().insert(
-                Uri.parse(SouvenirContentProvider.CONTENT_URI
-                    + SouvenirContentProvider.DatabaseConstants.NOTE_RES), cv);
-          }
-          // TODO
-          // adapter.notifyDataSetChanged();
-
-        }
-        catch (Exception e)
-        {
-          e.printStackTrace();
+          sync(notebook.getUpdateSequenceNum());
+          // incremental
         }
       }
+      catch (EDAMUserException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (EDAMSystemException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (TException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
-    lastUpdateCount = serverlastUpdateCount;
-    lastSyncTime = serverLastSyncTime;
-    prefs.edit().putInt("lastUpdateCount", lastUpdateCount).commit();
-    prefs.edit().putLong("lastSyncTime", lastSyncTime).commit();
-    sendChanges();
-
-  }
-
-  public void sendChanges()
-  {
-    String[] projection = { SouvenirContract.SouvenirNote._ID,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY };
     Cursor cursor;
 
     // Dirty
@@ -223,7 +294,6 @@ public class EvernoteSyncService extends IntentService
                 .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE)));
         SNote snote = new SNote(cursor);
         // TODO
-        String[] args = { "" + snote.getId() };
         Cursor resCursor;
         if ((resCursor = getContentResolver().query(
             Uri.parse(SouvenirContentProvider.CONTENT_URI
@@ -255,6 +325,7 @@ public class EvernoteSyncService extends IntentService
   public void saveNote(final SNote snote)
   {
     Note note = snote.toNote();
+    note.setNotebookGuid(NOTEBOOK_GUID);
     try
     {
       Note data = noteStore.createNote(mEvernoteSession.getAuthToken(), note);
@@ -262,7 +333,17 @@ public class EvernoteSyncService extends IntentService
       snote.setSyncNum(data.getUpdateSequenceNum());
       snote.setDirty(false);
       update(snote);
-
+      if (snote.getSyncNum() == lastUpdateCount + 1)
+      {
+        // still in sync
+        lastUpdateCount++;
+        prefs.edit().putInt("lastUpdateCount", snote.getSyncNum()).commit();
+      }
+      else if (snote.getSyncNum() > lastUpdateCount + 1)
+      {
+        sync(snote.getSyncNum());
+        // incremental
+      }
     }
     catch (Exception exception)
     {
@@ -273,6 +354,7 @@ public class EvernoteSyncService extends IntentService
   public void updateNote(final SNote snote)
   {
     Note note = snote.toNote();
+    note.setNotebookGuid(NOTEBOOK_GUID);
     System.out.println(snote.issetV);
     try
     {
@@ -284,6 +366,7 @@ public class EvernoteSyncService extends IntentService
       if (snote.getSyncNum() == lastUpdateCount + 1)
       {
         // still in sync
+        lastUpdateCount++;
         prefs.edit().putInt("lastUpdateCount", snote.getSyncNum()).commit();
       }
       else if (snote.getSyncNum() > lastUpdateCount + 1)
@@ -380,7 +463,6 @@ public class EvernoteSyncService extends IntentService
       @Override
       public void run()
       {
-        checkForTravelNotebook();
         syncCheck();
       }
     };
@@ -392,72 +474,6 @@ public class EvernoteSyncService extends IntentService
   {
     m_updateTimer.cancel();
     super.onDestroy();
-  }
-
-  private void checkForTravelNotebook()
-  {
-    try
-    {
-      mEvernoteSession.getClientFactory().createNoteStoreClient()
-          .listNotebooks(new OnClientCallback<List<Notebook>>()
-          {
-
-            @Override
-            public void onSuccess(List<Notebook> notebookList)
-            {
-              for (Notebook notebook : notebookList)
-              {
-                if ((notebook.getName().toString())
-                    .equals(TRAVEL_NOTEBOOK_NAME))
-                {
-                  NOTEBOOK_GUID = notebook.getGuid();
-                  // listViewCreate();
-                  return;
-                }
-              }
-              // Travel Notebook not found/created
-              Notebook notebook = new Notebook();
-              notebook.setName(TRAVEL_NOTEBOOK_NAME);
-              try
-              {
-                mEvernoteSession.getClientFactory().createNoteStoreClient()
-                    .createNotebook(notebook, new OnClientCallback<Notebook>()
-                    {
-
-                      @Override
-                      public void onSuccess(Notebook created)
-                      {
-                        NOTEBOOK_GUID = created.getGuid();
-                      }
-
-                      @Override
-                      public void onException(Exception exception)
-                      {
-                        exception.printStackTrace();
-                      }
-
-                    });
-
-                // listViewCreate();
-              }
-              catch (TTransportException e)
-              {
-                e.printStackTrace();
-              }
-            }
-
-            @Override
-            public void onException(Exception exception)
-            {
-
-            }
-
-          });
-    }
-    catch (TTransportException e1)
-    {
-      e1.printStackTrace();
-    }
   }
 
 }
