@@ -35,7 +35,6 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -81,7 +80,7 @@ public class DrawerActivity extends SherlockFragmentActivity
 
   private CharSequence mDrawerTitle;
   private CharSequence mTitle;
-  private String[] mPlanetTitles;
+  private String[] mDrawerTitles;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -97,7 +96,7 @@ public class DrawerActivity extends SherlockFragmentActivity
       ImageLoader.getInstance().init(config);
     }
     mTitle = mDrawerTitle = getTitle();
-    mPlanetTitles = getResources().getStringArray(R.array.planets_array);
+    mDrawerTitles = getResources().getStringArray(R.array.drawer_array);
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -106,7 +105,7 @@ public class DrawerActivity extends SherlockFragmentActivity
         .setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
     // set up the drawer's list view with items and click listener
     mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-        R.layout.drawer_list_item, mPlanetTitles));
+        R.layout.drawer_list_item, mDrawerTitles));
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
     // enable ActionBar app icon to behave as action to toggle nav drawer
@@ -142,13 +141,13 @@ public class DrawerActivity extends SherlockFragmentActivity
     }
   }
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu)
-  {
-    MenuInflater inflater = getSupportMenuInflater();
-    inflater.inflate(R.menu.main_menu, menu);
-    return super.onCreateOptionsMenu(menu);
-  }
+  // @Override
+  // public boolean onCreateOptionsMenu(Menu menu)
+  // {
+  // MenuInflater inflater = getSupportMenuInflater();
+  // // inflater.inflate(R.menu.main_menu, menu);
+  // return super.onCreateOptionsMenu(menu);
+  // }
 
   /* Called whenever we call invalidateOptionsMenu() */
   @Override
@@ -226,14 +225,17 @@ public class DrawerActivity extends SherlockFragmentActivity
       fragment.setArguments(args);
       break;
     case 1:
-      fragment = new PlanetFragment();
+      fragment = new TripsFragment();
       Bundle args2 = new Bundle();
-      args2.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-      fragment.setArguments(args2);
+      // args2.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+      // fragment.setArguments(args2);
       break;
     case 2:
       // update the main content by replacing fragments
       fragment = new SnippetFragment();
+      break;
+    case 3:
+      fragment = new FacebookLoginFragment();
       break;
     }
 
@@ -243,7 +245,7 @@ public class DrawerActivity extends SherlockFragmentActivity
 
     // update selected item and title, then close the drawer
     mDrawerList.setItemChecked(position, true);
-    setTitle(mPlanetTitles[position]);
+    setTitle(mDrawerTitles[position]);
     mDrawerLayout.closeDrawer(mDrawerList);
 
   }
@@ -295,7 +297,7 @@ public class DrawerActivity extends SherlockFragmentActivity
       View rootView = inflater.inflate(R.layout.fragment_planet, container,
           false);
       int i = getArguments().getInt(ARG_PLANET_NUMBER);
-      String planet = getResources().getStringArray(R.array.planets_array)[i];
+      String planet = getResources().getStringArray(R.array.drawer_array)[i];
 
       int imageId = getResources().getIdentifier(
           planet.toLowerCase(Locale.getDefault()), "drawable",

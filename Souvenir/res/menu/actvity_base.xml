@@ -13,7 +13,7 @@
         android:title="@string/menu_add_note"/>
     
     <item
-        android:id="@+id/menu_search"
+        android:id="@+id/menu_refresh"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/menu_search"/>

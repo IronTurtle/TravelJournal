@@ -1,21 +1,36 @@
 package com.souvenir.android;
 
+import java.util.Arrays;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class OtherFragment extends ParentFragment implements OnClickListener
+import com.facebook.widget.UserSettingsFragment;
+
+public class FacebookLoginFragment extends ParentFragment implements
+    OnClickListener
 {
+  private UserSettingsFragment userSettingsFragment;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState)
   {
-    View view = inflater.inflate(R.layout.fragment_other, container, false);
-
+    View view = inflater.inflate(R.layout.fblogin_fragment_activity, container, false);
+    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+    userSettingsFragment = (UserSettingsFragment) getFragmentManager()
+        .findFragmentById(R.id.login_fragment);
+    if (userSettingsFragment == null)
+    {
+      userSettingsFragment = new UserSettingsFragment();
+      userSettingsFragment.setReadPermissions(Arrays.asList("publish_actions"));
+    }
+    transaction.commit();
     /*
      * if (getLastNonConfigurationInstance() != null) { mImageData = (ImageData)
      * getLastNonConfigurationInstance();

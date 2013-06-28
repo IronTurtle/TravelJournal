@@ -24,6 +24,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
 
   String location = null;
   String generalLocation = null;
+  boolean isViewMode = true;
 
   NoteFragment mNoteFragment;
 
@@ -59,7 +60,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getSupportMenuInflater().inflate(R.menu.create_note_menu, menu);
+    getSupportMenuInflater().inflate(R.menu.note_menu, menu);
     return super.onCreateOptionsMenu(menu);
   }
 
@@ -87,8 +88,9 @@ public class NoteActivity extends SherlockFragmentActivity implements
   }
 
   @Override
-  public void onArticleSelected(String location)
+  public void onArticleSelected(String location, boolean viewMode)
   {
+    this.isViewMode = viewMode;
     PlacesFragment newFragment = new PlacesFragment();
     Bundle args = new Bundle();
     args.putString("PREV_LOC_DATA", location);
@@ -99,14 +101,13 @@ public class NoteActivity extends SherlockFragmentActivity implements
     // Replace whatever is in the fragment_container view with this fragment,
     // and add the transaction to the back stack so the user can navigate back
     transaction.replace(android.R.id.content, newFragment);
-    transaction.addToBackStack(null);
+    transaction.addToBackStack("note");
     transaction.commit();
 
   }
 
   public void sendLocationData(String selectedLocation, String generalLocation)
   {
-
     // ((NoteFragment) getSupportFragmentManager().getBackStackEntryAt(
     // getSupportFragmentManager().getBackStackEntryCount() - 1))
     // .setLocationData(data);

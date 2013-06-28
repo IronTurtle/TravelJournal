@@ -1,5 +1,6 @@
 package com.souvenir.android;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -12,6 +13,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.evernote.client.android.EvernoteSession;
+import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.notestore.NoteFilter;
@@ -21,6 +23,7 @@ import com.evernote.edam.notestore.SyncChunkFilter;
 import com.evernote.edam.notestore.SyncState;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteSortOrder;
+import com.evernote.edam.type.Notebook;
 import com.evernote.thrift.TException;
 import com.evernote.thrift.transport.TTransportException;
 import com.souvenir.android.database.SouvenirContentProvider;
@@ -37,6 +40,7 @@ public class EvernoteSyncService extends IntentService
   static final String CONSUMER_SECRET = "e0441c112aab58f6";
   static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
   private static String TRAVEL_NOTEBOOK_NAME = "Travel Notebook";
+  private static String NOTEBOOK_GUID;
 
   protected EvernoteSession mEvernoteSession = EvernoteSession.getInstance(
       this, CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
@@ -376,6 +380,7 @@ public class EvernoteSyncService extends IntentService
       @Override
       public void run()
       {
+        checkForTravelNotebook();
         syncCheck();
       }
     };
@@ -387,6 +392,72 @@ public class EvernoteSyncService extends IntentService
   {
     m_updateTimer.cancel();
     super.onDestroy();
+  }
+
+  private void checkForTravelNotebook()
+  {
+    try
+    {
+      mEvernoteSession.getClientFactory().createNoteStoreClient()
+          .listNotebooks(new OnClientCallback<List<Notebook>>()
+          {
+
+            @Override
+            public void onSuccess(List<Notebook> notebookList)
+            {
+              for (Notebook notebook : notebookList)
+              {
+                if ((notebook.getName().toString())
+                    .equals(TRAVEL_NOTEBOOK_NAME))
+                {
+                  NOTEBOOK_GUID = notebook.getGuid();
+                  // listViewCreate();
+                  return;
+                }
+              }
+              // Travel Notebook not found/created
+              Notebook notebook = new Notebook();
+              notebook.setName(TRAVEL_NOTEBOOK_NAME);
+              try
+              {
+                mEvernoteSession.getClientFactory().createNoteStoreClient()
+                    .createNotebook(notebook, new OnClientCallback<Notebook>()
+                    {
+
+                      @Override
+                      public void onSuccess(Notebook created)
+                      {
+                        NOTEBOOK_GUID = created.getGuid();
+                      }
+
+                      @Override
+                      public void onException(Exception exception)
+                      {
+                        exception.printStackTrace();
+                      }
+
+                    });
+
+                // listViewCreate();
+              }
+              catch (TTransportException e)
+              {
+                e.printStackTrace();
+              }
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+
+            }
+
+          });
+    }
+    catch (TTransportException e1)
+    {
+      e1.printStackTrace();
+    }
   }
 
 }

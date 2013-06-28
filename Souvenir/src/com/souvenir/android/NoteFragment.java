@@ -42,6 +42,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.Time;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -55,7 +56,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
@@ -110,12 +113,22 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   private final int FACEBOOK_SHARE = 6135;
   DisplayImageOptions options;
 
+  boolean isViewMode = true;
+  boolean fromAnotherFragment = false;
   // Note fields
   ImageView mImageView;
   ImageData mImageData = new ImageData();
-  EditText mTitle;
+  TextView mTitle;
   TextView mLocation;
-  EditText mEntry;
+  TextView mEntry;
+
+  EditText mTitleEdit;
+  EditText mLocationEdit;
+  EditText mEntryEdit;
+
+  Button mLocationBtn;
+
+  KeyListener titleKeyListener;
 
   // Note note = new Note();
   SNote mNote;
@@ -144,10 +157,22 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     setHasOptionsMenu(true);
 
     // mImageView = (ImageView) view.findViewById(R.id.entry_image);
-    mTitle = (EditText) view.findViewById(R.id.note_title);
+    mTitle = (TextView) view.findViewById(R.id.note_title);
+    mTitleEdit = (EditText) view.findViewById(R.id.note_title_edit);
     mLocation = (TextView) view.findViewById(R.id.note_location);
-    mEntry = (EditText) view.findViewById(R.id.note_entry);
+    mLocationEdit = (EditText) view.findViewById(R.id.note_location_edit);
+    mEntry = (TextView) view.findViewById(R.id.note_entry);
+    mEntryEdit = (EditText) view.findViewById(R.id.note_entry_edit);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
+    mLocationBtn = (Button) view.findViewById(R.id.note_location_btn);
+
+    if (savedInstanceState != null
+        && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
+    {
+      isViewMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
+          isViewMode);
+      this.setViewEditMode(view);
+    }
 
     mCaption.addTextChangedListener(new TextWatcher()
     {
@@ -206,7 +231,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     System.out.println("savedInstanceState is not null: "
         + (savedInstanceState != null));
-
     Bundle bundle = this.getActivity().getIntent().getExtras();
     if (bundle != null && bundle.containsKey("note"))
     {
@@ -240,9 +264,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
        * mTitle.setText((mTitle.getText().toString()).split("at")[0] + " at " +
        * ((NoteActivity) getActivity()).generalLocation); }
        */
+
       if (((NoteActivity) getActivity()).location != null)
       {
         mLocation.setText(((NoteActivity) getActivity()).location);
+        mLocationEdit.setText(((NoteActivity) getActivity()).location);
       }
       else
       {
@@ -261,13 +287,18 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       mTitle.setText("Souvenir Note on " + getDateTime() + " at "
           + ((NoteActivity) getActivity()).generalLocation);
       // TODO: something happens to redo the title after the call above
+
+      fromAnotherFragment = true;
+      isViewMode = ((NoteActivity) getActivity()).isViewMode;
+      setViewEditMode(view);
+      fromAnotherFragment = false;
     }
     else
     {
-      // CameraOperation c = new CameraOperation();
-      // c.execute("");/
+
       Log.i("souvenir", "New note...");
-      openCamera();
+      isViewMode = true;
+      setViewEditMode(view);
       // // setup locationManager for GPS request
       // mlocManager = (LocationManager) getActivity().getSystemService(
       // Context.LOCATION_SERVICE);
@@ -278,7 +309,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     }
 
-    mLocation.setOnClickListener(new btnFindPlace());
+    // mLocation.setOnClickListener(new btnFindPlace());
+    mLocationBtn.setOnClickListener(new btnFindPlace());
     mEntry.setOnKeyListener(new NoteEntryField());
 
     getTravelNotebook();
@@ -298,6 +330,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           .toString());
     if (mEntry.getText().toString() != null)
       outState.putString("SAVED_STATE_NOTE_ENTRY", mEntry.getText().toString());
+
+    outState.putBoolean("SAVED_STATE_NOTE_VIEW", this.isViewMode);
   }
 
   @Override
@@ -322,8 +356,15 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     super.onActivityCreated(null);
     // TODO: add value in fields
 
-    Log.i("souvenir", "Loading data...");
+    Log.i("souvenir", "onActivityCreated Loading data...");
     System.out.println(mTitle.getText());
+    if (savedInstanceState != null
+        && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
+    {
+      isViewMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
+          isViewMode);
+      this.setViewEditMode(getView());
+    }
     /*
      * if (savedInstanceState != null) { System.out .println("LOCATION:" +
      * savedInstanceState.getCharSequence("SAVED_STATE_NOTE_LOCATION", ""));
@@ -342,7 +383,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
     System.out.println(mTitle.getText());
 
-    // TODO Auto-generated method stub
     super.onViewStateRestored(null);
     System.out.println(mTitle.getText());
 
@@ -414,15 +454,58 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item)
+  // TODO: finish
+  public void setViewEditMode(View v)
   {
-    // This uses the imported MenuItem from ActionBarSherlock
-    // Toast.makeText(this.getActivity(), "Got click: " + item.toString(),
-    // Toast.LENGTH_SHORT).show();
-    switch (item.getItemId())
+    if (isViewMode)
     {
-    case R.id.create_note_menu_save:
+      // is in view mode, switch to edit mode
+      Toast.makeText(getActivity().getApplicationContext(),
+          "Switching to Edit Mode", Toast.LENGTH_SHORT).show();
+      isViewMode = false;
+      if (!fromAnotherFragment)
+        this.getSherlockActivity().invalidateOptionsMenu();
+
+      // title viewswitcher
+      ViewSwitcher switcher = (ViewSwitcher) v
+          .findViewById(R.id.switcher_title);
+      switcher.showNext(); // or switcher.showPrevious();
+      mTitleEdit.setText(mTitle.getText().toString());
+
+      // location view switcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_location);
+      switcher.showNext(); // or switcher.showPrevious();
+      mLocationEdit.setText(mLocation.getText().toString());
+
+      // entry view switcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_entry);
+      switcher.showNext(); // or switcher.showPrevious();
+      mEntryEdit.setText(mEntry.getText().toString());
+    }
+    else
+    {
+      // is in edit mode, switch to view mode
+      Toast.makeText(getActivity().getApplicationContext(),
+          "Switching to View Mode", Toast.LENGTH_SHORT).show();
+      isViewMode = true;
+      if (!fromAnotherFragment)
+        this.getSherlockActivity().invalidateOptionsMenu();
+
+      // title viewswitcher
+      ViewSwitcher switcher = (ViewSwitcher) v
+          .findViewById(R.id.switcher_title);
+      switcher.showPrevious();
+      mTitle.setText(mTitleEdit.getText().toString());
+
+      // location viewswitcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_location);
+      switcher.showPrevious();
+      mLocation.setText(mLocationEdit.getText().toString());
+
+      // entry viewswitcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_entry);
+      switcher.showPrevious();
+      mEntry.setText(mEntryEdit.getText().toString());
       System.out.println("Save pressed");
       Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
           .show();
@@ -434,8 +517,52 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       {
         updateNote(this.getView());
       }
+    }
+  }
+
+  @Override
+  public void onPrepareOptionsMenu(final Menu menu)
+  {
+    super.onPrepareOptionsMenu(menu);
+    MenuItem viewEdit = menu.findItem(R.id.menu_note_viewedit);
+
+    if (isViewMode)
+    {
+      viewEdit.setTitle("Edit");
+    }
+    else
+    {
+      viewEdit.setTitle("View");
+    }
+
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    // This uses the imported MenuItem from ActionBarSherlock
+    // Toast.makeText(this.getActivity(), "Got click: " + item.toString(),
+    // Toast.LENGTH_SHORT).show();
+    switch (item.getItemId())
+    {
+    case R.id.menu_note_viewedit:
+      setViewEditMode(this.getView());
+
       break;
-    case R.id.create_note_menu_camera:
+    // case R.id.menu_note_save:
+    // System.out.println("Save pressed");
+    // Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
+    // .show();
+    // if (!oldNote)
+    // {
+    // saveNote(this.getView());
+    // }
+    // else
+    // {
+    // updateNote(this.getView());
+    // }
+    // break;
+    case R.id.menu_note_camera:
       // startActivity(new Intent(this, NoteActivity.class));
 
       Intent cameraIntent = new Intent(
@@ -458,7 +585,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
       break;
 
-    case R.id.create_note_menu_select:
+    case R.id.menu_note_select:
       // startActivity(new Intent(this, EntryActivity.class));
 
       Intent intent = new Intent(Intent.ACTION_PICK,
@@ -466,7 +593,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       startActivityForResult(intent, SELECT_IMAGE);
       break;
 
-    case R.id.create_note_menu_trophy:
+    case R.id.menu_note_trophy:
       // startActivity(new Intent(this, EntryActivity.class));
       Toast
           .makeText(getActivity(), "Trophy Button clicked", Toast.LENGTH_SHORT)
@@ -480,7 +607,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // Toast.LENGTH_SHORT).show();
       updateNote(this.getView());
       break;
-    case R.id.viewedit_note_menu_fbshare:
+    case R.id.menu_note_fbshare:
       System.out.println("FACEBOOK SHARING");
 
       String[] noteContent = { mTitle.getText().toString(),
@@ -491,6 +618,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
       break;
     }
+
     return true;
   }
 
@@ -1098,7 +1226,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       System.out.println(cv
           .get(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH));
     }
-    getActivity().finish();
+    // getActivity().finish();
   }
 
   public void updateNote(View view)
@@ -1282,7 +1410,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // LOCATION_REQUEST);
       getActivity().getWindow().setSoftInputMode(
           WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-      mCallback.onArticleSelected(mLocation.getText().toString());
+      mCallback.onArticleSelected(mLocation.getText().toString(), isViewMode);
     }
   }
 
@@ -1309,7 +1437,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   public interface OnHeadlineSelectedListener
   {
     /** Called by HeadlinesFragment when a list item is selected */
-    public void onArticleSelected(String location);
+    public void onArticleSelected(String location, boolean isViewMode);
   }
 
   public void clearForm(View view)
@@ -1726,6 +1854,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     }
 
+  }
+
+  public void setLocationData(String data)
+  {
+    mLocation.setText(data);
+    mLocationEdit.setText(data);
   }
 
   private class ClothingPagerAdapter extends
