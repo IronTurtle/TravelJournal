@@ -1,11 +1,14 @@
 package com.souvenir.android;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.evernote.edam.type.Tag;
+import com.souvenir.android.database.SouvenirContentProvider;
 import com.souvenir.android.database.SouvenirContract;
 
 public class STrip implements Parcelable
@@ -26,6 +29,7 @@ public class STrip implements Parcelable
   int id;
   int syncNum = -1;
   String evernoteGUID;
+  // String parentEvernoteGUID;
   String tripName;
   boolean dirty = false;
 
@@ -105,5 +109,101 @@ public class STrip implements Parcelable
     dest.writeString(this.evernoteGUID);
     dest.writeInt(this.dirty ? 1 : 0);
     dest.writeInt(this.syncNum);
+  }
+
+  public void insert(Context applicationContext)
+  {
+    Cursor cursor;
+    String[] args = { evernoteGUID };
+    if ((cursor = applicationContext.getContentResolver().query(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.TRIP), null,
+        SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID + "=?", args, null)) != null
+        && cursor.getCount() > 0)
+    {
+      // System.out.println("This GUID already exists "
+      // + cursor.getCount());
+      // System.out.println("old note");
+      while (cursor.moveToNext())
+      {
+        applicationContext.getContentResolver().update(
+            Uri.parse(SouvenirContentProvider.CONTENT_URI
+                + SouvenirContentProvider.DatabaseConstants.TRIP),
+            toContentValues(), null, null);
+        // System.out.println(oldNote.getEvernoteGUID());
+      }
+      // System.out.println("syncnumber: " + syncnum);
+    }
+    else
+    {
+      Uri uri = applicationContext.getContentResolver().insert(
+          Uri.parse(SouvenirContentProvider.CONTENT_URI
+              + SouvenirContentProvider.DatabaseConstants.TRIP),
+          toContentValues());
+    }
+    cursor.close();
+
+    // int id = Integer.valueOf(uri.getLastPathSegment());
+    // setId(id);
+  }
+
+  public int getId()
+  {
+    return id;
+  }
+
+  public void setId(int id)
+  {
+    this.id = id;
+  }
+
+  public int getSyncNum()
+  {
+    return syncNum;
+  }
+
+  public void setSyncNum(int syncNum)
+  {
+    this.syncNum = syncNum;
+  }
+
+  public String getEvernoteGUID()
+  {
+    return evernoteGUID;
+  }
+
+  public void setEvernoteGUID(String evernoteGUID)
+  {
+    this.evernoteGUID = evernoteGUID;
+  }
+
+  // public String getParentEvernoteGUID()
+  // {
+  // return parentEvernoteGUID;
+  // }
+  //
+  // public void setParentEvernoteGUID(String parentEvernoteGUID)
+  // {
+  // this.parentEvernoteGUID = parentEvernoteGUID;
+  // }
+
+  public String getTripName()
+  {
+    return tripName;
+  }
+
+  public void setTripName(String tripName)
+  {
+    this.tripName = tripName;
+  }
+
+  public boolean isDirty()
+  {
+    return dirty;
+  }
+
+  public void setDirty(boolean dirty)
+  {
+    this.dirty = dirty;
   }
 }

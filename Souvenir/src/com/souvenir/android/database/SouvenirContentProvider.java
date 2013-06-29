@@ -31,6 +31,7 @@ public class SouvenirContentProvider extends ContentProvider
     public static String GET_NOTE = "note/#";
     public static String NOTE_RES = "res/";
     public static String GET_RES = "res/#";
+    public static String TRIP = "trip/";
   }
 
   /*****************/
@@ -45,6 +46,7 @@ public class SouvenirContentProvider extends ContentProvider
   public static final int GET_NOTE = NOTE + 1;
   public static final int NOTE_RES = NOTE + 2;
   public static final int GET_RES = NOTE + 3;
+  public static final int TRIP = NOTE + 4;
 
   /** The authority for this content provider. */
   private static final String AUTHORITY = "com.souvenir.database";
@@ -77,6 +79,7 @@ public class SouvenirContentProvider extends ContentProvider
     s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.GET_NOTE, GET_NOTE);
     s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.NOTE_RES, NOTE_RES);
     s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.GET_RES, GET_RES);
+    s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.TRIP, TRIP);
   }
 
   /**
@@ -156,6 +159,10 @@ public class SouvenirContentProvider extends ContentProvider
       // + "= \"" + uri.getLastPathSegment() + "\"");
       break;
 
+    case TRIP:
+      queryBuilder.setTables(SouvenirContract.SouvenirTrip.TABLE_NAME_TRIP);
+      break;
+
     default:
       throw new IllegalArgumentException("Unknown URI: " + uri);
     }
@@ -220,6 +227,14 @@ public class SouvenirContentProvider extends ContentProvider
       // table.
       id = sqlDB.insert(SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE,
           null, values);
+      break;
+
+    case TRIP:
+
+      // Perform the database insert, placing the app at the bottom of the
+      // table.
+      id = sqlDB.insert(SouvenirContract.SouvenirTrip.TABLE_NAME_TRIP, null,
+          values);
       break;
 
     default:

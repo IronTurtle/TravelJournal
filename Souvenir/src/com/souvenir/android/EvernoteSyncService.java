@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.evernote.client.android.EvernoteSession;
+import com.evernote.edam.error.EDAMNotFoundException;
 import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.notestore.NoteStore;
@@ -37,8 +38,12 @@ public class EvernoteSyncService extends IntentService
   static final String CONSUMER_KEY = "ironsuturtle";
   static final String CONSUMER_SECRET = "e0441c112aab58f6";
   static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
+
   private static String TRAVEL_NOTEBOOK_NAME = "Travel Notebook";
   private static String NOTEBOOK_GUID = null;
+
+  private static String TRIPS_TAG = "Trips";
+  private static String TRIPS_GUID = null;
 
   protected EvernoteSession mEvernoteSession = EvernoteSession.getInstance(
       this, CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
@@ -118,9 +123,39 @@ public class EvernoteSyncService extends IntentService
 
       if (data.isSetTags())
       {
-        for (Tag tag : data.getTags())
+        if (TRIPS_GUID == null)
         {
-          System.out.println("tag " + tag.getName());
+          try
+          {
+            List<Tag> tags = noteStore
+                .listTags(mEvernoteSession.getAuthToken());
+            for (Tag tag : tags)
+            {
+              if (tag.getName().equals(TRIPS_TAG))
+              {
+                TRIPS_GUID = tag.getGuid();
+                break;
+              }
+            }
+          }
+          catch (Exception e)
+          {
+            e.printStackTrace();
+          }
+        }
+        if (TRIPS_GUID != null)
+        {
+          for (Tag tag : data.getTags())
+          {
+            System.out.println("tag " + tag.getName());
+            if (tag.isSetParentGuid() && tag.getParentGuid().equals(TRIPS_GUID))
+            {
+              System.out.println("tag matches:" + tag.getName());
+
+              STrip trip = new STrip(tag);
+              trip.insert(getApplicationContext());
+            }
+          }
         }
       }
 
@@ -131,6 +166,7 @@ public class EvernoteSyncService extends IntentService
           if ((notebook.getName().toString()).equals(TRAVEL_NOTEBOOK_NAME))
           {
             NOTEBOOK_GUID = notebook.getGuid();
+            break;
           }
         }
       }
@@ -210,6 +246,69 @@ public class EvernoteSyncService extends IntentService
 
   public void sendChanges()
   {
+    // TODO
+    // repetitive
+    if (TRIPS_GUID == null)
+    {
+      try
+      {
+        List<Tag> tags = noteStore.listTags(mEvernoteSession.getAuthToken());
+        for (Tag tag : tags)
+        {
+          if (tag.getName().equals(TRIPS_TAG))
+          {
+            TRIPS_GUID = tag.getGuid();
+            break;
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+    }
+    if (TRIPS_GUID == null)
+    {
+      Tag tag = new Tag();
+      tag.setName(TRIPS_TAG);
+      try
+      {
+        tag = noteStore.createTag(mEvernoteSession.getAuthToken(), tag);
+        TRIPS_GUID = tag.getGuid();
+        if (tag.getUpdateSequenceNum() == lastUpdateCount + 1)
+        {
+          // still in sync
+          lastUpdateCount++;
+          prefs.edit().putInt("lastUpdateCount", lastUpdateCount).commit();
+        }
+        else if (tag.getUpdateSequenceNum() > lastUpdateCount + 1)
+        {
+          sync(tag.getUpdateSequenceNum());
+          // incremental
+        }
+      }
+      catch (EDAMUserException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (EDAMSystemException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (EDAMNotFoundException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (TException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+
     if (NOTEBOOK_GUID == null)
     {
       try
@@ -417,7 +516,8 @@ public class EvernoteSyncService extends IntentService
     prefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
     lastUpdateCount = prefs.getInt("lastUpdateCount", 0);
     lastSyncTime = prefs.getLong("lastSyncTime", 0);
-
+    // TODO
+    // need to check if database is empty cause of upgrade
     try
     {
       SyncState ss = noteStore.getSyncState(mEvernoteSession.getAuthToken());
@@ -449,6 +549,7 @@ public class EvernoteSyncService extends IntentService
   protected void onHandleIntent(Intent intent)
   {
     syncCheck();
+    System.out.println("Sync Done");
 
     // m_updateTimer.scheduleAtFixedRate(m_updateTask, 0, UPDATE_FREQUENCY);
   }

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
@@ -19,6 +20,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.souvenir.android.database.SouvenirContentProvider;
 
 public class TripsFragment extends ParentFragment implements OnClickListener,
     LoaderManager.LoaderCallbacks<Cursor>
@@ -33,7 +35,19 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     abs.setDisplayHomeAsUpEnabled(true);
     setHasOptionsMenu(true);
     View view = inflater.inflate(R.layout.fragment_trips, container, false);
-
+    Cursor resCursor;
+    if ((resCursor = getActivity().getContentResolver().query(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.TRIP), null, null,
+        null, null)) != null
+        && resCursor.getCount() > 0)
+    {
+      while (resCursor.moveToNext())
+      {
+        System.out.println(new STrip(resCursor).tripName);
+      }
+    }
+    resCursor.close();
     return view;
   }
 

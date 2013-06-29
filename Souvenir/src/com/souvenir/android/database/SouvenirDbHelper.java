@@ -35,8 +35,9 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_CAPTION
       + TEXT_TYPE + COMMA_SEP
       + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_GUID + TEXT_TYPE
-      + COMMA_SEP + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH
-      + TEXT_TYPE + COMMA_SEP
+      + " UNIQUE" + COMMA_SEP
+      + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH + TEXT_TYPE
+      + COMMA_SEP
       + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_LOCATION
       + TEXT_TYPE + COMMA_SEP
       + SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_MIME + TEXT_TYPE
@@ -49,11 +50,12 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + SouvenirContract.SouvenirTrip.TABLE_NAME_TRIP + " ("
       + SouvenirContract.SouvenirTrip._ID + INTEGER_TYPE + " PRIMARY KEY,"
       + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID + TEXT_TYPE
-      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME
-      + TEXT_TYPE + COMMA_SEP
-      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM + INTEGER_TYPE
-      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_DIRTY
-      + INTEGER_TYPE + " BOOLEAN" + " )";
+      + " UNIQUE" + COMMA_SEP
+      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME + TEXT_TYPE
+      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM
+      + INTEGER_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_DIRTY + INTEGER_TYPE
+      + " BOOLEAN" + " )";
 
   public static final String SQL_DELETE_NOTE_TABLE = "DROP TABLE IF EXISTS "
       + SouvenirContract.SouvenirNote.TABLE_NAME_NOTE;
