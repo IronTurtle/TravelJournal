@@ -50,9 +50,7 @@ public class PlacesFragment extends ParentFragment
   {
     super.onCreate(savedInstanceState);
     View view = inflater.inflate(R.layout.fragment_places, container, false);
-    ((NoteActivity) getActivity()).sendLocationData("test", "test2");
-    if (true)
-      return view;
+    setHasOptionsMenu(false);
     selected = (EditText) view.findViewById(R.id.selectedPlace);
     String prev_loc = getArguments().getString("PREV_LOC_DATA");
     selected.setText(prev_loc);

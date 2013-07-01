@@ -113,7 +113,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   private final int FACEBOOK_SHARE = 6135;
   DisplayImageOptions options;
 
-  boolean isViewMode = true;
+  boolean isEditMode = true;
   boolean fromAnotherFragment = false;
   // Note fields
   ImageView mImageView;
@@ -169,9 +169,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     if (savedInstanceState != null
         && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
     {
-      isViewMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
-          isViewMode);
-      this.setViewEditMode(view);
+      isEditMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
+          isEditMode);
+      // this.setViewEditMode(view);
     }
 
     mCaption.addTextChangedListener(new TextWatcher()
@@ -238,6 +238,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // getActivity().getWindow().setSoftInputMode(
       // WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
       // getMetadata();
+      // isEditMode = true;
+      // setViewEditMode(view);
       oldNote = true;
       mNote = (SNote) bundle.get("note");
       // String guid = (String) bundle.get("guid");
@@ -254,7 +256,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           .println("LOCATION:"
               + savedInstanceState.getCharSequence("SAVED_STATE_NOTE_LOCATION",
                   ""));
-
+      isEditMode = true;
+      // setViewEditMode(view);
       // mTitle.setText(savedInstanceState.getCharSequence(
       // "SAVED_STATE_NOTE_TITLE", ""));
       /*
@@ -289,16 +292,16 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // TODO: something happens to redo the title after the call above
 
       fromAnotherFragment = true;
-      isViewMode = ((NoteActivity) getActivity()).isViewMode;
-      setViewEditMode(view);
+      isEditMode = ((NoteActivity) getActivity()).isEditMode;
+      // setViewEditMode(view);
       fromAnotherFragment = false;
     }
     else
     {
 
       Log.i("souvenir", "New note...");
-      isViewMode = true;
-      setViewEditMode(view);
+      // isEditMode = true;
+      // setViewEditMode(view);
       // // setup locationManager for GPS request
       // mlocManager = (LocationManager) getActivity().getSystemService(
       // Context.LOCATION_SERVICE);
@@ -331,7 +334,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     if (mEntry.getText().toString() != null)
       outState.putString("SAVED_STATE_NOTE_ENTRY", mEntry.getText().toString());
 
-    outState.putBoolean("SAVED_STATE_NOTE_VIEW", this.isViewMode);
+    outState.putBoolean("SAVED_STATE_NOTE_VIEW", this.isEditMode);
   }
 
   @Override
@@ -357,34 +360,66 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     // TODO: add value in fields
 
     Log.i("souvenir", "onActivityCreated Loading data...");
-    System.out.println(mTitle.getText());
-    if (savedInstanceState != null
-        && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
-    {
-      isViewMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
-          isViewMode);
-      this.setViewEditMode(getView());
-    }
-    /*
-     * if (savedInstanceState != null) { System.out .println("LOCATION:" +
-     * savedInstanceState.getCharSequence("SAVED_STATE_NOTE_LOCATION", ""));
-     * mTitle.setText(savedInstanceState.getCharSequence(
-     * "SAVED_STATE_NOTE_TITLE", ""));
-     * mLocation.setText(savedInstanceState.getCharSequence(
-     * "SAVED_STATE_NOTE_LOCATION", ""));
-     * mEntry.setText(savedInstanceState.getCharSequence(
-     * "SAVED_STATE_NOTE_ENTRY", "")); }
-     */
+    // if (savedInstanceState != null
+    // && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
+    // {
+    // isEditMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
+    // isEditMode);
+    // System.out.println("isEditMode: " + isEditMode);
+    // // this.setViewEditMode(getView());
+    // }
+    // if ((((NoteActivity) getActivity()).location != null)
+    // && (((NoteActivity) getActivity()).generalLocation != null))
+    // {
+    // mLocation.setText(((NoteActivity) getActivity()).location);
+    // mLocationEdit.setText(((NoteActivity) getActivity()).location);
+    // System.out.println("location set");
+    // if (mTitleEdit.getText().length() == 0 && mTitle.getText().length() == 0)
+    // {
+    // mTitle.setText("Souvenir Note on " + getDateTime() + " at "
+    // + ((NoteActivity) getActivity()).generalLocation);
+    // mTitleEdit.setText(mTitleEdit + " at "
+    // + ((NoteActivity) getActivity()).generalLocation);
+    // }
+    // else
+    // {
+    // mTitle.setText(mTitle.getText() + " at "
+    // + ((NoteActivity) getActivity()).generalLocation);
+    // mTitleEdit.setText(mTitleEdit.getText() + " at "
+    // + ((NoteActivity) getActivity()).generalLocation);
+    // }
+    // }
 
   }
 
   @Override
   public void onViewStateRestored(Bundle savedInstanceState)
   {
-    System.out.println(mTitle.getText());
 
     super.onViewStateRestored(null);
-    System.out.println(mTitle.getText());
+    Log.i("souvenir", "onActivityRestored Loading data...");
+    if (savedInstanceState != null
+        && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
+    {
+      isEditMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
+          isEditMode);
+      System.out.println("isEditMode: " + isEditMode);
+      // this.setViewEditMode(getView());
+    }
+    if ((((NoteActivity) getActivity()).location != null)
+        && (((NoteActivity) getActivity()).generalLocation != null))
+    {
+      mLocation.setText(((NoteActivity) getActivity()).location);
+      mLocationEdit.setText(((NoteActivity) getActivity()).location);
+      System.out.println("location set");
+      if (mTitleEdit.getText().length() == 0 && mTitle.getText().length() == 0)
+      {
+        mTitle.setText("Souvenir Note on " + getDateTime() + " at "
+            + ((NoteActivity) getActivity()).generalLocation);
+        mTitleEdit.setText(mTitleEdit + " at "
+            + ((NoteActivity) getActivity()).generalLocation);
+      }
+    }
 
   }
 
@@ -457,12 +492,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   // TODO: finish
   public void setViewEditMode(View v)
   {
-    if (isViewMode)
+    if (isEditMode)
     {
       // is in view mode, switch to edit mode
       Toast.makeText(getActivity().getApplicationContext(),
-          "Switching to Edit Mode", Toast.LENGTH_SHORT).show();
-      isViewMode = false;
+          "Switching to View Mode", Toast.LENGTH_SHORT).show();
+      isEditMode = false;
       if (!fromAnotherFragment)
         this.getSherlockActivity().invalidateOptionsMenu();
 
@@ -486,8 +521,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     {
       // is in edit mode, switch to view mode
       Toast.makeText(getActivity().getApplicationContext(),
-          "Switching to View Mode", Toast.LENGTH_SHORT).show();
-      isViewMode = true;
+          "Switching to Edit Mode", Toast.LENGTH_SHORT).show();
+      isEditMode = true;
       if (!fromAnotherFragment)
         this.getSherlockActivity().invalidateOptionsMenu();
 
@@ -526,13 +561,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     super.onPrepareOptionsMenu(menu);
     MenuItem viewEdit = menu.findItem(R.id.menu_note_viewedit);
 
-    if (isViewMode)
+    if (isEditMode)
     {
-      viewEdit.setTitle("Edit");
+      viewEdit.setTitle("View");
     }
     else
     {
-      viewEdit.setTitle("View");
+      viewEdit.setTitle("Edit");
     }
 
   }
@@ -687,6 +722,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           if (!mlocManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
               && !mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
           {
+
             GPSDialogFragment d = new GPSDialogFragment();
             d.show(getFragmentManager(), GPS_TAG);
           }
@@ -705,7 +741,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
             }
           }
         }
-        if (mTitle.getText().length() == 0)
+        if (mTitle.getText().length() == 0
+            && mTitleEdit.getText().length() == 0)
         {
           setDefaultTitle();
         }
@@ -737,7 +774,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       break;
     }
 
-    mEntry.requestFocus();
+    // mEntry.requestFocus();
     // getActivity().getWindow().setSoftInputMode(
     // WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
   }
@@ -787,7 +824,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
 
     mTitle.setText(mNote.getTitle().toUpperCase(Locale.US));
-    mLocation.setText("testerse");
+    // mLocation.setText("testerse");
     String contents = mNote.getContent();
     mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
 
@@ -1123,10 +1160,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     {
       mTitle.setText(title + ", at "
           + getActivity().getIntent().getStringExtra("ITINERARY_SELECT"));
+      mTitleEdit.setText(title + ", at "
+          + getActivity().getIntent().getStringExtra("ITINERARY_SELECT"));
     }
     else
     {
       mTitle.setText(title);
+      mTitleEdit.setText(title);
     }
   }
 
@@ -1410,7 +1450,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // LOCATION_REQUEST);
       getActivity().getWindow().setSoftInputMode(
           WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-      mCallback.onArticleSelected(mLocation.getText().toString(), isViewMode);
+      mCallback.onArticleSelected(mLocation.getText().toString(), isEditMode);
     }
   }
 
@@ -1813,12 +1853,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
       latitude = loc.getLatitude();
       longitude = loc.getLongitude();
-
-      String Text = "My current location is: " + "Latitude = "
-          + loc.getLatitude() + " Longitude = " + loc.getLongitude();
-
-      // Toast.makeText(getActivity().getApplicationContext(), Text,
-      // Toast.LENGTH_SHORT).show();
 
       // setText of coordinates to mLocation field
       mLocation.setText(loc.getLatitude() + ", " + loc.getLongitude());

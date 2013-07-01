@@ -1,5 +1,6 @@
 package com.souvenir.android;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,11 +9,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+//import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public class NoteActivity extends SherlockFragmentActivity implements
     NoteFragment.OnHeadlineSelectedListener
@@ -24,7 +26,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
 
   String location = null;
   String generalLocation = null;
-  boolean isViewMode = true;
+  boolean isEditMode = true;
 
   NoteFragment mNoteFragment;
 
@@ -45,8 +47,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
           .denyCacheImageMultipleSizesInMemory()/* .enableLogging() */.build();
       ImageLoader.getInstance().init(config);
     }
-    final ActionBar bar = getSupportActionBar();
-    bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+    getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
     if (savedInstanceState == null)
     {
       mNoteFragment = new NoteFragment();
@@ -90,7 +91,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
   @Override
   public void onArticleSelected(String location, boolean viewMode)
   {
-    this.isViewMode = viewMode;
+    this.isEditMode = viewMode;
     PlacesFragment newFragment = new PlacesFragment();
     Bundle args = new Bundle();
     args.putString("PREV_LOC_DATA", location);
@@ -101,7 +102,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
     // Replace whatever is in the fragment_container view with this fragment,
     // and add the transaction to the back stack so the user can navigate back
     transaction.replace(android.R.id.content, newFragment);
-    transaction.addToBackStack("note");
+    transaction.addToBackStack(null);
     transaction.commit();
 
   }
@@ -113,7 +114,7 @@ public class NoteActivity extends SherlockFragmentActivity implements
     // .setLocationData(data);
     location = selectedLocation;
     this.generalLocation = generalLocation;
-    mNoteFragment.setLocationData("tester");
+    // mNoteFragment.setLocationData("tester");
     getSupportFragmentManager().popBackStack();
   }
 }
