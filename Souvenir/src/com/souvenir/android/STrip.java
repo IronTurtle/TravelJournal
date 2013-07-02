@@ -31,6 +31,9 @@ public class STrip implements Parcelable
   String evernoteGUID;
   // String parentEvernoteGUID;
   String tripName;
+  String generalLocation;
+  String startDate;
+  String endDate;
   boolean dirty = false;
 
   public STrip(Cursor cursor)
@@ -68,10 +71,30 @@ public class STrip implements Parcelable
     this.syncNum = in.readInt();
   }
 
+  // trip name-only
   public STrip(String tripName)
   {
     super();
     this.tripName = tripName;
+  }
+
+  // trip name & general location
+  public STrip(String tripName, String generalLocation)
+  {
+    super();
+    this.tripName = tripName;
+    this.generalLocation = generalLocation;
+  }
+
+  // trip name, general location, start & end date
+  public STrip(String tripName, String generalLocation, String startDate,
+      String endDate)
+  {
+    super();
+    this.tripName = tripName;
+    this.generalLocation = generalLocation;
+    this.startDate = startDate;
+    this.endDate = endDate;
   }
 
   @Override
@@ -85,6 +108,12 @@ public class STrip implements Parcelable
     ContentValues values = new ContentValues();
     values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME,
         this.tripName);
+    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GENLOCATION,
+        this.generalLocation);
+    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_STARTDATE,
+        this.startDate);
+    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_ENDDATE,
+        this.endDate);
     values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID,
         this.evernoteGUID);
     values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM,
@@ -106,6 +135,9 @@ public class STrip implements Parcelable
   {
     dest.writeInt(this.id);
     dest.writeString(this.tripName);
+    dest.writeString(this.generalLocation);
+    dest.writeString(this.startDate);
+    dest.writeString(this.endDate);
     dest.writeString(this.evernoteGUID);
     dest.writeInt(this.dirty ? 1 : 0);
     dest.writeInt(this.syncNum);
@@ -195,6 +227,36 @@ public class STrip implements Parcelable
   public void setTripName(String tripName)
   {
     this.tripName = tripName;
+  }
+
+  public String getGeneralLocation()
+  {
+    return generalLocation;
+  }
+
+  public void setGeneralLocation(String generalLocation)
+  {
+    this.generalLocation = generalLocation;
+  }
+
+  public String getStartDate()
+  {
+    return startDate;
+  }
+
+  public void setStartDate(String startDate)
+  {
+    this.startDate = startDate;
+  }
+
+  public String getEndDate()
+  {
+    return endDate;
+  }
+
+  public void setEndDate(String endDate)
+  {
+    this.endDate = endDate;
   }
 
   public boolean isDirty()

@@ -40,6 +40,9 @@ public class SouvenirContract
     public static final String TABLE_NAME_TRIP = "trip";
     public static final String COLUMN_NAME_TRIP_GUID = "trip_id";
     public static final String COLUMN_NAME_TRIP_NAME = "trip_name";
+    public static final String COLUMN_NAME_TRIP_GENLOCATION = "trip_general_location";
+    public static final String COLUMN_NAME_TRIP_STARTDATE = "trip_startdate";
+    public static final String COLUMN_NAME_TRIP_ENDDATE = "trip_enddate";
     public static final String COLUMN_NAME_TRIP_SYNC_NUM = "trip_sync_num";
     public static final String COLUMN_NAME_TRIP_DIRTY = "trip_dirty";
   }

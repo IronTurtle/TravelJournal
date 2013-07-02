@@ -385,10 +385,20 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
   }
 
   @Override
-  public void onTripDialogPositiveClick(DialogFragment dialog)
+  public void onTripDialogPositiveClick(DialogFragment dialog, Bundle tripInfo)
   {
     Toast.makeText(getActivity().getApplicationContext(), "Trip Created",
         Toast.LENGTH_SHORT).show();
+
+    // System.out.println("name: " + tripInfo.getCharSequence("tripName") + "\n"
+    // + "genLocation: " + tripInfo.getCharSequence("tripGenLoc") + "\n"
+    // + "startDate: " + tripInfo.getCharSequence("tripStartDate") + "\n"
+    // + "endDate: " + tripInfo.getCharSequence("tripEndDate"));
+    STrip strip = new STrip(tripInfo.getCharSequence("tripName").toString(),
+        tripInfo.getCharSequence("tripGenLoc").toString(), tripInfo
+            .getCharSequence("tripStartDate").toString(), tripInfo
+            .getCharSequence("tripEndDate").toString());
+
   }
 
   @Override
