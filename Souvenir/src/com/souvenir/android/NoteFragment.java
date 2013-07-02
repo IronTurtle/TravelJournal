@@ -51,6 +51,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -127,6 +128,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   EditText mEntryEdit;
 
   Button mLocationBtn;
+  CheckBox mIsFinished;
 
   KeyListener titleKeyListener;
 
@@ -165,6 +167,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mEntryEdit = (EditText) view.findViewById(R.id.note_entry_edit);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
     mLocationBtn = (Button) view.findViewById(R.id.note_location_btn);
+    mIsFinished = (CheckBox) view.findViewById(R.id.note_is_finished);
 
     if (savedInstanceState != null
         && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
@@ -238,8 +241,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       // getActivity().getWindow().setSoftInputMode(
       // WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
       // getMetadata();
-      // isEditMode = true;
-      // setViewEditMode(view);
+      isEditMode = true;
+      setViewEditMode(view, false);
       oldNote = true;
       mNote = (SNote) bundle.get("note");
       // String guid = (String) bundle.get("guid");
@@ -419,6 +422,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
         mTitleEdit.setText(mTitleEdit + " at "
             + ((NoteActivity) getActivity()).generalLocation);
       }
+      // else
+      // {
+      // mTitle.setText(mTitle.getText().toString() + " at "
+      // + ((NoteActivity) getActivity()).generalLocation);
+      // mTitleEdit.setText(mTitleEdit.getText().toString() + " at "
+      // + ((NoteActivity) getActivity()).generalLocation);
+      // }
     }
 
   }
@@ -490,11 +500,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   }
 
   // TODO: finish
-  public void setViewEditMode(View v)
+  public void setViewEditMode(View v, boolean saveNote)
   {
     if (isEditMode)
     {
-      // is in view mode, switch to edit mode
+      // is in edit mode, switch to view mode
       Toast.makeText(getActivity().getApplicationContext(),
           "Switching to View Mode", Toast.LENGTH_SHORT).show();
       isEditMode = false;
@@ -505,21 +515,41 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       ViewSwitcher switcher = (ViewSwitcher) v
           .findViewById(R.id.switcher_title);
       switcher.showNext(); // or switcher.showPrevious();
-      mTitleEdit.setText(mTitle.getText().toString());
+      mTitle.setText(mTitleEdit.getText().toString());
 
       // location view switcher
       switcher = (ViewSwitcher) v.findViewById(R.id.switcher_location);
       switcher.showNext(); // or switcher.showPrevious();
-      mLocationEdit.setText(mLocation.getText().toString());
+      mLocation.setText(mLocationEdit.getText().toString());
+
+      // hide places select btn
+      mLocationBtn.setVisibility(View.GONE);
 
       // entry view switcher
       switcher = (ViewSwitcher) v.findViewById(R.id.switcher_entry);
       switcher.showNext(); // or switcher.showPrevious();
-      mEntryEdit.setText(mEntry.getText().toString());
+      mEntry.setText(mEntryEdit.getText().toString());
+
+      if (saveNote && mTitleEdit.getText().length() != 0)
+      {
+        // Save/Update to Evernote
+        System.out.println("Save pressed");
+        Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
+            .show();
+
+        if (!oldNote)
+        {
+          saveNote(this.getView());
+        }
+        else
+        {
+          updateNote(this.getView());
+        }
+      }
     }
     else
     {
-      // is in edit mode, switch to view mode
+      // is in view mode, switch to edit mode
       Toast.makeText(getActivity().getApplicationContext(),
           "Switching to Edit Mode", Toast.LENGTH_SHORT).show();
       isEditMode = true;
@@ -530,28 +560,20 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       ViewSwitcher switcher = (ViewSwitcher) v
           .findViewById(R.id.switcher_title);
       switcher.showPrevious();
-      mTitle.setText(mTitleEdit.getText().toString());
+      mTitleEdit.setText(mTitle.getText().toString());
 
       // location viewswitcher
       switcher = (ViewSwitcher) v.findViewById(R.id.switcher_location);
       switcher.showPrevious();
-      mLocation.setText(mLocationEdit.getText().toString());
+      mLocationEdit.setText(mLocation.getText().toString());
+
+      // show places select btn
+      mLocationBtn.setVisibility(View.VISIBLE);
 
       // entry viewswitcher
       switcher = (ViewSwitcher) v.findViewById(R.id.switcher_entry);
       switcher.showPrevious();
-      mEntry.setText(mEntryEdit.getText().toString());
-      System.out.println("Save pressed");
-      Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
-          .show();
-      if (!oldNote)
-      {
-        saveNote(this.getView());
-      }
-      else
-      {
-        updateNote(this.getView());
-      }
+      mEntryEdit.setText(mEntry.getText().toString());
     }
   }
 
@@ -581,7 +603,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     switch (item.getItemId())
     {
     case R.id.menu_note_viewedit:
-      setViewEditMode(this.getView());
+      setViewEditMode(this.getView(), true);
 
       break;
     // case R.id.menu_note_save:
@@ -1220,6 +1242,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     String title = mTitle.getText().toString();
     SNote snote = new SNote(title, content, location);
     snote.setDirty(true);
+    snote.finished = mIsFinished.isChecked();
     Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.NOTE),
@@ -1282,6 +1305,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     snote.setEvernoteGUID(mNote.getEvernoteGUID());
     snote.setSyncNum(mNote.syncNum);
     snote.setId(mNote.getId());
+    snote.finished = mIsFinished.isChecked();
     if (!title.equals(mNote.getTitle()))
     {
       snote.issetV.add(SNote.isset.title);

@@ -20,6 +20,7 @@ public class SouvenirContract
     public static final String COLUMN_NAME_NOTE_MODIFY_DATE = "note_modify_date";
     public static final String COLUMN_NAME_NOTE_START_DATE = "note_start_date";
     public static final String COLUMN_NAME_NOTE_END_DATE = "note_end_date";
+    public static final String COLUMN_NAME_NOTE_FINISHED = "note_finished";
   }
 
   public static abstract class SouvenirResource implements BaseColumns

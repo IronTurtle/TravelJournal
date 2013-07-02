@@ -28,7 +28,9 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE
       + INTEGER_TYPE + COMMA_SEP
       + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CREATE_DATE
-      + INTEGER_TYPE + " )";
+      + INTEGER_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_FINISHED + INTEGER_TYPE
+      + " )";
   public static final String SQL_CREATE_RESOURCE_TABLE = "CREATE TABLE "
       + SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE + " ("
       + SouvenirContract.SouvenirResource._ID + INTEGER_TYPE + " PRIMARY KEY,"

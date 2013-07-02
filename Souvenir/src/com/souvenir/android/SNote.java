@@ -62,6 +62,7 @@ public class SNote implements Parcelable
   String trophyNumber = null;//
   Boolean[] issetVector = new Boolean[7];
   EnumSet<isset> issetV = EnumSet.noneOf(isset.class);
+  boolean finished = false; //
 
   public enum isset
   {
@@ -147,6 +148,9 @@ public class SNote implements Parcelable
     this.syncNum = cursor
         .getInt(cursor
             .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_SYNC_NUM));
+    this.finished = cursor
+        .getInt(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_FINISHED)) == 1;
 
     // this.content = ""
     // + cursor
@@ -167,6 +171,7 @@ public class SNote implements Parcelable
     // this.tags = null;
     // this.trophyNumber = trophyNumber;
     // this.tripID = tripID;
+    this.finished = false;
 
   }
 
@@ -188,6 +193,7 @@ public class SNote implements Parcelable
     this.bundle = in.readBundle(SResource.class.getClassLoader());
     this.syncNum = in.readInt();
     this.r = in.readHashMap(SResource.class.getClassLoader());
+    this.finished = (in.readInt() == 1);
   }
 
   public SNote(String title, String content, String location)
@@ -198,6 +204,7 @@ public class SNote implements Parcelable
     this.location = location;
     this.createDate = System.currentTimeMillis();
     this.modifyDate = System.currentTimeMillis();
+    this.finished = false;
   }
 
   // public SNote(String title, String content, String location,

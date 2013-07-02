@@ -96,11 +96,6 @@
             android:paddingLeft="15dp"
             android:scrollHorizontally="true" />
 
-        <TextView
-            android:id="@+id/note_trophy"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-
         <ViewSwitcher
         android:id="@+id/switcher_entry"
         android:layout_width="fill_parent"
@@ -118,7 +113,23 @@
             android:layout_height="wrap_content"
             android:gravity="top|left"
             android:hint="@string/entryPlaceholder" />
+
         </ViewSwitcher>
+
+        <CheckBox
+            android:id="@+id/note_is_finished"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/finishedSouvenir" />
+        
+        <EditText
+            android:id="@+id/note_trophy"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|left"
+            android:paddingLeft="15dp"
+            android:hint="Trophy" />
+        
     </LinearLayout>
 
 </ScrollView>

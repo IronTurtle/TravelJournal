@@ -86,5 +86,6 @@
     <string name="create_dialog">Would you like to create a Trip or a Souvenir?</string>
     <string name="create_dialog_trip">Trip</string>
     <string name="create_dialog_souvenir">Souvenir</string>
+    <string name="finishedSouvenir">is Finished</string>
     
 </resources>
