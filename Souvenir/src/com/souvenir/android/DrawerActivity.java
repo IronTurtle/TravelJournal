@@ -21,6 +21,7 @@ import java.util.Locale;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -87,6 +88,7 @@ public class DrawerActivity extends SherlockFragmentActivity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_drawer);
+
     if (!ImageLoader.getInstance().isInited())
     {
       ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
@@ -307,4 +309,12 @@ public class DrawerActivity extends SherlockFragmentActivity
       return rootView;
     }
   }
+
+  public interface TripDialogListener
+  {
+    public void onDialogPositiveClick(DialogFragment dialog);
+
+    public void onDialogNegativeClick(DialogFragment dialog);
+  }
+
 }

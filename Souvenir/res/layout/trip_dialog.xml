@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_name"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    
+    <EditText
+        android:id="@+id/trip_dialog_name"
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content"
+        android:hint="@string/trip_dialog_name" />
+    
+    <EditText
+        android:id="@+id/trip_dialog_gen_loc"
+        android:layout_width="match_parent"  
+        android:layout_height="wrap_content"
+        android:hint="@string/trip_dialog_general_location" />
+
+    <TextView
+        android:id="@+id/trip_dialog_startdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/trip_dialog_startdate" />
+    
+    <DatePicker
+        android:id="@+id/trip_dialog_date_start"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:spinnersShown="true"
+        android:calendarViewShown="false"
+        android:gravity="center" />
+    
+    <TextView
+        android:id="@+id/trip_dialog_enddate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/trip_dialog_enddate" />
+    
+    <DatePicker
+        android:id="@+id/trip_dialog_date_end"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:spinnersShown="true"
+        android:calendarViewShown="false"
+        android:gravity="center" />
+
+</LinearLayout>

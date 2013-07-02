@@ -1,9 +1,6 @@
 package com.souvenir.android;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -28,11 +25,13 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.edam.type.Note;
+import com.souvenir.android.CreateDialogFragment.DialogListener;
+import com.souvenir.android.NewTripDialogFragment.TripDialogListener;
 import com.souvenir.android.database.SouvenirContentProvider;
 import com.souvenir.android.database.SouvenirContract;
 
 public class TripsFragment extends ParentFragment implements OnClickListener,
-    LoaderManager.LoaderCallbacks<Cursor>
+    LoaderManager.LoaderCallbacks<Cursor>, DialogListener, TripDialogListener
 {
   private final static String CREATE_TAG = "CREATE";
 
@@ -108,8 +107,9 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
 
     case R.id.menu_add_note:
       // startActivity(new Intent(getActivity(), NoteActivity.class));
-      CreateDialogFragment cdf = new CreateDialogFragment();
-      cdf.show(getFragmentManager(), CREATE_TAG);
+      CreateDialogFragment dialogFragment = CreateDialogFragment
+          .newInstance(TripsFragment.this);
+      dialogFragment.show(getFragmentManager(), CREATE_TAG);
       break;
     case R.id.menu_refresh:
       getActivity().startService(
@@ -321,40 +321,82 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     this.adapter.swapCursor(null);
   }
 
-  public static class CreateDialogFragment extends DialogFragment
-  {
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState)
-    {
-      // Use the Builder class for convenient dialog construction
-      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-      builder
-          .setMessage(R.string.create_dialog)
-          .setPositiveButton(R.string.create_dialog_souvenir,
-              new DialogInterface.OnClickListener()
-              {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                  // Create Souvenir
-                  startActivity(new Intent(getActivity(), NoteActivity.class));
-                }
-              })
-          .setNegativeButton(R.string.create_dialog_trip,
-              new DialogInterface.OnClickListener()
-              {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                  // Create another dialog to create Trip name, Location, & date
-                  // range
-                  // Trip name is the only mandatory field
-                  Toast.makeText(getActivity().getApplicationContext(),
-                      "Creating Trip", Toast.LENGTH_SHORT).show();
+  // public static class CreateDialogFragment extends DialogFragment
+  // {
+  // @Override
+  // public Dialog onCreateDialog(Bundle savedInstanceState)
+  // {
+  // // Use the Builder class for convenient dialog construction
+  // AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+  // builder
+  // .setMessage(R.string.create_dialog)
+  // .setPositiveButton(R.string.create_dialog_souvenir,
+  // new DialogInterface.OnClickListener()
+  // {
+  // public void onClick(DialogInterface dialog, int id)
+  // {
+  // // Create Souvenir
+  //
+  // startActivity(new Intent(getActivity(), NoteActivity.class));
+  // }
+  // })
+  // .setNegativeButton(R.string.create_dialog_trip,
+  // new DialogInterface.OnClickListener()
+  // {
+  // public void onClick(DialogInterface dialog, int id)
+  // {
+  // // Create another dialog to create Trip name, Location, & date
+  // // range
+  // // Trip name is the only mandatory field
+  // Toast.makeText(getActivity().getApplicationContext(),
+  // "Creating Trip", Toast.LENGTH_SHORT).show();
+  //
+  // }
+  // });
+  // // Create the AlertDialog object and return it
+  // return builder.create();
+  // }
+  //
+  // }
 
-                }
-              });
-      // Create the AlertDialog object and return it
-      return builder.create();
-    }
+  public void openTripDialog()
+  {
+
+    NewTripDialogFragment dialogFragment = NewTripDialogFragment
+        .newInstance(TripsFragment.this);
+    dialogFragment.show(getFragmentManager(), CREATE_TAG);
+  }
+
+  @Override
+  public void onDialogPositiveClick(DialogFragment dialog)
+  {
+    startActivity(new Intent(getActivity(), NoteActivity.class));
+  }
+
+  @Override
+  public void onDialogNegativeClick(DialogFragment dialog)
+  {
+    // Create another dialog to create Trip name, Location, & date
+    // range
+    // Trip name is the only mandatory field
+    Toast.makeText(getActivity().getApplicationContext(), "Creating Trip",
+        Toast.LENGTH_SHORT).show();
+    openTripDialog();
+  }
+
+  @Override
+  public void onTripDialogPositiveClick(DialogFragment dialog)
+  {
+    Toast.makeText(getActivity().getApplicationContext(), "Trip Created",
+        Toast.LENGTH_SHORT).show();
+  }
+
+  @Override
+  public void onTripDialogNegativeClick(DialogFragment dialog)
+  {
+
+    Toast.makeText(getActivity().getApplicationContext(), "New Trip Cancelled",
+        Toast.LENGTH_SHORT).show();
   }
 
 }

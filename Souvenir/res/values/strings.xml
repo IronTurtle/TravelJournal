@@ -87,5 +87,11 @@
     <string name="create_dialog_trip">Trip</string>
     <string name="create_dialog_souvenir">Souvenir</string>
     <string name="finishedSouvenir">is Finished</string>
+    <string name="trip_dialog_title">New Trip Info</string>
+    <string name="trip_dialog_name">New Trip Name</string>
+    <string name="trip_dialog_general_location">New Trip General Location</string>
+    <string name="trip_dialog_date_range">Date Range</string>
+    <string name="trip_dialog_startdate">Start Date</string>
+    <string name="trip_dialog_enddate">End Date</string>
     
 </resources>
