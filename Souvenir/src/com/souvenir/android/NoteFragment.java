@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -845,11 +844,14 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   public void displayNote()
   {
 
-    mTitle.setText(mNote.getTitle().toUpperCase(Locale.US));
+    // mTitle.setText(mNote.getTitle().toUpperCase(Locale.US));
+    mTitle.setText(mNote.getTitle());
     // mLocation.setText("testerse");
     String contents = mNote.getContent();
-    mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
-
+    // mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
+    mEntry.setText(mNote.getContent().substring(
+        mNote.getContent().indexOf("<p>") + "<p>".length(),
+        mNote.getContent().indexOf("</p>")));
     Document doc = Jsoup.parse(contents);
     System.out.println("contents");
     System.out.println(contents);
@@ -1311,11 +1313,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     {
       snote.issetV.add(SNote.isset.title);
     }
-    // System.out.println(mNote.getContent().substring(
-    // mNote.getContent().indexOf("<p>") + "<p>".length(),
-    // mNote.getContent().indexOf("</p>")));
+    System.out.println("|"
+        + mNote.getContent().substring(
+            mNote.getContent().indexOf("<p>") + "<p>".length(),
+            mNote.getContent().indexOf("</p>")) + "|");
     if (!content.equals(mNote.getContent().substring(
-        mNote.getContent().indexOf("<p>"), mNote.getContent().indexOf("</p>"))))
+        mNote.getContent().indexOf("<p>") + "<p>".length(),
+        mNote.getContent().indexOf("</p>"))))
     {
       // content = mNote.getContent().replace(
       // mNote.getContent().substring(
