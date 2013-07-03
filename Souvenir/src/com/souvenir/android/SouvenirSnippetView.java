@@ -14,7 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
-public class SnippetView extends RelativeLayout
+public class SouvenirSnippetView extends RelativeLayout
 {
 
   private SNote mNote;
@@ -46,7 +46,7 @@ public class SnippetView extends RelativeLayout
   protected DisplayImageOptions options;
   protected EvernoteSession mEvernoteSession;
 
-  public SnippetView(Context context, SNote note)
+  public SouvenirSnippetView(Context context, SNote note)
   {
     super(context);
     this.context = context;
@@ -159,7 +159,7 @@ public class SnippetView extends RelativeLayout
   // * @param app
   // * The App that was changed.
   // */
-  // public void onAppChanged(SnippetView view, App app);
+  // public void onAppChanged(SouvenirSnippetView view, App app);
   // }
   //
   // @Override

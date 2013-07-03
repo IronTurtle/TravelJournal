@@ -94,7 +94,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
           long id)
       {
         Intent intent = new Intent(SnippetFragment.this.getActivity(),
-            NoteActivity.class).putExtra("note", ((SnippetView) view).getNote());
+            NoteActivity.class).putExtra("note",
+            ((SouvenirSnippetView) view).getNote());
         getActivity().startActivityForResult(intent, 300);
       }
     });
@@ -348,7 +349,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       }
       resCursor.close();
       // ((AppView) view).setOnAppChangeListener(null);
-      ((SnippetView) view).setSNote(note);
+      ((SouvenirSnippetView) view).setSNote(note);
       // ((AppView) view).setOnAppChangeListener(this.m_listener);
     }
 
@@ -372,7 +373,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
         }
       }
       resCursor.close();
-      SnippetView sv = new SnippetView(context, note);
+      SouvenirSnippetView sv = new SouvenirSnippetView(context, note);
       return sv;
     }
   }

@@ -62,7 +62,7 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + TEXT_TYPE + COMMA_SEP
       + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM + INTEGER_TYPE
       + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_DIRTY
-      + INTEGER_TYPE + " BOOLEAN" + " )";
+      + " BOOLEAN" + " )";
 
   public static final String SQL_DELETE_NOTE_TABLE = "DROP TABLE IF EXISTS "
       + SouvenirContract.SouvenirNote.TABLE_NAME_NOTE;

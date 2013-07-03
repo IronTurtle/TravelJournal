@@ -46,6 +46,7 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     abs.setDisplayHomeAsUpEnabled(true);
     setHasOptionsMenu(true);
     View view = inflater.inflate(R.layout.fragment_trips, container, false);
+
     Cursor resCursor;
     if ((resCursor = getActivity().getContentResolver().query(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
@@ -73,7 +74,7 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
           long id)
       {
         Intent intent = new Intent(TripsFragment.this.getActivity(),
-            NoteActivity.class).putExtra("note", ((SnippetView) view).getNote());
+            NoteActivity.class).putExtra("note", ((SouvenirSnippetView) view).getNote());
         getActivity().startActivityForResult(intent, 300);
       }
     });
@@ -260,7 +261,7 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
       // }
       // resCursor.close();
       // // ((AppView) view).setOnAppChangeListener(null);
-      // ((SnippetView) view).setSNote(note);
+      // ((SouvenirSnippetView) view).setSNote(note);
       // // ((AppView) view).setOnAppChangeListener(this.m_listener);
       ((TextView) view).setText(new STrip(cursor).tripName);
     }
@@ -288,7 +289,7 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
       // }
       // }
       // resCursor.close();
-      // SnippetView sv = new SnippetView(context, note);
+      // SouvenirSnippetView sv = new SouvenirSnippetView(context, note);
       // return sv;
     }
   }
@@ -410,5 +411,4 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     Toast.makeText(getActivity().getApplicationContext(), "New Trip Cancelled",
         Toast.LENGTH_SHORT).show();
   }
-
 }

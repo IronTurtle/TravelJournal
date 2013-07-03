@@ -106,20 +106,19 @@ public class STrip implements Parcelable
   public ContentValues toContentValues()
   {
     ContentValues values = new ContentValues();
-    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME,
-        this.tripName);
+
+    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME, tripName);
     values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GENLOCATION,
-        this.generalLocation);
+        generalLocation);
     values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_STARTDATE,
-        this.startDate);
-    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_ENDDATE,
-        this.endDate);
+        startDate);
+    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_ENDDATE, endDate);
     values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID,
-        this.evernoteGUID);
-    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM,
-        this.syncNum);
-    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID,
-        this.dirty ? 1 : 0);
+        evernoteGUID);
+    values
+        .put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM, syncNum);
+    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID, dirty ? 1
+        : 0);
     return values;
   }
 
