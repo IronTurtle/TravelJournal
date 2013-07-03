@@ -93,5 +93,7 @@
     <string name="trip_dialog_date_range">Date Range</string>
     <string name="trip_dialog_startdate">Start Date</string>
     <string name="trip_dialog_enddate">End Date</string>
+    <string name="note_view_mode_string">Save</string>
+    <string name="note_edit_mode_string">Edit</string>
     
 </resources>

@@ -320,6 +320,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     getTravelNotebook();
     System.out.println(mTitle.getText());
+    getActivity().getWindow().setSoftInputMode(
+        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     return view;
   }
 
@@ -362,35 +364,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     // TODO: add value in fields
 
     Log.i("souvenir", "onActivityCreated Loading data...");
-    // if (savedInstanceState != null
-    // && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
-    // {
-    // isEditMode = savedInstanceState.getBoolean("SAVED_STATE_NOTE_VIEW",
-    // isEditMode);
-    // System.out.println("isEditMode: " + isEditMode);
-    // // this.setViewEditMode(getView());
-    // }
-    // if ((((NoteActivity) getActivity()).location != null)
-    // && (((NoteActivity) getActivity()).generalLocation != null))
-    // {
-    // mLocation.setText(((NoteActivity) getActivity()).location);
-    // mLocationEdit.setText(((NoteActivity) getActivity()).location);
-    // System.out.println("location set");
-    // if (mTitleEdit.getText().length() == 0 && mTitle.getText().length() == 0)
-    // {
-    // mTitle.setText("Souvenir Note on " + getDateTime() + " at "
-    // + ((NoteActivity) getActivity()).generalLocation);
-    // mTitleEdit.setText(mTitleEdit + " at "
-    // + ((NoteActivity) getActivity()).generalLocation);
-    // }
-    // else
-    // {
-    // mTitle.setText(mTitle.getText() + " at "
-    // + ((NoteActivity) getActivity()).generalLocation);
-    // mTitleEdit.setText(mTitleEdit.getText() + " at "
-    // + ((NoteActivity) getActivity()).generalLocation);
-    // }
-    // }
 
   }
 
@@ -421,13 +394,19 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
         mTitleEdit.setText(mTitleEdit + " at "
             + ((NoteActivity) getActivity()).generalLocation);
       }
-      // else
-      // {
-      // mTitle.setText(mTitle.getText().toString() + " at "
-      // + ((NoteActivity) getActivity()).generalLocation);
-      // mTitleEdit.setText(mTitleEdit.getText().toString() + " at "
-      // + ((NoteActivity) getActivity()).generalLocation);
-      // }
+      System.out.println("FROM SELECTING LOCATION");
+      if (oldNote)
+      {
+        isEditMode = false;
+        setViewEditMode(getView(), false);
+
+      }// else
+       // {
+       // mTitle.setText(mTitle.getText().toString() + " at "
+       // + ((NoteActivity) getActivity()).generalLocation);
+       // mTitleEdit.setText(mTitleEdit.getText().toString() + " at "
+       // + ((NoteActivity) getActivity()).generalLocation);
+       // }
     }
 
   }
@@ -504,8 +483,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     if (isEditMode)
     {
       // is in edit mode, switch to view mode
-      Toast.makeText(getActivity().getApplicationContext(),
-          "Switching to View Mode", Toast.LENGTH_SHORT).show();
+      // Toast.makeText(getActivity().getApplicationContext(),
+      // "Switching to View Mode", Toast.LENGTH_SHORT).show();
       isEditMode = false;
       if (!fromAnotherFragment)
         this.getSherlockActivity().invalidateOptionsMenu();
@@ -549,8 +528,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     else
     {
       // is in view mode, switch to edit mode
-      Toast.makeText(getActivity().getApplicationContext(),
-          "Switching to Edit Mode", Toast.LENGTH_SHORT).show();
+      // Toast.makeText(getActivity().getApplicationContext(),
+      // "Switching to Edit Mode", Toast.LENGTH_SHORT).show();
       isEditMode = true;
       if (!fromAnotherFragment)
         this.getSherlockActivity().invalidateOptionsMenu();
@@ -584,11 +563,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     if (isEditMode)
     {
-      viewEdit.setTitle("View");
+      viewEdit.setTitle(R.string.note_view_mode_string)
+          .setIcon(R.drawable.save);
     }
     else
     {
-      viewEdit.setTitle("Edit");
+      viewEdit.setTitle(R.string.note_edit_mode_string);
     }
 
   }
@@ -846,7 +826,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     // mTitle.setText(mNote.getTitle().toUpperCase(Locale.US));
     mTitle.setText(mNote.getTitle());
-    // mLocation.setText("testerse");
+    mLocation.setText(mNote.getLocation());
     String contents = mNote.getContent();
     // mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
     mEntry.setText(mNote.getContent().substring(

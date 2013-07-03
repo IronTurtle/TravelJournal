@@ -22,6 +22,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -83,7 +84,8 @@ public class PlacesFragment extends ParentFragment
     mlocManager = (LocationManager) getActivity().getSystemService(
         Context.LOCATION_SERVICE);
     mlocListener = new AppLocationListener();
-
+    getActivity().getWindow().setSoftInputMode(
+        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     // get nearby places from gps
     getNearbyPlaces();
     return view;

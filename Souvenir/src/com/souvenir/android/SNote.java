@@ -412,7 +412,8 @@ public class SNote implements Parcelable
 
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE, title);
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT, content);
-    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION, "");
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
+        location);
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_DIRTY,
         dirty == true ? 1 : 0);
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID,
