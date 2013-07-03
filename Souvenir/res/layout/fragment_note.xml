@@ -122,14 +122,14 @@
             android:layout_height="wrap_content"
             android:text="@string/finishedSouvenir" />
         
-        <EditText
+        <!-- <EditText
             android:id="@+id/note_trophy"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="top|left"
             android:paddingLeft="15dp"
             android:hint="Trophy" />
-        
+        -->
     </LinearLayout>
 
 </ScrollView>

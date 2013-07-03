@@ -853,6 +853,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     Document doc = Jsoup.parse(contents);
     System.out.println("contents");
     System.out.println(contents);
+
     Elements divs = doc.getElementsByAttribute("hash");
     System.out.println("Images");
     for (final Element div : divs)

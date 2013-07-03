@@ -75,7 +75,7 @@
         <item>Explore</item>
         <item>Trips</item>
         <item>Completed</item>
-        <item>Facebook</item>
+        <!-- <item>Facebook Login</item>-->
         <!-- <item>Settings</item>-->
     </string-array>
     

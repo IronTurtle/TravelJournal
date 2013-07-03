@@ -26,7 +26,7 @@ public class STrip implements Parcelable
     }
   };
 
-  int id;
+  int id = -1;
   int syncNum = -1;
   String evernoteGUID;
   // String parentEvernoteGUID;

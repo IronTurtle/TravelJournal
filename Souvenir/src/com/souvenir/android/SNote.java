@@ -502,9 +502,10 @@ public class SNote implements Parcelable
 
     System.out.println(date);
     NoteAttributes attr = new NoteAttributes();
+    attr.setPlaceName(location); // this is the official evernote loc name field
     LazyMap map = new LazyMap();
-
-    map.putToFullMap("LOCATION", location);
+    map.putToFullMap("LOCATION", location); // this was the old & incorrect way
+                                            // to store evernote loc
     // if (longitude != 0 && latitude != 0)
     // {
     // attr.setLongitude(longitude);
