@@ -152,6 +152,10 @@ public class SNote implements Parcelable
         .getInt(cursor
             .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_FINISHED)) == 1;
 
+    this.tripID = cursor
+        .getString(cursor
+            .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TRIP_ID));
+
     // this.content = ""
     // + cursor
     // .getLong(cursor
@@ -172,6 +176,10 @@ public class SNote implements Parcelable
     // this.trophyNumber = trophyNumber;
     // this.tripID = tripID;
     this.finished = false;
+    if (note.isSetTagNames())
+      this.tripID = note.getTagNames().get(0);
+    else
+      this.tripID = "uncategorized";
 
   }
 
@@ -417,6 +425,7 @@ public class SNote implements Parcelable
         modifyDate);
     values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_ISSET,
         encode(issetV));
+    values.put(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TRIP_ID, tripID);
     return values;
   }
 
@@ -437,6 +446,9 @@ public class SNote implements Parcelable
     if (syncNum == -1)
     {
       issetV = EnumSet.allOf(isset.class);
+      List<String> list = new ArrayList<String>();
+      list.add(tripID);
+      note.setTagNames(list);
     }
     else
     {

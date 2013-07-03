@@ -98,7 +98,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
         getActivity().startActivityForResult(intent, 300);
       }
     });
-    getActivity().getSupportLoaderManager().initLoader(1, null, this);
+    getActivity().getSupportLoaderManager().initLoader(2, null, this);
 
     return view;
   }
@@ -108,7 +108,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   {
     super.onResume();
     updateUi();
-    getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+    getActivity().getSupportLoaderManager().restartLoader(2, null, this);
     adapter.notifyDataSetChanged();
   }
 
@@ -360,8 +360,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       Cursor resCursor;
       if ((resCursor = getActivity().getContentResolver().query(
           Uri.parse(SouvenirContentProvider.CONTENT_URI
-              + SouvenirContentProvider.DatabaseConstants.NOTE_RES),
-          null, null, null, null)) != null
+              + SouvenirContentProvider.DatabaseConstants.NOTE_RES), null,
+          null, null, null)) != null
           && resCursor.getCount() > 0)
       {
         while (resCursor.moveToNext())
@@ -462,7 +462,12 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
         null, null, SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE
             + " DESC");
     return cursorLoader;
-    // return null;
+
+    // CursorLoader cursorLoader = new CursorLoader(getActivity(),
+    // Uri.parse(SouvenirContentProvider.CONTENT_URI
+    // + SouvenirContentProvider.DatabaseConstants.TRIP), null, null,
+    // null, null);
+    // return cursorLoader;
   }
 
   @Override

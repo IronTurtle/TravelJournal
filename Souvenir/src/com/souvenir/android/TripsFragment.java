@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -28,7 +29,6 @@ import com.evernote.edam.type.Note;
 import com.souvenir.android.CreateDialogFragment.DialogListener;
 import com.souvenir.android.NewTripDialogFragment.TripDialogListener;
 import com.souvenir.android.database.SouvenirContentProvider;
-import com.souvenir.android.database.SouvenirContract;
 
 public class TripsFragment extends ParentFragment implements OnClickListener,
     LoaderManager.LoaderCallbacks<Cursor>, DialogListener, TripDialogListener
@@ -242,68 +242,64 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     @Override
     public void bindView(View view, Context context, Cursor cursor)
     {
-      SNote note = new SNote(cursor);
-      String[] args = { "" + note.getId() };
-      Cursor resCursor;
-      if ((resCursor = getActivity().getContentResolver().query(
-          Uri.parse(SouvenirContentProvider.CONTENT_URI
-              + SouvenirContentProvider.DatabaseConstants.NOTE_RES),
-          null,
-          SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID + "="
-              + note.getId(), null, null)) != null
-          && resCursor.getCount() > 0)
-      {
-        while (resCursor.moveToNext())
-        {
-          note.addResource(new SResource(resCursor));
-        }
-      }
-      resCursor.close();
-      // ((AppView) view).setOnAppChangeListener(null);
-      ((SnippetView) view).setSNote(note);
-      // ((AppView) view).setOnAppChangeListener(this.m_listener);
+      // SNote note = new SNote(cursor);
+      // String[] args = { "" + note.getId() };
+      // Cursor resCursor;
+      // if ((resCursor = getActivity().getContentResolver().query(
+      // Uri.parse(SouvenirContentProvider.CONTENT_URI
+      // + SouvenirContentProvider.DatabaseConstants.NOTE_RES),
+      // null,
+      // SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID + "="
+      // + note.getId(), null, null)) != null
+      // && resCursor.getCount() > 0)
+      // {
+      // while (resCursor.moveToNext())
+      // {
+      // note.addResource(new SResource(resCursor));
+      // }
+      // }
+      // resCursor.close();
+      // // ((AppView) view).setOnAppChangeListener(null);
+      // ((SnippetView) view).setSNote(note);
+      // // ((AppView) view).setOnAppChangeListener(this.m_listener);
+      ((TextView) view).setText(new STrip(cursor).tripName);
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
-      SNote note = new SNote(cursor);
-      String[] args = { "" + note.getId() };
-      Cursor resCursor;
-      if ((resCursor = getActivity().getContentResolver().query(
-          Uri.parse(SouvenirContentProvider.CONTENT_URI
-              + SouvenirContentProvider.DatabaseConstants.NOTE_RES), null,
-          null, null, null)) != null
-          && resCursor.getCount() > 0)
-      {
-        while (resCursor.moveToNext())
-        {
-          SResource sc = new SResource(resCursor);
-          // System.out.println(note.getId() + " " + sc.getNoteId());
-          note.addResource(sc);
-        }
-      }
-      resCursor.close();
-      SnippetView sv = new SnippetView(context, note);
-      return sv;
+      TextView tv = new TextView(context);
+      tv.setText(new STrip(cursor).tripName);
+      return tv;
+      // SNote note = new SNote(cursor);
+      // String[] args = { "" + note.getId() };
+      // Cursor resCursor;
+      // if ((resCursor = getActivity().getContentResolver().query(
+      // Uri.parse(SouvenirContentProvider.CONTENT_URI
+      // + SouvenirContentProvider.DatabaseConstants.NOTE_RES), null,
+      // null, null, null)) != null
+      // && resCursor.getCount() > 0)
+      // {
+      // while (resCursor.moveToNext())
+      // {
+      // SResource sc = new SResource(resCursor);
+      // // System.out.println(note.getId() + " " + sc.getNoteId());
+      // note.addResource(sc);
+      // }
+      // }
+      // resCursor.close();
+      // SnippetView sv = new SnippetView(context, note);
+      // return sv;
     }
   }
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
-    String[] projection = { SouvenirContract.SouvenirNote._ID,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_CONTENT,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_LOCATION,
-        SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_GUID };
-
-    Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI
-        + SouvenirContentProvider.DatabaseConstants.NOTE);
-
-    CursorLoader cursorLoader = new CursorLoader(getActivity(), uri, null,
-        null, null, SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE
-            + " DESC");
+    CursorLoader cursorLoader = new CursorLoader(getActivity(),
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.TRIP), null, null,
+        null, null);
     return cursorLoader;
     // return null;
   }
