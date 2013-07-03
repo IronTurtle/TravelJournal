@@ -237,7 +237,7 @@ public class DrawerActivity extends SherlockFragmentActivity
       fragment = new SnippetFragment();
       break;
     case 3:
-      fragment = new FacebookLoginFragment();
+      fragment = new SettingsFragment();
       break;
     }
 

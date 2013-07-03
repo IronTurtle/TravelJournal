@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -29,6 +28,7 @@ import com.evernote.edam.type.Note;
 import com.souvenir.android.CreateDialogFragment.DialogListener;
 import com.souvenir.android.NewTripDialogFragment.TripDialogListener;
 import com.souvenir.android.database.SouvenirContentProvider;
+import com.souvenir.android.database.SouvenirContract;
 
 public class TripsFragment extends ParentFragment implements OnClickListener,
     LoaderManager.LoaderCallbacks<Cursor>, DialogListener, TripDialogListener
@@ -74,7 +74,8 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
           long id)
       {
         Intent intent = new Intent(TripsFragment.this.getActivity(),
-            NoteActivity.class).putExtra("note", ((SouvenirSnippetView) view).getNote());
+            NoteActivity.class).putExtra("note",
+            ((SouvenirSnippetView) view).getNote());
         getActivity().startActivityForResult(intent, 300);
       }
     });
@@ -243,54 +244,17 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     @Override
     public void bindView(View view, Context context, Cursor cursor)
     {
-      // SNote note = new SNote(cursor);
-      // String[] args = { "" + note.getId() };
-      // Cursor resCursor;
-      // if ((resCursor = getActivity().getContentResolver().query(
-      // Uri.parse(SouvenirContentProvider.CONTENT_URI
-      // + SouvenirContentProvider.DatabaseConstants.NOTE_RES),
-      // null,
-      // SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_NOTE_ID + "="
-      // + note.getId(), null, null)) != null
-      // && resCursor.getCount() > 0)
-      // {
-      // while (resCursor.moveToNext())
-      // {
-      // note.addResource(new SResource(resCursor));
-      // }
-      // }
-      // resCursor.close();
-      // // ((AppView) view).setOnAppChangeListener(null);
-      // ((SouvenirSnippetView) view).setSNote(note);
-      // // ((AppView) view).setOnAppChangeListener(this.m_listener);
-      ((TextView) view).setText(new STrip(cursor).tripName);
+      STrip trip = new STrip(cursor);
+      // ((TextView) view).setText(new STrip(cursor).tripName);
+      ((TripSnippetView) view).setSTrip(trip);
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
-      TextView tv = new TextView(context);
-      tv.setText(new STrip(cursor).tripName);
+      STrip trip = new STrip(cursor);
+      TripSnippetView tv = new TripSnippetView(context, trip);
       return tv;
-      // SNote note = new SNote(cursor);
-      // String[] args = { "" + note.getId() };
-      // Cursor resCursor;
-      // if ((resCursor = getActivity().getContentResolver().query(
-      // Uri.parse(SouvenirContentProvider.CONTENT_URI
-      // + SouvenirContentProvider.DatabaseConstants.NOTE_RES), null,
-      // null, null, null)) != null
-      // && resCursor.getCount() > 0)
-      // {
-      // while (resCursor.moveToNext())
-      // {
-      // SResource sc = new SResource(resCursor);
-      // // System.out.println(note.getId() + " " + sc.getNoteId());
-      // note.addResource(sc);
-      // }
-      // }
-      // resCursor.close();
-      // SouvenirSnippetView sv = new SouvenirSnippetView(context, note);
-      // return sv;
     }
   }
 
@@ -395,6 +359,7 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
         tripInfo.getCharSequence("tripGenLoc").toString(), tripInfo
             .getCharSequence("tripStartDate").toString(), tripInfo
             .getCharSequence("tripEndDate").toString());
+
     Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.TRIP),
@@ -410,5 +375,20 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
 
     Toast.makeText(getActivity().getApplicationContext(), "New Trip Cancelled",
         Toast.LENGTH_SHORT).show();
+
+    String[] queryColumns = { SouvenirContract.SouvenirTrip._ID,
+        SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME };
+
+    Cursor cursor = getActivity().getContentResolver().query(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.TRIP), null, null,
+        null, null);
+    while (cursor.moveToNext())
+    {
+      System.out.println("TripID: "
+          + cursor.getString(cursor.getColumnIndex(queryColumns[0]))
+          + " TRIPNAME: "
+          + cursor.getString(cursor.getColumnIndex(queryColumns[1])));
+    }
   }
 }

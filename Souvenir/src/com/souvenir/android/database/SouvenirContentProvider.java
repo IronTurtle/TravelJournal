@@ -235,6 +235,7 @@ public class SouvenirContentProvider extends ContentProvider
       // table.
       id = sqlDB.insert(SouvenirContract.SouvenirTrip.TABLE_NAME_TRIP, null,
           values);
+      System.out.println("id from souvenircontentprvider:" + id);
       break;
 
     default:

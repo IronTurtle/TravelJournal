@@ -218,7 +218,7 @@ public class STrip implements Parcelable
   // this.parentEvernoteGUID = parentEvernoteGUID;
   // }
 
-  public String getTripName()
+  public String getName()
   {
     return tripName;
   }

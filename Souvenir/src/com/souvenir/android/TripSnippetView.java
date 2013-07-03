@@ -33,9 +33,9 @@ public class TripSnippetView extends RelativeLayout
 
   private ImageView snippetPic;
 
-  private TextView snippetLocation;
+  private TextView snippetGeneralLocation;
 
-  private TextView snippetEvent;
+  private TextView snippetName;
 
   private static final String CONSUMER_KEY = "ironsuturtle";
   private static final String CONSUMER_SECRET = "e0441c112aab58f6";
@@ -50,8 +50,8 @@ public class TripSnippetView extends RelativeLayout
     this.context = context;
     View view = LayoutInflater.from(context).inflate(R.layout.snippet_trip,
         this);
-    snippetEvent = (TextView) view.findViewById(R.id.trip_snippetName);
-    snippetLocation = (TextView) view
+    snippetName = (TextView) view.findViewById(R.id.trip_snippetName);
+    snippetGeneralLocation = (TextView) view
         .findViewById(R.id.trip_snippetGeneralLocation);
     snippetStartDate = (TextView) view.findViewById(R.id.trip_snippetStartDate);
     snippetEndDate = (TextView) view.findViewById(R.id.trip_snippetEndDate);
@@ -63,20 +63,11 @@ public class TripSnippetView extends RelativeLayout
   public void setSTrip(STrip trip)
   {
     this.mTrip = trip;
-    //
-    // snippetStartDate.setText("");
-    //
-    // // imageLoader.displayImage(
-    // // "" + mEvernoteSession.getAuthenticationResult().getWebApiUrlPrefix()
-    // // + "thm/note/" + snippetEntry.getGuid() + "?auth="
-    // // + mEvernoteSession.getAuthToken(), snippetPic, options);
-    //
-    // // String location = snippetEntry.getAttributes().getPlaceName();
-    // // if (location == null)
-    // // {
-    // // location = String.valueOf((snippetEntry.getAttributes().getLatitude())
-    // // + String.valueOf(snippetEntry.getAttributes().getLongitude()));
-    // // }
+    snippetName.setText(trip.getName());
+    snippetGeneralLocation.setText(trip.getGeneralLocation());
+    snippetStartDate.setText(trip.getStartDate());
+    snippetEndDate.setText(trip.getEndDate());
+
     //
     // snippetLocation.setText(trip.getLocation());
     // snippetEvent.setText(trip.getTitle());

@@ -57,7 +57,6 @@ import com.souvenir.android.database.SouvenirContract;
 public class SnippetFragment extends ParentFragment implements OnClickListener,
     LoaderManager.LoaderCallbacks<Cursor>
 {
-  private static final int SNIPPET_PAGE_SIZE = 5;
   private static String TRAVEL_NOTEBOOK_NAME = "Travel Notebook";
   // private static String NOTEBOOK_GUID;
 

@@ -75,8 +75,7 @@
         <item>Explore</item>
         <item>Trips</item>
         <item>Completed</item>
-        <!-- <item>Facebook Login</item>-->
-        <!-- <item>Settings</item>-->
+        <item>Settings</item>
     </string-array>
     
     <string name="drawer_open">Open navigation drawer</string>

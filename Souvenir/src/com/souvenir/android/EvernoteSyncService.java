@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.evernote.client.android.EvernoteSession;
+import com.evernote.client.android.OnClientCallback;
 import com.evernote.edam.error.EDAMNotFoundException;
 import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
@@ -23,6 +24,7 @@ import com.evernote.edam.notestore.SyncState;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Tag;
+import com.evernote.edam.type.User;
 import com.evernote.thrift.TException;
 import com.evernote.thrift.transport.TTransportException;
 import com.souvenir.android.database.SouvenirContentProvider;
@@ -577,4 +579,38 @@ public class EvernoteSyncService extends IntentService
     super.onDestroy();
   }
 
+  public void userAccountInfo()
+  {
+    try
+    {
+      mEvernoteSession.getClientFactory().createUserStoreClient()
+          .getUser(new OnClientCallback<User>()
+          {
+
+            @Override
+            public void onSuccess(User data)
+            {
+              // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onException(Exception exception)
+            {
+              // TODO Auto-generated method stub
+              exception.printStackTrace();
+            }
+          });
+    }
+    catch (IllegalStateException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch (TTransportException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
 }
