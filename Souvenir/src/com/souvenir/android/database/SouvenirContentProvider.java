@@ -32,6 +32,7 @@ public class SouvenirContentProvider extends ContentProvider
     public static String NOTE_RES = "res/";
     public static String GET_RES = "res/#";
     public static String TRIP = "trip/";
+    public static String GET_TRIP = "trip/#";
   }
 
   /*****************/
@@ -47,6 +48,7 @@ public class SouvenirContentProvider extends ContentProvider
   public static final int NOTE_RES = NOTE + 2;
   public static final int GET_RES = NOTE + 3;
   public static final int TRIP = NOTE + 4;
+  public static final int GET_TRIP = NOTE + 5;
 
   /** The authority for this content provider. */
   private static final String AUTHORITY = "com.souvenir.database";
@@ -80,6 +82,7 @@ public class SouvenirContentProvider extends ContentProvider
     s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.NOTE_RES, NOTE_RES);
     s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.GET_RES, GET_RES);
     s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.TRIP, TRIP);
+    s_URIMatcher.addURI(AUTHORITY, DatabaseConstants.GET_TRIP, GET_TRIP);
   }
 
   /**
@@ -371,6 +374,26 @@ public class SouvenirContentProvider extends ContentProvider
         rowsUpdated = sqlDB.update(
             SouvenirContract.SouvenirResource.TABLE_NAME_RESOURCE, values,
             SouvenirContract.SouvenirResource._ID + "=" + id2, null);
+      }
+
+      break;
+
+    case GET_TRIP:
+      String id21 = uri.getLastPathSegment();
+
+      // Perform the actual update in the table.
+      if (!TextUtils.isEmpty(selection))
+      {
+        rowsUpdated = sqlDB.update(
+            SouvenirContract.SouvenirTrip.TABLE_NAME_TRIP, values,
+            SouvenirContract.SouvenirTrip._ID + "=" + id21 + " AND "
+                + selection, null);
+      }
+      else
+      {
+        rowsUpdated = sqlDB.update(
+            SouvenirContract.SouvenirTrip.TABLE_NAME_TRIP, values,
+            SouvenirContract.SouvenirTrip._ID + "=" + id21, null);
       }
 
       break;

@@ -398,11 +398,13 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     // + "genLocation: " + tripInfo.getCharSequence("tripGenLoc") + "\n"
     // + "startDate: " + tripInfo.getCharSequence("tripStartDate") + "\n"
     // + "endDate: " + tripInfo.getCharSequence("tripEndDate"));
+    if (tripInfo.getCharSequence("tripName").toString().isEmpty())
+      return;
     STrip sTrip = new STrip(tripInfo.getCharSequence("tripName").toString(),
         tripInfo.getCharSequence("tripGenLoc").toString(), tripInfo
             .getCharSequence("tripStartDate").toString(), tripInfo
             .getCharSequence("tripEndDate").toString());
-
+    sTrip.setDirty(true);
     Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.TRIP),

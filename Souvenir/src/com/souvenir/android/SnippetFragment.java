@@ -528,8 +528,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     case R.id.menu_refresh:
       getActivity().startService(
           new Intent(getActivity(), EvernoteSyncService.class));
-      getActivity().getSupportLoaderManager().restartLoader(1, null, this);
-      adapter.notifyDataSetChanged();
+      getActivity().getSupportLoaderManager().restartLoader(2, null, this);
+      // adapter.notifyDataSetChanged();
       return true;
 
       // case R.id.facebook_login:

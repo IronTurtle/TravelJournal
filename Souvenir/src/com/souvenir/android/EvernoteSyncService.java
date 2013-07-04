@@ -381,6 +381,21 @@ public class EvernoteSyncService extends IntentService
     }
     Cursor cursor;
 
+    if ((cursor = getContentResolver().query(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.TRIP), null,
+        SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_DIRTY, null, null)) != null
+        && cursor.getCount() > 0)
+    {
+      while (cursor.moveToNext())
+      {
+        STrip tag = new STrip(cursor);
+
+        saveTag(tag);
+      }
+    }
+    cursor.close();
+
     // Dirty
     if ((cursor = getContentResolver().query(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
@@ -419,7 +434,46 @@ public class EvernoteSyncService extends IntentService
           updateNote(snote);
         }
       }
-      cursor.close();
+    }
+    cursor.close();
+
+  }
+
+  public void saveTag(final STrip strip)
+  {
+    Tag tag = strip.toTag();
+    tag.setParentGuid(TRIPS_GUID);
+    try
+    {
+      Tag data = null;
+      if (strip.getSyncNum() == -1)
+      {
+        data = noteStore.createTag(mEvernoteSession.getAuthToken(), tag);
+      }
+      else
+      {
+        System.out.println("Shouldnt be here");
+        noteStore.updateTag(mEvernoteSession.getAuthToken(), tag);
+      }
+      strip.setSyncNum(data.getUpdateSequenceNum());
+      strip.setDirty(false);
+      strip.setEvernoteGUID(data.getGuid());
+      strip.insert(getApplicationContext());
+      if (strip.getSyncNum() == lastUpdateCount + 1)
+      {
+        // still in sync
+        lastUpdateCount++;
+        prefs.edit().putInt("lastUpdateCount", strip.getSyncNum()).commit();
+      }
+      else if (strip.getSyncNum() > lastUpdateCount + 1)
+      {
+        sync(strip.getSyncNum());
+        // incremental
+      }
+    }
+    catch (Exception exception)
+    {
+      exception.printStackTrace();
     }
   }
 
@@ -433,6 +487,7 @@ public class EvernoteSyncService extends IntentService
 
       snote.setSyncNum(data.getUpdateSequenceNum());
       snote.setDirty(false);
+      snote.setEvernoteGUID(data.getGuid());
       update(snote);
       if (snote.getSyncNum() == lastUpdateCount + 1)
       {
