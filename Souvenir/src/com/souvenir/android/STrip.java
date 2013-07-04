@@ -117,7 +117,7 @@ public class STrip implements Parcelable
         evernoteGUID);
     values
         .put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM, syncNum);
-    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID, dirty ? 1
+    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_DIRTY, dirty ? 1
         : 0);
     return values;
   }
