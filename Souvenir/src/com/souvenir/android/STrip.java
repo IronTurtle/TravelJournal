@@ -117,7 +117,7 @@ public class STrip implements Parcelable
         evernoteGUID);
     values
         .put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM, syncNum);
-    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID, dirty ? 1
+    values.put(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_DIRTY, dirty ? 1
         : 0);
     return values;
   }
@@ -144,26 +144,13 @@ public class STrip implements Parcelable
 
   public void insert(Context applicationContext)
   {
-    Cursor cursor;
-    String[] args = { evernoteGUID };
-    if ((cursor = applicationContext.getContentResolver().query(
-        Uri.parse(SouvenirContentProvider.CONTENT_URI
-            + SouvenirContentProvider.DatabaseConstants.TRIP), null,
-        SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID + "=?", args, null)) != null
-        && cursor.getCount() > 0)
+
+    if (id != -1)
     {
-      // System.out.println("This GUID already exists "
-      // + cursor.getCount());
-      // System.out.println("old note");
-      while (cursor.moveToNext())
-      {
-        applicationContext.getContentResolver().update(
-            Uri.parse(SouvenirContentProvider.CONTENT_URI
-                + SouvenirContentProvider.DatabaseConstants.TRIP),
-            toContentValues(), null, null);
-        // System.out.println(oldNote.getEvernoteGUID());
-      }
-      // System.out.println("syncnumber: " + syncnum);
+      applicationContext.getContentResolver().update(
+          Uri.parse(SouvenirContentProvider.CONTENT_URI
+              + SouvenirContentProvider.DatabaseConstants.GET_TRIP.replace("#",
+                  "" + id)), toContentValues(), null, null);
     }
     else
     {
@@ -172,10 +159,43 @@ public class STrip implements Parcelable
               + SouvenirContentProvider.DatabaseConstants.TRIP),
           toContentValues());
     }
-    cursor.close();
 
     // int id = Integer.valueOf(uri.getLastPathSegment());
     // setId(id);
+
+    // Cursor cursor;
+    // String[] args = { evernoteGUID };
+    // if ((cursor = applicationContext.getContentResolver().query(
+    // Uri.parse(SouvenirContentProvider.CONTENT_URI
+    // + SouvenirContentProvider.DatabaseConstants.TRIP), null,
+    // SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID + "=?", args, null))
+    // != null
+    // && cursor.getCount() > 0)
+    // {
+    // // System.out.println("This GUID already exists "
+    // // + cursor.getCount());
+    // // System.out.println("old note");
+    // while (cursor.moveToNext())
+    // {
+    // applicationContext.getContentResolver().update(
+    // Uri.parse(SouvenirContentProvider.CONTENT_URI
+    // + SouvenirContentProvider.DatabaseConstants.TRIP),
+    // toContentValues(), null, null);
+    // // System.out.println(oldNote.getEvernoteGUID());
+    // }
+    // // System.out.println("syncnumber: " + syncnum);
+    // }
+    // else
+    // {
+    // Uri uri = applicationContext.getContentResolver().insert(
+    // Uri.parse(SouvenirContentProvider.CONTENT_URI
+    // + SouvenirContentProvider.DatabaseConstants.TRIP),
+    // toContentValues());
+    // }
+    // cursor.close();
+    //
+    // // int id = Integer.valueOf(uri.getLastPathSegment());
+    // // setId(id);
   }
 
   public int getId()

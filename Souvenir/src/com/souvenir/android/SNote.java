@@ -176,8 +176,8 @@ public class SNote implements Parcelable
     // this.trophyNumber = trophyNumber;
     // this.tripID = tripID;
     this.finished = false;
-    if (note.isSetTagNames())
-      this.tripID = note.getTagNames().get(0);
+    if (note.isSetTagGuids())
+      this.tripID = note.getTagGuids().get(0);
     else
       this.tripID = "uncategorized";
 

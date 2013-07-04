@@ -72,6 +72,11 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState)
   {
+    if (getArguments() != null)
+    {
+      trip = getArguments().getString("trip");
+    }
+
     ActionBar abs = getSherlockActivity().getSupportActionBar();
     // abs.setTitle("Outfit");
     abs.setDisplayHomeAsUpEnabled(true);
@@ -446,6 +451,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   // }
   // }
 
+  String trip;
+
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
@@ -458,9 +465,17 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     Uri uri = Uri.parse(SouvenirContentProvider.CONTENT_URI
         + SouvenirContentProvider.DatabaseConstants.NOTE);
 
-    CursorLoader cursorLoader = new CursorLoader(getActivity(), uri, null,
-        null, null, SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE
-            + " DESC");
+    CursorLoader cursorLoader = null;
+    if (trip == null)
+      cursorLoader = new CursorLoader(getActivity(), uri, null, null, null,
+          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE + " DESC");
+    else
+    {
+      String[] args1 = { trip };
+      cursorLoader = new CursorLoader(getActivity(), uri, null,
+          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TRIP_ID + "=?", args1,
+          SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE + " DESC");
+    }
     return cursorLoader;
 
     // CursorLoader cursorLoader = new CursorLoader(getActivity(),
@@ -513,8 +528,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     case R.id.menu_refresh:
       getActivity().startService(
           new Intent(getActivity(), EvernoteSyncService.class));
-      getActivity().getSupportLoaderManager().restartLoader(1, null, this);
-      adapter.notifyDataSetChanged();
+      getActivity().getSupportLoaderManager().restartLoader(2, null, this);
+      // adapter.notifyDataSetChanged();
       return true;
 
       // case R.id.facebook_login:

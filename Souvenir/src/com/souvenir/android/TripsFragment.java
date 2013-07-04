@@ -79,10 +79,46 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
         // ((TripSnippetView) view).getTrip());
         // getActivity().startActivityForResult(intent, 300);
         System.out.println(((TripSnippetView) view).getTrip().getName());
-        ToDoDialog todoFragment = new ToDoDialog();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-            .replace(R.id.content_frame, todoFragment).commit();
+        Cursor cursor;
+        String[] args = { ((TripSnippetView) view).getTrip().getEvernoteGUID() };
+        System.out.println(args[0]);
+        if ((cursor = getActivity().getContentResolver().query(
+            Uri.parse(SouvenirContentProvider.CONTENT_URI
+                + SouvenirContentProvider.DatabaseConstants.NOTE), null,
+            SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TRIP_ID + "=?",
+            args, null)) != null
+            // null, null, null)) != null
+            && cursor.getCount() > 0)
+        {
+          // System.out.println("This GUID already exists "
+          // + cursor.getCount());
+          // System.out.println("old note");
+          while (cursor.moveToNext())
+          {
+            // SnippetFragment sf = new SnippetFragment()
+            System.out.println(new SNote(cursor).getContent());
+            // Bundle args1 = new Bundle();
+            // args1.putString("trip", ((TripSnippetView) view).getTrip()
+            // .getEvernoteGUID());
+            // // Put any other arguments
+            // sf.setArguments(args1);
+            // System.out.println(oldNote.getEvernoteGUID());
+          }
+        }
+        cursor.close();
+        SnippetFragment sf = new SnippetFragment();
+        // System.out.println(new SNote(cursor).getContent());
+        Bundle args1 = new Bundle();
+        args1.putString("trip", ((TripSnippetView) view).getTrip()
+            .getEvernoteGUID());
+        // Put any other arguments
+        sf.setArguments(args1);
+        // System.out.println(oldN
+        // ToDoDialog todoFragment = new ToDoDialog();
+        FragmentManager fragmentManager = getSherlockActivity()
+            .getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, sf)
+            .commit();
 
       }
     });
@@ -362,11 +398,13 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     // + "genLocation: " + tripInfo.getCharSequence("tripGenLoc") + "\n"
     // + "startDate: " + tripInfo.getCharSequence("tripStartDate") + "\n"
     // + "endDate: " + tripInfo.getCharSequence("tripEndDate"));
+    if (tripInfo.getCharSequence("tripName").toString().isEmpty())
+      return;
     STrip sTrip = new STrip(tripInfo.getCharSequence("tripName").toString(),
         tripInfo.getCharSequence("tripGenLoc").toString(), tripInfo
             .getCharSequence("tripStartDate").toString(), tripInfo
             .getCharSequence("tripEndDate").toString());
-
+    sTrip.setDirty(true);
     Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.TRIP),
