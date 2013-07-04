@@ -51,10 +51,11 @@ public class TripSnippetView extends RelativeLayout
     View view = LayoutInflater.from(context).inflate(R.layout.snippet_trip,
         this);
     snippetName = (TextView) view.findViewById(R.id.trip_snippetName);
-    snippetGeneralLocation = (TextView) view
-        .findViewById(R.id.trip_snippetGeneralLocation);
-    snippetStartDate = (TextView) view.findViewById(R.id.trip_snippetStartDate);
-    snippetEndDate = (TextView) view.findViewById(R.id.trip_snippetEndDate);
+    // snippetGeneralLocation = (TextView) view
+    // .findViewById(R.id.trip_snippetGeneralLocation);
+    // snippetStartDate = (TextView)
+    // view.findViewById(R.id.trip_snippetStartDate);
+    // snippetEndDate = (TextView) view.findViewById(R.id.trip_snippetEndDate);
     snippetPic = (ImageView) view.findViewById(R.id.trip_snippetPic);
     setSTrip(trip);
     // m_onAppChangeListener = null;
@@ -64,9 +65,9 @@ public class TripSnippetView extends RelativeLayout
   {
     this.mTrip = trip;
     snippetName.setText(trip.getName());
-    snippetGeneralLocation.setText(trip.getGeneralLocation());
-    snippetStartDate.setText(trip.getStartDate());
-    snippetEndDate.setText(trip.getEndDate());
+    // snippetGeneralLocation.setText(trip.getGeneralLocation());
+    // snippetStartDate.setText(trip.getStartDate());
+    // snippetEndDate.setText(trip.getEndDate());
 
     //
     // snippetLocation.setText(trip.getLocation());

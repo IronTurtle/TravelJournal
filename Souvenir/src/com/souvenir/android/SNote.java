@@ -66,7 +66,8 @@ public class SNote implements Parcelable
 
   public enum isset
   {
-    content, location, resources, tags, title
+    content, location, resources, tags, title, tripid // tripid just added (7/4
+                                                      // - Kevin)
   }
 
   // From Adamski's answer

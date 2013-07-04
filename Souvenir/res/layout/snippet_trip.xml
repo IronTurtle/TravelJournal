@@ -27,7 +27,7 @@
         android:typeface="sans" 
         android:layout_toRightOf="@id/trip_snippetPic"/>
 
-    <TextView
+    <!-- <TextView
         android:id="@+id/trip_snippetGeneralLocation"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -60,6 +60,6 @@
         android:scrollHorizontally="true"
         android:textColor="@android:color/black" 
         android:layout_below="@id/snippetText"
-        android:layout_toRightOf="@id/trip_snippetPic"/>
+        android:layout_toRightOf="@id/trip_snippetPic"/> -->
 
 </RelativeLayout>

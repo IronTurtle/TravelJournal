@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -49,11 +50,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -84,6 +87,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   ViewPager pager;
   // ArrayList<String> urls = new ArrayList<String>();
   ArrayList<ImageData> images = new ArrayList<ImageData>();
+  ArrayList<String> tripsList;
 
   // The path to and MIME type of the currently selected image from the
   // gallery
@@ -128,6 +132,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
   Button mLocationBtn;
   CheckBox mIsFinished;
+  Spinner tripSpinner;
 
   KeyListener titleKeyListener;
 
@@ -166,7 +171,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mEntryEdit = (EditText) view.findViewById(R.id.note_entry_edit);
     mCaption = (EditText) view.findViewById(R.id.image_caption);
     mLocationBtn = (Button) view.findViewById(R.id.note_location_btn);
-    mIsFinished = (CheckBox) view.findViewById(R.id.note_is_finished);
+    // mIsFinished = (CheckBox) view.findViewById(R.id.note_is_finished);
+
+    tripSpinner = (Spinner) view.findViewById(R.id.note_trips_spinner);
+    setupTripSpinner();
 
     if (savedInstanceState != null
         && savedInstanceState.containsKey("SAVED_STATE_NOTE_VIEW"))
@@ -339,6 +347,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       outState.putString("SAVED_STATE_NOTE_ENTRY", mEntry.getText().toString());
 
     outState.putBoolean("SAVED_STATE_NOTE_VIEW", this.isEditMode);
+
+    System.out.println("Note trip:" + tripSpinner.getSelectedItem().toString());
+    outState.putString("SAVED_STATE_NOTE_TRIP", tripSpinner.getSelectedItem()
+        .toString());
   }
 
   @Override
@@ -409,6 +421,40 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
        // }
     }
 
+  }
+
+  public void setupTripSpinner()
+  {
+
+    String[] array = { "Unnassigned Trip" };
+    tripsList = new ArrayList<String>();
+    tripsList.addAll(Arrays.asList(array));
+
+    Cursor resCursor;
+    if ((resCursor = getActivity().getContentResolver().query(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.TRIP), null, null,
+        null, null)) != null
+        && resCursor.getCount() > 0)
+    {
+      while (resCursor.moveToNext())
+      {
+        System.out.println(new STrip(resCursor).tripName);
+
+        tripsList
+            .add(resCursor.getString(resCursor
+                .getColumnIndex(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME)));
+      }
+    }
+    resCursor.close();
+    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity()
+        .getApplicationContext(), android.R.layout.simple_spinner_item,
+        tripsList);
+    // Specify the layout to use when the list of choices appears
+    adapter
+        .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    // Apply the adapter to the tripSpinner
+    tripSpinner.setAdapter(adapter);
   }
 
   private void getTravelNotebook()
@@ -508,6 +554,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       switcher.showNext(); // or switcher.showPrevious();
       mEntry.setText(mEntryEdit.getText().toString());
 
+      // trip spinner disabled
+      tripSpinner.setClickable(false);
+
       if (saveNote && mTitleEdit.getText().length() != 0)
       {
         // Save/Update to Evernote
@@ -552,6 +601,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       switcher = (ViewSwitcher) v.findViewById(R.id.switcher_entry);
       switcher.showPrevious();
       mEntryEdit.setText(mEntry.getText().toString());
+
+      // trip spinner enables
+      tripSpinner.setClickable(true);
     }
   }
 
@@ -828,6 +880,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mTitle.setText(mNote.getTitle());
     mLocation.setText(mNote.getLocation());
     String contents = mNote.getContent();
+    tripSpinner.setSelection(tripsList.indexOf(mNote.getTripID()));
     // mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
     mEntry.setText(mNote.getContent().substring(
         mNote.getContent().indexOf("<p>") + "<p>".length(),
@@ -1225,7 +1278,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     String title = mTitle.getText().toString();
     SNote snote = new SNote(title, content, location);
     snote.setDirty(true);
-    snote.finished = mIsFinished.isChecked();
+    // snote.finished = mIsFinished.isChecked();
+    snote.tripID = tripSpinner.getSelectedItem().toString();
     Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.NOTE),
@@ -1288,7 +1342,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     snote.setEvernoteGUID(mNote.getEvernoteGUID());
     snote.setSyncNum(mNote.syncNum);
     snote.setId(mNote.getId());
-    snote.finished = mIsFinished.isChecked();
+    // snote.finished = mIsFinished.isChecked();
+    snote.setTripID(tripSpinner.getSelectedItem().toString());
     if (!title.equals(mNote.getTitle()))
     {
       snote.issetV.add(SNote.isset.title);
@@ -1310,6 +1365,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     if (!location.equals(mNote.getLocation()))
     {
       snote.issetV.add(SNote.isset.location);
+    }
+    if (!(tripSpinner.getSelectedItem().toString()).equals(mNote.getTripID()))
+    {
+      snote.issetV.add(SNote.isset.tripid);
     }
     // System.out.println(SNote.encode((EnumSet<SNote.isset>) snote.issetV));
     snote.setDirty(true);

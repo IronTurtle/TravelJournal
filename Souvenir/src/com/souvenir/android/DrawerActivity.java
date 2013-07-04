@@ -323,6 +323,7 @@ public class DrawerActivity extends SherlockFragmentActivity
   @Override
   public void onBackPressed()
   {
+    super.onBackPressed();
     System.out.println("Back Button Pressed");
     // if (mDrawerLayout.isDrawerOpen(mDrawerList))
     // {
