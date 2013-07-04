@@ -72,7 +72,7 @@
     <string name="cancel_itinerary_item">Cancel</string>
 
     <string-array name="drawer_array">
-        <item>Explore</item>
+        <!-- <item>Explore</item> -->
         <item>Trips</item>
         <item>Completed</item>
         <item>Settings</item>

@@ -584,9 +584,10 @@ public class EvernoteSyncService extends IntentService
     try
     {
       System.out.println("GETTING USER INFO");
+
       // final String packageName =
-      // this.getApplication().getApplicationContext()
-      // .getPackageName();
+      // this.getApplicationContext().getPackageName();
+
       mEvernoteSession.getClientFactory().createUserStoreClient()
           .getUser(new OnClientCallback<User>()
           {

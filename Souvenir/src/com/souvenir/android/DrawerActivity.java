@@ -75,6 +75,10 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
  */
 public class DrawerActivity extends SherlockFragmentActivity
 {
+  private static final int TRIPS_POSITION = 0;
+  private static final int COMPLETED_POSITION = 1;
+  private static final int SETTINGS_POSITION = 2;
+
   private DrawerLayout mDrawerLayout;
   private ListView mDrawerList;
   private ActionBarDrawerToggle mDrawerToggle;
@@ -139,7 +143,7 @@ public class DrawerActivity extends SherlockFragmentActivity
 
     if (savedInstanceState == null)
     {
-      selectItem(2);
+      selectItem(COMPLETED_POSITION);
     }
   }
 
@@ -220,23 +224,23 @@ public class DrawerActivity extends SherlockFragmentActivity
     Fragment fragment = null;
     switch (position)
     {
-    case 0:
-      fragment = new PlanetFragment();
-      Bundle args = new Bundle();
-      args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-      fragment.setArguments(args);
-      break;
-    case 1:
+    // case 0:
+    // fragment = new PlanetFragment();
+    // Bundle args = new Bundle();
+    // args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+    // fragment.setArguments(args);
+    // break;
+    case TRIPS_POSITION:
       fragment = new TripsFragment();
       Bundle args2 = new Bundle();
       // args2.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
       // fragment.setArguments(args2);
       break;
-    case 2:
+    case COMPLETED_POSITION:
       // update the main content by replacing fragments
       fragment = new SnippetFragment();
       break;
-    case 3:
+    case SETTINGS_POSITION:
       fragment = new SettingsFragment();
       break;
     }
