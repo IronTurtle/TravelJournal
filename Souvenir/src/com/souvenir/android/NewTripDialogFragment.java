@@ -116,7 +116,7 @@ public class NewTripDialogFragment extends DialogFragment
     Context context = this.getActivity().getApplicationContext();
     LayoutInflater inflater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    builder.setView(inflater.inflate(R.layout.trip_dialog, null));
+    builder.setView(inflater.inflate(R.layout.dialog_trip, null));
 
     return builder.create();
   }

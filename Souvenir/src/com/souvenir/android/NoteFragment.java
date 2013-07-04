@@ -1272,7 +1272,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       System.out.println(cv
           .get(SouvenirContract.SouvenirResource.COLUMN_NAME_RESOURCE_HASH));
     }
-    // getActivity().finish();
+    getActivity().finish();
   }
 
   public void updateNote(View view)

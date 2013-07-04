@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -73,10 +74,16 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id)
       {
-        Intent intent = new Intent(TripsFragment.this.getActivity(),
-            NoteActivity.class).putExtra("note",
-            ((SouvenirSnippetView) view).getNote());
-        getActivity().startActivityForResult(intent, 300);
+        // Intent intent = new Intent(TripsFragment.this.getActivity(),
+        // TripActivity.class).putExtra("trip",
+        // ((TripSnippetView) view).getTrip());
+        // getActivity().startActivityForResult(intent, 300);
+        System.out.println(((TripSnippetView) view).getTrip().getName());
+        ToDoDialog todoFragment = new ToDoDialog();
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+            .replace(R.id.content_frame, todoFragment).commit();
+
       }
     });
     getActivity().getSupportLoaderManager().initLoader(1, null, this);
