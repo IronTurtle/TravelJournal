@@ -56,7 +56,7 @@ public class TripSnippetView extends RelativeLayout
     // snippetStartDate = (TextView)
     // view.findViewById(R.id.trip_snippetStartDate);
     // snippetEndDate = (TextView) view.findViewById(R.id.trip_snippetEndDate);
-    snippetPic = (ImageView) view.findViewById(R.id.trip_snippetPic);
+    // snippetPic = (ImageView) view.findViewById(R.id.trip_snippetPic);
     setSTrip(trip);
     // m_onAppChangeListener = null;
   }

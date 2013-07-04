@@ -244,10 +244,16 @@ public class DrawerActivity extends SherlockFragmentActivity
       break;
     }
 
+    // FragmentTransaction transaction = getSupportFragmentManager()
+    // .beginTransaction();
+    // transaction.replace(R.id.content_frame, fragment);
+    // transaction.addToBackStack(null);
+    // transaction.commit();
+
     FragmentManager fragmentManager = getSupportFragmentManager();
     fragmentManager.beginTransaction().replace(R.id.content_frame, fragment)
         .commit();
-
+    invalidateOptionsMenu();
     // update selected item and title, then close the drawer
     mDrawerList.setItemChecked(position, true);
     setTitle(mDrawerTitles[position]);
@@ -323,8 +329,22 @@ public class DrawerActivity extends SherlockFragmentActivity
   @Override
   public void onBackPressed()
   {
-    super.onBackPressed();
+    invalidateOptionsMenu();
+
     System.out.println("Back Button Pressed");
+    System.out.println(getSupportFragmentManager().getBackStackEntryCount());
+    if (getSupportFragmentManager().getBackStackEntryCount() > 0)
+    {
+      getSupportFragmentManager().popBackStack();
+    }
+    else if (!mDrawerLayout.isDrawerOpen(mDrawerList))
+    {
+      mDrawerLayout.openDrawer(mDrawerList);
+    }
+    else
+    {
+      super.onBackPressed();
+    }
     // if (mDrawerLayout.isDrawerOpen(mDrawerList))
     // {
     // super.onBackPressed();

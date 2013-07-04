@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -113,12 +113,12 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
             .getEvernoteGUID());
         // Put any other arguments
         sf.setArguments(args1);
-        // System.out.println(oldN
-        // ToDoDialog todoFragment = new ToDoDialog();
-        FragmentManager fragmentManager = getSherlockActivity()
-            .getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, sf)
-            .commit();
+
+        FragmentTransaction transaction = getFragmentManager()
+            .beginTransaction();
+        transaction.replace(R.id.content_frame, sf);
+        // transaction.addToBackStack(null);
+        transaction.commit();
 
       }
     });

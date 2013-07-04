@@ -98,9 +98,6 @@ public class NoteActivity extends SherlockFragmentActivity implements
     newFragment.setArguments(args);
     FragmentTransaction transaction = getSupportFragmentManager()
         .beginTransaction();
-
-    // Replace whatever is in the fragment_container view with this fragment,
-    // and add the transaction to the back stack so the user can navigate back
     transaction.replace(android.R.id.content, newFragment);
     transaction.addToBackStack(null);
     transaction.commit();

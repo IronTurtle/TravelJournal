@@ -3,7 +3,7 @@ package com.souvenir.android;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,9 +74,10 @@ public class SettingsFragment extends ParentFragment
     public void onClick(View v)
     {
       FacebookLoginFragment fragment = new FacebookLoginFragment();
-      FragmentManager fragmentManager = getFragmentManager();
-      fragmentManager.beginTransaction().replace(R.id.content_frame, fragment)
-          .commit();
+      FragmentTransaction transaction = getFragmentManager().beginTransaction();
+      transaction.replace(R.id.content_frame, fragment);
+      transaction.addToBackStack(null);
+      transaction.commit();
     }
   }
 
