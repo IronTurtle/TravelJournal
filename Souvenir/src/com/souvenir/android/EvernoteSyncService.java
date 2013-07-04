@@ -583,6 +583,10 @@ public class EvernoteSyncService extends IntentService
   {
     try
     {
+      System.out.println("GETTING USER INFO");
+      // final String packageName =
+      // this.getApplication().getApplicationContext()
+      // .getPackageName();
       mEvernoteSession.getClientFactory().createUserStoreClient()
           .getUser(new OnClientCallback<User>()
           {
@@ -590,14 +594,19 @@ public class EvernoteSyncService extends IntentService
             @Override
             public void onSuccess(User data)
             {
+              System.out.println(data.getUsername());
               // TODO Auto-generated method stub
-
+              // SharedPreferences prefs = getSharedPreferences(packageName,
+              // Context.MODE_PRIVATE);
+              // prefs.edit().putString("settings_username",
+              // data.getUsername());
             }
 
             @Override
             public void onException(Exception exception)
             {
               // TODO Auto-generated method stub
+              System.out.println("Exception");
               exception.printStackTrace();
             }
           });
@@ -605,11 +614,13 @@ public class EvernoteSyncService extends IntentService
     catch (IllegalStateException e)
     {
       // TODO Auto-generated catch block
+      System.out.println("IllegalStateException");
       e.printStackTrace();
     }
     catch (TTransportException e)
     {
       // TODO Auto-generated catch block
+      System.out.println("TTransportException");
       e.printStackTrace();
     }
   }

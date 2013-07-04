@@ -317,4 +317,10 @@ public class DrawerActivity extends SherlockFragmentActivity
     public void onDialogNegativeClick(DialogFragment dialog);
   }
 
+  @Override
+  public void onBackPressed()
+  {
+    super.onBackPressed();
+    System.out.println("Back Button Pressed");
+  }
 }

@@ -1,11 +1,14 @@
 package com.souvenir.android;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -15,6 +18,7 @@ import com.facebook.widget.LoginButton;
 
 public class SettingsFragment extends ParentFragment
 {
+  TextView username;
   LoginButton fbLoginBtn;
 
   @Override
@@ -25,6 +29,16 @@ public class SettingsFragment extends ParentFragment
     abs.setDisplayHomeAsUpEnabled(true);
     setHasOptionsMenu(true);
     View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+    EvernoteSyncService ess = new EvernoteSyncService();
+    ess.userAccountInfo();
+
+    SharedPreferences pref = getActivity().getSharedPreferences(
+        getActivity().getApplicationContext().getPackageName(),
+        Context.MODE_PRIVATE);
+
+    username = (TextView) view.findViewById(R.id.settings_username);
+    username.setText(pref.getString("settings_username", null));
 
     fbLoginBtn = (LoginButton) view.findViewById(R.id.settings_btn_facebook);
     fbLoginBtn.setOnClickListener(new FacebookOnClickListener());
