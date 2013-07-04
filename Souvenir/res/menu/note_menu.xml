@@ -20,8 +20,8 @@
 		android:icon="@drawable/trophy"
 		android:title="Trophy" />
 	
-	<!-- <item android:id="@+id/menu_note_fbshare" android:showAsAction="ifRoom"
+	<item android:id="@+id/menu_note_fbshare" android:showAsAction="ifRoom"
 		android:icon="@drawable/share"
 		android:title="Share to Facebook" />
-	-->
+	
 </menu>

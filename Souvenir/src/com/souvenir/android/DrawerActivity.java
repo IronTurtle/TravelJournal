@@ -105,7 +105,6 @@ public class DrawerActivity extends SherlockFragmentActivity
     mDrawerTitles = getResources().getStringArray(R.array.drawer_array);
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
     // set a custom shadow that overlays the main content when the drawer opens
     mDrawerLayout
         .setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -324,7 +323,14 @@ public class DrawerActivity extends SherlockFragmentActivity
   @Override
   public void onBackPressed()
   {
-    super.onBackPressed();
     System.out.println("Back Button Pressed");
+    // if (mDrawerLayout.isDrawerOpen(mDrawerList))
+    // {
+    // super.onBackPressed();
+    // }
+    // else
+    // {
+    // mDrawerLayout.openDrawer(mDrawerList);
+    // }
   }
 }

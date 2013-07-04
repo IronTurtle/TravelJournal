@@ -96,7 +96,7 @@ public class ShareFragment extends ParentFragment implements OnClickListener
       String entry = getActivity().getIntent().getExtras()
           .getStringArray("NOTE")[2];
       Bundle postParams = new Bundle();
-      postParams.putString("name", "Souvenir @ Evernote Hackathon: " + title);
+      postParams.putString("name", title);
       postParams.putString("caption", loc);
       postParams.putString("description", entry);
       postParams
