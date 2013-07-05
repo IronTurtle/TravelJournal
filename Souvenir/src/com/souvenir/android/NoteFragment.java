@@ -126,10 +126,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   TextView mTitle;
   TextView mLocation;
   TextView mEntry;
+  TextView mCaption;
 
   EditText mTitleEdit;
   EditText mLocationEdit;
   EditText mEntryEdit;
+  EditText mCaptionEdit;
 
   Button mLocationBtn;
   CheckBox mIsFinished;
@@ -140,7 +142,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   // Note note = new Note();
   SNote mNote;
   Resource resource = new Resource();
-  private EditText mCaption;
 
   // Activity result request codes
   private static final int SELECT_IMAGE = 1;
@@ -170,7 +171,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mLocationEdit = (EditText) view.findViewById(R.id.note_location_edit);
     mEntry = (TextView) view.findViewById(R.id.note_entry);
     mEntryEdit = (EditText) view.findViewById(R.id.note_entry_edit);
-    mCaption = (EditText) view.findViewById(R.id.image_caption);
+    mCaption = (TextView) view.findViewById(R.id.image_caption);
+    mCaptionEdit = (EditText) view.findViewById(R.id.image_caption_edit);
     mLocationBtn = (Button) view.findViewById(R.id.note_location_btn);
     // mIsFinished = (CheckBox) view.findViewById(R.id.note_is_finished);
 
@@ -186,6 +188,34 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
 
     mCaption.addTextChangedListener(new TextWatcher()
+    {
+
+      @Override
+      public void afterTextChanged(Editable s)
+      {
+        if (!images.isEmpty())
+        {
+          images.get(pager.getCurrentItem()).caption = s.toString();
+        }
+
+      }
+
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count,
+          int after)
+      {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count)
+      {
+      }
+
+    });
+
+    mCaptionEdit.addTextChangedListener(new TextWatcher()
     {
 
       @Override
@@ -228,6 +258,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       public void onPageSelected(int arg0)
       {
         mCaption.setText(images.get(arg0).caption);
+        mCaptionEdit.setText(images.get(arg0).caption);
       }
 
       @Override
@@ -565,6 +596,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       switcher.showNext(); // or switcher.showPrevious();
       mEntry.setText(mEntryEdit.getText().toString());
 
+      // caption view switcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_caption);
+      switcher.showNext(); // or switcher.showPrevious();
+      mCaption.setText(mCaptionEdit.getText().toString());
+
       // trip spinner disabled
       tripSpinner.setClickable(false);
 
@@ -612,6 +648,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       switcher = (ViewSwitcher) v.findViewById(R.id.switcher_entry);
       switcher.showPrevious();
       mEntryEdit.setText(mEntry.getText().toString());
+
+      // caption viewswitcher
+      switcher = (ViewSwitcher) v.findViewById(R.id.switcher_caption);
+      switcher.showPrevious();
+      mCaptionEdit.setText(mCaption.getText().toString());
 
       // trip spinner enables
       tripSpinner.setClickable(true);
@@ -988,255 +1029,6 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
 
   }
-
-  // public void displayNote()
-  // {
-  //
-  // mTitle.setText(note.getTitle().toUpperCase(Locale.US));
-  //
-  // String location = note.getAttributes().getPlaceName();
-  // if (location == null)
-  // {
-  // location = String.valueOf((note.getAttributes().getLatitude())
-  // + String.valueOf(note.getAttributes().getLongitude()));
-  // }
-  // if (location != null)
-  // {
-  // selectedPlace = true;
-  // mLocation.setText(location);
-  // }
-  // latitude = note.getAttributes().getLatitude();
-  // longitude = note.getAttributes().getLongitude();
-  // System.out.println("Getting note content...");
-  // String contents = note.getContent();
-  //
-  // System.out.println("Got note content");
-  //
-  // mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
-  //
-  // Document doc = Jsoup.parse(contents);
-  // System.out.println("contents");
-  // System.out.println(contents);
-  // Elements divs = doc.getElementsByAttribute("hash");
-  // System.out.println("Images");
-  // for (final Element div : divs)
-  // {
-  // System.out.println(div.attr("hash"));
-  // System.out.println(div.attr("title"));
-  //
-  // mImageData.fileName = div.attr("hash");
-  // try
-  // {
-  // mEvernoteSession
-  // .getClientFactory()
-  // .createNoteStoreClient()
-  // .getResourceByHash(note.getGuid(),
-  // EvernoteUtil.hexToBytes(div.attr("hash")), false, true, false,
-  // new OnClientCallback<Resource>()
-  // {
-  // @Override
-  // public void onSuccess(Resource data)
-  // {
-  // resource = data;
-  // System.out.println(data.toString());
-  // urls.add(""
-  // + mEvernoteSession.getAuthenticationResult()
-  // .getWebApiUrlPrefix() + "res/" + data.getGuid()
-  // + "?auth=" + mEvernoteSession.getAuthToken());
-  // ImageData mImageData = new ImageData();
-  //
-  // mImageData.caption = div.attr("title");
-  // images.add(mImageData);
-  // pager.getAdapter().notifyDataSetChanged();
-  // mCaption.setText(images.get(pager.getCurrentItem()).caption);
-  // }
-  //
-  // @Override
-  // public void onException(Exception exception)
-  // {
-  // exception.printStackTrace();
-  //
-  // }
-  //
-  // });
-  // }
-  // catch (TTransportException e)
-  // {
-  // e.printStackTrace();
-  // }
-  // }
-  // }
-  //
-  // public void updateNote(View view)
-  // {
-  // try
-  // {
-  // /*
-  // * note.setTitle(mTitle.getText().toString());
-  // * System.out.println("Note Title: " + note.getTitle());
-  // *
-  // * // Trying to add locations to data resources NoteAttributes attr = new
-  // * NoteAttributes(); LazyMap map = new LazyMap();
-  // *
-  // * map.putToFullMap("LOCATION", mLocation.getText().toString());
-  // * attr.setApplicationData(map); note.setAttributes(attr);
-  // *
-  // * System.out.println(note.getAttributes().getApplicationData().toString())
-  // * ;
-  // *
-  // * note.addToResources(resource);
-  // *
-  // * note.setTitle(mTitle.getText().toString());
-  // * note.setContent(EvernoteUtil.NOTE_PREFIX + "<p>" +
-  // * mEntry.getText().toString() + "</p>" +
-  // * EvernoteUtil.createEnMediaTag(resource) + EvernoteUtil.NOTE_SUFFIX);
-  // */
-  //
-  // String content;
-  // System.out.println("curContent: " + mEntry.getText().toString() + "\n"
-  // + ((note.getContent().split("<p>")[1]).split("</p>")[0]));
-  // if (mEntry.getText().toString()
-  // .equals(((note.getContent().split("<p>")[1]).split("</p>")[0])))
-  // {
-  // content = note.getContent().replace(EvernoteUtil.NOTE_SUFFIX, "");
-  // }
-  // else
-  // {
-  // String contentRes = (note.getContent().split("</p>")[1]).replace(
-  // EvernoteUtil.NOTE_SUFFIX, "");
-  // content = EvernoteUtil.NOTE_PREFIX + "<p>"
-  // + mEntry.getText().toString() + "</p>" + contentRes;
-  //
-  // contentChanged = true;
-  //
-  // }
-  //
-  // String location = mLocation.getText().toString();
-  //
-  // // final Note note = new Note();
-  // if (NOTEBOOK_GUID != null)
-  // {
-  // note.setNotebookGuid(NOTEBOOK_GUID);
-  // }
-  // // note.setTitle(title);
-  // note.setTitle(mTitle.getText().toString());
-  // System.out.println("Note Title: " + note.getTitle());
-  //
-  // // Trying to add locations to data resources
-  // NoteAttributes attr = new NoteAttributes();
-  // LazyMap map = new LazyMap();
-  //
-  // map.putToFullMap("LOCATION", location);
-  // if (longitude != 0 && latitude != 0)
-  // {
-  // attr.setLongitude(longitude);
-  // attr.setLatitude(latitude);
-  // }
-  // else
-  // {
-  // attr.setLatitudeIsSet(false);
-  // attr.setLongitudeIsSet(false);
-  // if (!selectedPlace)
-  // {
-  // attr.setPlaceName(LOCATION_NOT_SPECIFIED);
-  // }
-  // }
-  //
-  // if (selectedPlace)
-  // {
-  // attr.setPlaceName(location);
-  // }
-  //
-  // attr.setSourceApplication("Souvenir App (Android)");
-  //
-  // note.setAttributes(attr);
-  //
-  // //
-  // System.out.println(note.getAttributes().getApplicationData().toString());
-  //
-  // // content = EvernoteUtil.NOTE_PREFIX + "<p>" + content + "</p>";
-  // boolean newImages = false;
-  // for (ImageData imageData : images)
-  // {
-  //
-  // if (imageData.isNew)
-  // {
-  // newImages = true;
-  // // ImageData imageData = mImageData;
-  // // ImageData imageData = images.get(images.size() - 1);
-  // String f = imageData.filePath;
-  //
-  // Resource resource = new Resource();
-  // InputStream in;
-  // try
-  // {
-  // System.out.println("f: " + f);
-  // in = new BufferedInputStream(new FileInputStream(f));
-  //
-  // FileData data = new FileData(EvernoteUtil.hash(in), new File(f));
-  // in.close();
-  //
-  // resource.setData(data);
-  // resource.setMime(imageData.mimeType);
-  // ResourceAttributes attributes = new ResourceAttributes();
-  // attributes.setFileName(imageData.fileName);
-  // resource.setAttributes(attributes);
-  //
-  // }
-  // catch (Exception e)
-  // {
-  // e.printStackTrace();
-  // }
-  // System.out.println("Resource size: " + note.getResourcesSize());
-  // note.addToResources(resource);
-  // System.out.println("Resource size: " + note.getResourcesSize());
-  //
-  // String enmedia = EvernoteUtil.createEnMediaTag(resource)
-  // .replaceFirst(" ", " title=\"" + imageData.caption + "\" ");
-  // content += enmedia;
-  //
-  // }
-  // }
-  // if (contentChanged || newImages)
-  // {
-  // note.setContent(content + EvernoteUtil.NOTE_SUFFIX);
-  // }
-  // System.out.println(note.getContent());
-  // /*
-  // * Time now = new Time(); now.setToNow(); String title =
-  // * now.toString();//mTitle.getText().toString();
-  // */
-  //
-  // mEvernoteSession.getClientFactory().createNoteStoreClient()
-  // .updateNote(note, new OnClientCallback<Note>()
-  // {
-  //
-  // @Override
-  // public void onSuccess(Note data)
-  // {
-  // Toast.makeText(getActivity(), R.string.success_creating_note,
-  // Toast.LENGTH_LONG).show();
-  // getActivity().finish();
-  // getFragmentManager().popBackStack();
-  // }
-  //
-  // @Override
-  // public void onException(Exception exception)
-  // {
-  // exception.printStackTrace();
-  // Toast.makeText(getActivity(), R.string.err_update_note,
-  // Toast.LENGTH_LONG).show();
-  // getActivity().finish();
-  // getFragmentManager().popBackStack();
-  // }
-  //
-  // });
-  // }
-  // catch (TTransportException e)
-  // {
-  // e.printStackTrace();
-  // }
-  // }
 
   private void setDefaultTitle()
   {

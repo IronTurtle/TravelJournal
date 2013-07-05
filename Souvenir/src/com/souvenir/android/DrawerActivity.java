@@ -128,7 +128,16 @@ public class DrawerActivity extends SherlockFragmentActivity
     {
       public void onDrawerClosed(View view)
       {
-        getActionBar().setTitle(mTitle);
+        String curTitle = (String) getActionBar().getTitle();
+        if (curTitle.toString().contains(":"))
+        {
+          setTitle(curTitle);
+        }
+        else
+        {
+
+          getActionBar().setTitle(mTitle);
+        }
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
       }
 
@@ -175,7 +184,6 @@ public class DrawerActivity extends SherlockFragmentActivity
     // }
     if (item.getItemId() == android.R.id.home)
     {
-
       if (mDrawerLayout.isDrawerOpen(mDrawerList))
       {
         mDrawerLayout.closeDrawer(mDrawerList);
@@ -221,6 +229,7 @@ public class DrawerActivity extends SherlockFragmentActivity
   private void selectItem(int position)
   {
     Fragment fragment = null;
+
     switch (position)
     {
     // case 0:

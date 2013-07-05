@@ -111,6 +111,8 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
         Bundle args1 = new Bundle();
         args1.putString("trip", ((TripSnippetView) view).getTrip()
             .getEvernoteGUID());
+        args1.putString("tripName",
+            ((STrip) ((TripSnippetView) view).getTrip()).getName());
         // Put any other arguments
         sf.setArguments(args1);
 
