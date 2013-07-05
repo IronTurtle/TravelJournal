@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -88,6 +89,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   // ArrayList<String> urls = new ArrayList<String>();
   ArrayList<ImageData> images = new ArrayList<ImageData>();
   ArrayList<String> tripsList;
+  HashMap<String, STrip> tripMap;;
 
   // The path to and MIME type of the currently selected image from the
   // gallery
@@ -428,6 +430,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     String[] array = { "Unnassigned Trip" };
     tripsList = new ArrayList<String>();
+    tripMap = new HashMap<String, STrip>();
+
     tripsList.addAll(Arrays.asList(array));
 
     Cursor resCursor;
@@ -439,7 +443,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     {
       while (resCursor.moveToNext())
       {
-        System.out.println(new STrip(resCursor).tripName);
+
+        STrip curTrip = new STrip(resCursor);
+        tripMap.put(curTrip.tripName, curTrip);
+        System.out.println(curTrip.tripName);
 
         tripsList
             .add(resCursor.getString(resCursor
@@ -681,14 +688,14 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       startActivityForResult(intent, SELECT_IMAGE);
       break;
 
-    case R.id.menu_note_trophy:
-      // startActivity(new Intent(this, EntryActivity.class));
-      Toast
-          .makeText(getActivity(), "Trophy Button clicked", Toast.LENGTH_SHORT)
-          .show();
-      TrophyDialogFragment trophy = new TrophyDialogFragment();
-      trophy.show(getFragmentManager(), "TROPHY");
-      break;
+    // case R.id.menu_note_trophy:
+    // // startActivity(new Intent(this, EntryActivity.class));
+    // Toast
+    // .makeText(getActivity(), "Trophy Button clicked", Toast.LENGTH_SHORT)
+    // .show();
+    // TrophyDialogFragment trophy = new TrophyDialogFragment();
+    // trophy.show(getFragmentManager(), "TROPHY");
+    // break;
     case R.id.viewedit_note_menu_save:
       System.out.println("Save pressed");
       // Toast.makeText(getActivity(), "Save Button clicked",
@@ -1275,11 +1282,13 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
     String content = mEntry.getText().toString();
     String location = mLocation.getText().toString();
-    String title = mTitle.getText().toString();
+    String title = mTitle.getText().toString().trim();
     SNote snote = new SNote(title, content, location);
     snote.setDirty(true);
     // snote.finished = mIsFinished.isChecked();
-    snote.tripID = tripSpinner.getSelectedItem().toString();
+
+    snote.tripID = ((STrip) tripMap.get(tripSpinner.getSelectedItem()
+        .toString())).evernoteGUID;
     Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.NOTE),
@@ -1333,7 +1342,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   {
     String content = mEntry.getText().toString();
     String location = mLocation.getText().toString();
-    String title = mTitle.getText().toString();
+    String title = mTitle.getText().toString().trim();
     // TODO
     // Ugly clone
     SNote snote = new SNote(title, content, location);
@@ -1343,7 +1352,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     snote.setSyncNum(mNote.syncNum);
     snote.setId(mNote.getId());
     // snote.finished = mIsFinished.isChecked();
-    snote.setTripID(tripSpinner.getSelectedItem().toString());
+    snote.setTripID(snote.tripID = ((STrip) tripMap.get(tripSpinner
+        .getSelectedItem().toString())).evernoteGUID);
+
     if (!title.equals(mNote.getTitle()))
     {
       snote.issetV.add(SNote.isset.title);

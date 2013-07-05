@@ -96,7 +96,7 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
           while (cursor.moveToNext())
           {
             // SnippetFragment sf = new SnippetFragment()
-            System.out.println(new SNote(cursor).getContent());
+            System.out.println(new SNote(cursor).getTitle());
             // Bundle args1 = new Bundle();
             // args1.putString("trip", ((TripSnippetView) view).getTrip()
             // .getEvernoteGUID());
@@ -412,6 +412,7 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     int id = Integer.valueOf(uri.getLastPathSegment());
     sTrip.setId(id);
     System.out.println("Trip ID: " + sTrip.getId());
+
   }
 
   @Override

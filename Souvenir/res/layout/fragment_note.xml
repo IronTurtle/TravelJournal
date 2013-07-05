@@ -26,6 +26,7 @@
 	            android:inputType="text"
 	            android:paddingLeft="15dp"
 	            android:scrollHorizontally="true" />
+
 	        <TextView
 	            android:id="@+id/note_title"
 	            android:layout_width="match_parent"
@@ -36,7 +37,9 @@
 	            android:hint="@string/titlePlaceholder"
 	            android:inputType="text"
 	            android:paddingLeft="15dp"
-	            android:scrollHorizontally="true" />
+	            android:scrollHorizontally="true"
+	            android:textColor="@android:color/white" />
+
         </ViewSwitcher>
 
         <LinearLayout
@@ -48,9 +51,10 @@
 			    android:id="@+id/note_trips_label"
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
-			    android:textAppearance="?android:attr/textAppearanceLarge"
 			    android:layout_weight="1"
-			    android:text="Trip: " />
+			    android:paddingLeft="15dp"
+			    android:text="Trip: "
+			    android:textAppearance="?android:attr/textAppearanceLarge" />
             
 			<Spinner
 			    android:id="@+id/note_trips_spinner"
@@ -63,11 +67,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
+
 	        <ViewSwitcher
-	        android:id="@+id/switcher_location"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-		    android:layout_weight="1" >
+	            android:id="@+id/switcher_location"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1" >
+
 		        <EditText
 		            android:id="@+id/note_location_edit"
 		            android:layout_width="match_parent"
@@ -78,6 +84,7 @@
 		            android:inputType="textPostalAddress"
 		            android:paddingLeft="15dp"
 		            android:textColor="@android:color/primary_text_dark" />
+
 		        <TextView
 		            android:id="@+id/note_location"
 		            android:layout_width="match_parent"
@@ -86,7 +93,8 @@
 		            android:gravity="bottom|left"
 		            android:hint="@string/locationPlaceholder"
 		            android:paddingLeft="15dp"
-		            android:textColor="@android:color/primary_text_dark" />
+		            android:textColor="@android:color/white" />
+
 	        </ViewSwitcher>
 
 	        <Button
@@ -119,19 +127,24 @@
         android:id="@+id/switcher_entry"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
+
 	        <EditText
 	            android:id="@+id/note_entry_edit"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:gravity="top|left"
 	            android:hint="@string/entryPlaceholder"
-	            android:inputType="textMultiLine" />
+	            android:inputType="textMultiLine"
+	            android:paddingLeft="15dp" />
+
 	        <TextView
-            android:id="@+id/note_entry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top|left"
-            android:hint="@string/entryPlaceholder" />
+	            android:id="@+id/note_entry"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:gravity="top|left"
+	            android:hint="@string/entryPlaceholder"
+	            android:paddingLeft="15dp"
+	            android:textColor="@android:color/white" />
 
         </ViewSwitcher>
         

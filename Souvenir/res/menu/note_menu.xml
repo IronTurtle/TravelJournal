@@ -16,9 +16,10 @@
 		android:icon="@drawable/photos"
 		android:title="Select" />
 	
-	<item android:id="@+id/menu_note_trophy" android:showAsAction="ifRoom"
+	<!-- <item android:id="@+id/menu_note_trophy" android:showAsAction="ifRoom"
 		android:icon="@drawable/trophy"
 		android:title="Trophy" />
+	-->
 	
 	<item android:id="@+id/menu_note_fbshare" android:showAsAction="ifRoom"
 		android:icon="@drawable/share"

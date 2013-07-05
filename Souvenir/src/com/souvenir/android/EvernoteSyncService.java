@@ -480,6 +480,7 @@ public class EvernoteSyncService extends IntentService
   public void saveNote(final SNote snote)
   {
     Note note = snote.toNote();
+    System.out.println("Title:" + note.getTitle() + "|");
     note.setNotebookGuid(NOTEBOOK_GUID);
     try
     {

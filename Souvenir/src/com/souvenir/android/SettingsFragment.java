@@ -30,9 +30,6 @@ public class SettingsFragment extends ParentFragment
     setHasOptionsMenu(true);
     View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-    EvernoteSyncService ess = new EvernoteSyncService();
-    ess.userAccountInfo();
-
     SharedPreferences pref = getActivity().getSharedPreferences(
         getActivity().getApplicationContext().getPackageName(),
         Context.MODE_PRIVATE);
