@@ -250,10 +250,10 @@ public class PlacesFragment extends ParentFragment
           EditText selected = (EditText) getActivity().findViewById(
               R.id.selectedPlace);
           System.out.println(curPlace.getName());
-          selected.setText(curPlace.getName() + "\n" + curPlace.getAddress());
+          selected.setText(curPlace.getName() + " - " + curPlace.getAddress());
 
           ((NoteActivity) getActivity()).sendLocationData(curPlace.getName()
-              + "\n" + curPlace.getAddress(), generalLocation);
+              + " - " + curPlace.getAddress(), generalLocation);
 
         }
       });

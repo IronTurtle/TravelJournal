@@ -74,7 +74,7 @@
     <string-array name="drawer_array">
         <!-- <item>Explore</item> -->
         <item>Trips</item>
-        <item>Completed</item>
+        <item>All Souvenirs</item>
         <item>Settings</item>
     </string-array>
     

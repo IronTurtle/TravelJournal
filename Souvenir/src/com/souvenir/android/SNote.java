@@ -58,6 +58,8 @@ public class SNote implements Parcelable
   ArrayList<String> tags = null;// 5
   String title = null;// 6
   String tripID = null;//
+  String tripName = null;
+
   String trophyNumber = null;//
   Boolean[] issetVector = new Boolean[7];
   EnumSet<isset> issetV = EnumSet.noneOf(isset.class);
@@ -65,8 +67,9 @@ public class SNote implements Parcelable
 
   public enum isset
   {
-    content, location, resources, tags, title, tripid // tripid just added (7/4
-                                                      // - Kevin)
+    content, location, resources, tags, title, tripid, // tripid just added (7/4
+                                                       // - Kevin)
+    tripname// tripid just added (7/5 - Kevin)
   }
 
   // From Adamski's answer
@@ -401,6 +404,16 @@ public class SNote implements Parcelable
     this.tripID = tripID;
   }
 
+  public String getTripName()
+  {
+    return tripName;
+  }
+
+  public void setTripName(String tripName)
+  {
+    this.tripName = tripName;
+  }
+
   public void setTrophyNumber(String trophyNumber)
   {
     this.trophyNumber = trophyNumber;
@@ -444,12 +457,17 @@ public class SNote implements Parcelable
   {
     Note note = new Note();
     note.setTitle(this.getTitle());
+
+    List<String> list = new ArrayList<String>();
+    list.add(tripName.trim());
+    note.setTagNames(list);
+
     if (syncNum == -1)
     {
       issetV = EnumSet.allOf(isset.class);
-      List<String> list = new ArrayList<String>();
-      list.add(tripID);
-      note.setTagNames(list);
+      // List<String> list = new ArrayList<String>();
+      // list.add(tripName.trim());
+      // note.setTagNames(list);
     }
     else
     {

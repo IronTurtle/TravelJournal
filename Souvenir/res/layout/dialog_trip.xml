@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/trip_dialog_name" />
     
-    <EditText
+    <!-- <EditText
         android:id="@+id/trip_dialog_gen_loc"
         android:layout_width="match_parent"  
         android:layout_height="wrap_content"
@@ -44,5 +44,5 @@
         android:spinnersShown="true"
         android:calendarViewShown="false"
         android:gravity="center" />
-
+	-->
 </LinearLayout>

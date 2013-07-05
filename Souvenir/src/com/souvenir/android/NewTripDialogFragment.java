@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.widget.DatePicker;
 import android.widget.EditText;
 
 public class NewTripDialogFragment extends DialogFragment
@@ -77,33 +76,35 @@ public class NewTripDialogFragment extends DialogFragment
       {
         Bundle tripInfo = new Bundle();
         tripInfo.putCharSequence("tripName", ((EditText) getDialog()
-            .findViewById(R.id.trip_dialog_name)).getText().toString());
-        tripInfo.putCharSequence("tripGenLoc", ((EditText) getDialog()
-            .findViewById(R.id.trip_dialog_gen_loc)).getText().toString());
-        tripInfo.putCharSequence(
-            "tripStartDate",
-            getRealMonth(((DatePicker) getDialog().findViewById(
-                R.id.trip_dialog_date_start)).getMonth())
-                + "/"
-                + ((DatePicker) getDialog().findViewById(
-                    R.id.trip_dialog_date_start)).getDayOfMonth()
-                + "/"
-                + ((DatePicker) getDialog().findViewById(
-                    R.id.trip_dialog_date_start)).getYear());
-        tripInfo.putCharSequence(
-            "tripEndDate",
-            getRealMonth(((DatePicker) getDialog().findViewById(
-                R.id.trip_dialog_date_end)).getMonth())
-                + "/"
-                + ((DatePicker) getDialog().findViewById(
-                    R.id.trip_dialog_date_end)).getDayOfMonth()
-                + "/"
-                + ((DatePicker) getDialog().findViewById(
-                    R.id.trip_dialog_date_end)).getYear());
+            .findViewById(R.id.trip_dialog_name)).getText().toString().trim());
+        // tripInfo.putCharSequence("tripGenLoc", ((EditText) getDialog()
+        // .findViewById(R.id.trip_dialog_gen_loc)).getText().toString());
+        // tripInfo.putCharSequence(
+        // "tripStartDate",
+        // getRealMonth(((DatePicker) getDialog().findViewById(
+        // R.id.trip_dialog_date_start)).getMonth())
+        // + "/"
+        // + ((DatePicker) getDialog().findViewById(
+        // R.id.trip_dialog_date_start)).getDayOfMonth()
+        // + "/"
+        // + ((DatePicker) getDialog().findViewById(
+        // R.id.trip_dialog_date_start)).getYear());
+        // tripInfo.putCharSequence(
+        // "tripEndDate",
+        // getRealMonth(((DatePicker) getDialog().findViewById(
+        // R.id.trip_dialog_date_end)).getMonth())
+        // + "/"
+        // + ((DatePicker) getDialog().findViewById(
+        // R.id.trip_dialog_date_end)).getDayOfMonth()
+        // + "/"
+        // + ((DatePicker) getDialog().findViewById(
+        // R.id.trip_dialog_date_end)).getYear());
+
         mListener.onTripDialogPositiveClick(NewTripDialogFragment.this,
             tripInfo);
       }
     });
+    builder.setTitle("Create New Trip");
     builder.setNegativeButton(android.R.string.cancel, new OnClickListener()
     {
       public void onClick(DialogInterface dialog, int which)

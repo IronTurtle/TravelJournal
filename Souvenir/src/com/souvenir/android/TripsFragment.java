@@ -391,8 +391,6 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
   @Override
   public void onTripDialogPositiveClick(DialogFragment dialog, Bundle tripInfo)
   {
-    Toast.makeText(getActivity().getApplicationContext(), "Trip Created",
-        Toast.LENGTH_SHORT).show();
 
     // System.out.println("name: " + tripInfo.getCharSequence("tripName") + "\n"
     // + "genLocation: " + tripInfo.getCharSequence("tripGenLoc") + "\n"
@@ -400,10 +398,12 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     // + "endDate: " + tripInfo.getCharSequence("tripEndDate"));
     if (tripInfo.getCharSequence("tripName").toString().isEmpty())
       return;
-    STrip sTrip = new STrip(tripInfo.getCharSequence("tripName").toString(),
-        tripInfo.getCharSequence("tripGenLoc").toString(), tripInfo
-            .getCharSequence("tripStartDate").toString(), tripInfo
-            .getCharSequence("tripEndDate").toString());
+    STrip sTrip = new STrip(tripInfo.getCharSequence("tripName").toString()
+        .trim());
+    // STrip sTrip = new STrip(tripInfo.getCharSequence("tripName").toString(),
+    // tripInfo.getCharSequence("tripGenLoc").toString(), tripInfo
+    // .getCharSequence("tripStartDate").toString(), tripInfo
+    // .getCharSequence("tripEndDate").toString());
     sTrip.setDirty(true);
     Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
@@ -411,6 +411,12 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
         sTrip.toContentValues());
     int id = Integer.valueOf(uri.getLastPathSegment());
     sTrip.setId(id);
+    Toast.makeText(getActivity(),
+        "Trip Created: " + tripInfo.getCharSequence("tripName").toString(),
+        Toast.LENGTH_SHORT).show();
+    getActivity().startService(
+        new Intent(getActivity(), EvernoteSyncService.class));
+    getActivity().getSupportLoaderManager().restartLoader(2, null, this);
     System.out.println("Trip ID: " + sTrip.getId());
 
   }

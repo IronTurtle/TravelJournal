@@ -406,10 +406,11 @@ public class EvernoteSyncService extends IntentService
       while (cursor.moveToNext())
       {
         System.out
-            .println(cursor.getString(cursor
-                .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE)));
+            .println("Note title: "
+                + cursor.getString(cursor
+                    .getColumnIndexOrThrow(SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TITLE)));
         SNote snote = new SNote(cursor);
-        // TODO
+        // note res
         Cursor resCursor;
         if ((resCursor = getContentResolver().query(
             Uri.parse(SouvenirContentProvider.CONTENT_URI
@@ -425,6 +426,41 @@ public class EvernoteSyncService extends IntentService
           }
           resCursor.close();
         }
+        System.out.println("getting trips...");
+        // note trip
+        Cursor tripCursor;
+        if ((tripCursor = getContentResolver().query(
+            Uri.parse(SouvenirContentProvider.CONTENT_URI
+                + SouvenirContentProvider.DatabaseConstants.TRIP), null, null,
+            null, null)) != null
+            && tripCursor.getCount() > 0)
+        {
+          while (tripCursor.moveToNext())
+          {
+            System.out
+                .println("Tripid: "
+                    + tripCursor.getString(tripCursor
+                        .getColumnIndex(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID))
+                    + " " + snote.getTripID());
+            if (tripCursor
+                .getString(
+                    tripCursor
+                        .getColumnIndex(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID))
+                .equals(snote.getTripID()))
+
+            {
+              System.out
+                  .println("Note's trip name:"
+                      + tripCursor.getString(tripCursor
+                          .getColumnIndex(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME)));
+              snote
+                  .setTripName(tripCursor.getString(tripCursor
+                      .getColumnIndex(SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME)));
+              break;
+            }
+          }
+        }
+        tripCursor.close();
         if (snote.getSyncNum() == -1)
         {
           saveNote(snote);
@@ -480,7 +516,6 @@ public class EvernoteSyncService extends IntentService
   public void saveNote(final SNote snote)
   {
     Note note = snote.toNote();
-    System.out.println("Title:" + note.getTitle() + "|");
     note.setNotebookGuid(NOTEBOOK_GUID);
     try
     {

@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -192,7 +191,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       @Override
       public void afterTextChanged(Editable s)
       {
-        images.get(pager.getCurrentItem()).caption = s.toString();
+        if (!images.isEmpty())
+        {
+          images.get(pager.getCurrentItem()).caption = s.toString();
+        }
 
       }
 
@@ -350,7 +352,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
     outState.putBoolean("SAVED_STATE_NOTE_VIEW", this.isEditMode);
 
-    System.out.println("Note trip:" + tripSpinner.getSelectedItem().toString());
+    // System.out.println("Note trip:" +
+    // tripSpinner.getSelectedItem().toString());
     outState.putString("SAVED_STATE_NOTE_TRIP", tripSpinner.getSelectedItem()
         .toString());
   }
@@ -428,11 +431,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   public void setupTripSpinner()
   {
 
-    String[] array = { "Unnassigned Trip" };
+    // String[] array = { "Uncategorized" };
     tripsList = new ArrayList<String>();
     tripMap = new HashMap<String, STrip>();
 
-    tripsList.addAll(Arrays.asList(array));
+    // tripsList.addAll(Arrays.asList(array));
+    // tripMap.put(array[0], new STrip(array[0]));
 
     Cursor resCursor;
     if ((resCursor = getActivity().getContentResolver().query(
@@ -568,7 +572,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       {
         // Save/Update to Evernote
         System.out.println("Save pressed");
-        Toast.makeText(getActivity(), "Saving to Evernote", Toast.LENGTH_SHORT)
+        Toast.makeText(getActivity(), "Saving Souvenir", Toast.LENGTH_SHORT)
             .show();
 
         if (!oldNote)
@@ -887,7 +891,25 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mTitle.setText(mNote.getTitle());
     mLocation.setText(mNote.getLocation());
     String contents = mNote.getContent();
-    tripSpinner.setSelection(tripsList.indexOf(mNote.getTripID()));
+
+    Cursor resCursor;
+    if ((resCursor = getActivity().getContentResolver().query(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.TRIP), null, null,
+        null, null)) != null
+        && resCursor.getCount() > 0)
+    {
+      while (resCursor.moveToNext())
+      {
+
+        STrip curTrip = new STrip(resCursor);
+        if (curTrip.getEvernoteGUID().equals(mNote.getTripID()))
+        {
+          tripSpinner.setSelection(tripsList.indexOf(curTrip.getName()));
+        }
+      }
+    }
+    resCursor.close();
     // mEntry.setText(android.text.Html.fromHtml(contents).toString().trim());
     mEntry.setText(mNote.getContent().substring(
         mNote.getContent().indexOf("<p>") + "<p>".length(),
@@ -1352,8 +1374,9 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     snote.setSyncNum(mNote.syncNum);
     snote.setId(mNote.getId());
     // snote.finished = mIsFinished.isChecked();
-    snote.setTripID(snote.tripID = ((STrip) tripMap.get(tripSpinner
-        .getSelectedItem().toString())).evernoteGUID);
+    snote.setTripID(((STrip) tripMap.get(tripSpinner.getSelectedItem()
+        .toString())).evernoteGUID);
+    snote.setTripName(tripSpinner.getSelectedItem().toString().trim());
 
     if (!title.equals(mNote.getTitle()))
     {
@@ -1380,6 +1403,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     if (!(tripSpinner.getSelectedItem().toString()).equals(mNote.getTripID()))
     {
       snote.issetV.add(SNote.isset.tripid);
+      snote.issetV.add(SNote.isset.tripname);
     }
     // System.out.println(SNote.encode((EnumSet<SNote.isset>) snote.issetV));
     snote.setDirty(true);

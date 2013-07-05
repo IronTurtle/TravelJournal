@@ -30,6 +30,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -51,13 +52,16 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.edam.type.Note;
+import com.souvenir.android.CreateDialogFragment.DialogListener;
+import com.souvenir.android.NewTripDialogFragment.TripDialogListener;
 import com.souvenir.android.database.SouvenirContentProvider;
 import com.souvenir.android.database.SouvenirContract;
 
 public class SnippetFragment extends ParentFragment implements OnClickListener,
-    LoaderManager.LoaderCallbacks<Cursor>
+    LoaderManager.LoaderCallbacks<Cursor>, DialogListener, TripDialogListener
 {
   private static String TRAVEL_NOTEBOOK_NAME = "Travel Notebook";
+  private final static String CREATE_TAG = "CREATE";
   // private static String NOTEBOOK_GUID;
 
   // UI elements that we update
@@ -522,7 +526,10 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       break;
 
     case R.id.menu_add_note:
-      startActivity(new Intent(getActivity(), NoteActivity.class));
+      // startActivity(new Intent(getActivity(), NoteActivity.class));
+      CreateDialogFragment dialogFragment = CreateDialogFragment
+          .newInstance(SnippetFragment.this);
+      dialogFragment.show(getFragmentManager(), CREATE_TAG);
       break;
 
     case R.id.menu_refresh:
@@ -538,5 +545,88 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  public void openTripDialog()
+  {
+
+    NewTripDialogFragment dialogFragment = NewTripDialogFragment
+        .newInstance(SnippetFragment.this);
+    dialogFragment.show(getFragmentManager(), CREATE_TAG);
+  }
+
+  @Override
+  public void onDialogPositiveClick(DialogFragment dialog)
+  {
+    startActivity(new Intent(getActivity(), NoteActivity.class));
+  }
+
+  @Override
+  public void onDialogNegativeClick(DialogFragment dialog)
+  {
+    // Create another dialog to create Trip name, Location, & date
+    // range
+    // Trip name is the only mandatory field
+    Toast.makeText(getActivity().getApplicationContext(), "Creating Trip",
+        Toast.LENGTH_SHORT).show();
+    openTripDialog();
+  }
+
+  @Override
+  public void onTripDialogPositiveClick(DialogFragment dialog, Bundle tripInfo)
+  {
+    Toast.makeText(getActivity().getApplicationContext(), "Trip Created",
+        Toast.LENGTH_SHORT).show();
+
+    // System.out.println("name: " + tripInfo.getCharSequence("tripName") + "\n"
+    // + "genLocation: " + tripInfo.getCharSequence("tripGenLoc") + "\n"
+    // + "startDate: " + tripInfo.getCharSequence("tripStartDate") + "\n"
+    // + "endDate: " + tripInfo.getCharSequence("tripEndDate"));
+    if (tripInfo.getCharSequence("tripName").toString().isEmpty())
+      return;
+    STrip sTrip = new STrip(tripInfo.getCharSequence("tripName").toString());
+    // STrip sTrip = new STrip(tripInfo.getCharSequence("tripName").toString(),
+    // tripInfo.getCharSequence("tripGenLoc").toString(), tripInfo
+    // .getCharSequence("tripStartDate").toString(), tripInfo
+    // .getCharSequence("tripEndDate").toString());
+    sTrip.setDirty(true);
+    Uri uri = getActivity().getContentResolver().insert(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.TRIP),
+        sTrip.toContentValues());
+    int id = Integer.valueOf(uri.getLastPathSegment());
+    sTrip.setId(id);
+
+    Toast.makeText(getActivity(),
+        "Trip Created: " + tripInfo.getCharSequence("tripName").toString(),
+        Toast.LENGTH_SHORT).show();
+    getActivity().startService(
+        new Intent(getActivity(), EvernoteSyncService.class));
+    getActivity().getSupportLoaderManager().restartLoader(2, null, this);
+    System.out.println("Trip ID: " + sTrip.getId());
+
+  }
+
+  @Override
+  public void onTripDialogNegativeClick(DialogFragment dialog)
+  {
+
+    Toast.makeText(getActivity().getApplicationContext(), "New Trip Cancelled",
+        Toast.LENGTH_SHORT).show();
+
+    String[] queryColumns = { SouvenirContract.SouvenirTrip._ID,
+        SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME };
+
+    Cursor cursor = getActivity().getContentResolver().query(
+        Uri.parse(SouvenirContentProvider.CONTENT_URI
+            + SouvenirContentProvider.DatabaseConstants.TRIP), null, null,
+        null, null);
+    while (cursor.moveToNext())
+    {
+      System.out.println("TripID: "
+          + cursor.getString(cursor.getColumnIndex(queryColumns[0]))
+          + " TRIPNAME: "
+          + cursor.getString(cursor.getColumnIndex(queryColumns[1])));
+    }
   }
 }
