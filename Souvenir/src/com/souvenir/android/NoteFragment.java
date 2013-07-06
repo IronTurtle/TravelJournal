@@ -295,7 +295,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     pager = (ViewPager) view.findViewById(R.id.pager);
 
     options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()
-        .showStubImage(R.drawable.traveljournal).build();
+        .showStubImage(android.R.color.white).build();
 
     pager.setAdapter(new PhotoPagerAdapter(images));
     pager.setOnPageChangeListener(new OnPageChangeListener()
@@ -408,7 +408,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mLocationBtn.setOnClickListener(new btnFindPlace());
     mEntry.setOnKeyListener(new NoteEntryField());
 
-    getTravelNotebook();
+    // getTravelNotebook();
     System.out.println(mTitle.getText());
     getActivity().getWindow().setSoftInputMode(
         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -991,10 +991,10 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       {
 
         STrip curTrip = new STrip(resCursor);
-        if (curTrip.getEvernoteGUID().equals(mNote.getTripID()))
-        {
-          tripSpinner.setSelection(tripsList.indexOf(curTrip.getName()));
-        }
+        // if (curTrip..equals(mNote.getTripID()))
+        // {
+        tripSpinner.setSelection(tripsList.indexOf(mNote.getTripID()));
+        // }
       }
     }
     resCursor.close();

@@ -80,7 +80,7 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
         // getActivity().startActivityForResult(intent, 300);
         System.out.println(((TripSnippetView) view).getTrip().getName());
         Cursor cursor;
-        String[] args = { ((TripSnippetView) view).getTrip().getEvernoteGUID() };
+        String[] args = { ((TripSnippetView) view).getTrip().getName() };
         System.out.println(args[0]);
         if ((cursor = getActivity().getContentResolver().query(
             Uri.parse(SouvenirContentProvider.CONTENT_URI

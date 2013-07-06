@@ -87,7 +87,7 @@ public class SouvenirSnippetView extends RelativeLayout
     options = new DisplayImageOptions.Builder().resetViewBeforeLoading()
         .cacheOnDisc().imageScaleType(ImageScaleType.EXACTLY)
         .bitmapConfig(Bitmap.Config.RGB_565)
-        .showImageOnFail(R.drawable.traveljournal)
+        .showImageOnFail(android.R.color.white)
         .displayer(new FadeInBitmapDisplayer(300))
         .imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
 
@@ -98,12 +98,13 @@ public class SouvenirSnippetView extends RelativeLayout
     if (!mNote.resources.isEmpty())
     {
       // System.out.println("file://" + mNote.resources.get(0).getPath());
-
+      snippetPic.setVisibility(View.VISIBLE);
       ImageLoader.getInstance().displayImage(
           "file://" + mNote.resources.get(0).getPath(), snippetPic, options);
     }
     else
     {
+      snippetPic.setVisibility(View.INVISIBLE);
       ImageLoader.getInstance().displayImage(
           "drawable://" + R.drawable.traveljournal, snippetPic, options);
     }
