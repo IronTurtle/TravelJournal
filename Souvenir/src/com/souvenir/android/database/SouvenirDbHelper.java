@@ -55,14 +55,15 @@ public class SouvenirDbHelper extends SQLiteOpenHelper
       + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID + TEXT_TYPE
       + " UNIQUE" + COMMA_SEP
       + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_NAME + TEXT_TYPE
-      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GENLOCATION
+      + " UNIQUE" + COMMA_SEP
+      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GENLOCATION + TEXT_TYPE
+      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_STARTDATE
       + TEXT_TYPE + COMMA_SEP
-      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_STARTDATE + TEXT_TYPE
-      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_ENDDATE
-      + TEXT_TYPE + COMMA_SEP
-      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM + INTEGER_TYPE
-      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_DIRTY
-      + " BOOLEAN" + " )";
+      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_ENDDATE + TEXT_TYPE
+      + COMMA_SEP + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_SYNC_NUM
+      + INTEGER_TYPE + COMMA_SEP
+      + SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_DIRTY + " BOOLEAN"
+      + " )";
 
   public static final String SQL_DELETE_NOTE_TABLE = "DROP TABLE IF EXISTS "
       + SouvenirContract.SouvenirNote.TABLE_NAME_NOTE;

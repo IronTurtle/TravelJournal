@@ -156,6 +156,10 @@ public class DrawerActivity extends SherlockFragmentActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_drawer);
 
+    STrip strip = new STrip("uncategorized");
+    strip.setDirty(true);
+    strip.insert(this);
+
     if (!ImageLoader.getInstance().isInited())
     {
       ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
