@@ -56,7 +56,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -184,7 +183,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   EditText mEntryEdit;
   EditText mCaptionEdit;
 
-  ImageButton mLocationBtn;
+  Button mLocationBtn;
   CheckBox mIsFinished;
   Spinner tripSpinner;
 
@@ -229,7 +228,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mEntryEdit = (EditText) view.findViewById(R.id.note_entry_edit);
     mCaption = (TextView) view.findViewById(R.id.image_caption);
     mCaptionEdit = (EditText) view.findViewById(R.id.image_caption_edit);
-    mLocationBtn = (ImageButton) view.findViewById(R.id.note_location_btn);
+    mLocationBtn = (Button) view.findViewById(R.id.note_location_btn);
     // mIsFinished = (CheckBox) view.findViewById(R.id.note_is_finished);
 
     tripSpinner = (Spinner) view.findViewById(R.id.note_trips_spinner);
