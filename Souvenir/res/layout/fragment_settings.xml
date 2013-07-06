@@ -10,10 +10,16 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/settings_btn_evernote"
+        android:id="@+id/settings_btn_evernotesync"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Evernote Login" />
+        android:text="Sync with Evernote" />
+
+    <Switch
+        android:id="@+id/settings_switch_autosync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Allow Auto-Sync" />
 
     <com.facebook.widget.LoginButton
         android:id="@+id/settings_btn_facebook"

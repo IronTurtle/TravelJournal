@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
@@ -80,6 +81,17 @@ public class DrawerActivity extends SherlockFragmentActivity
   private static final int TRIPS_POSITION = 0;
   private static final int COMPLETED_POSITION = 1;
   private static final int SETTINGS_POSITION = 2;
+  boolean autosync = false;
+
+  public boolean isAutosync()
+  {
+    return autosync;
+  }
+
+  public void setAutosync(boolean autosync)
+  {
+    this.autosync = autosync;
+  }
 
   private DrawerLayout mDrawerLayout;
   private ListView mDrawerList;
@@ -165,7 +177,10 @@ public class DrawerActivity extends SherlockFragmentActivity
     // enable ActionBar app icon to behave as action to toggle nav drawer
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
-
+    int titleId = Resources.getSystem().getIdentifier("action_bar_title", "id",
+        "android");
+    TextView yourTextView = (TextView) findViewById(titleId);
+    yourTextView.setTextColor(getResources().getColor(android.R.color.white));
     // ActionBarDrawerToggle ties together the the proper interactions
     // between the sliding drawer and the action bar app icon
     mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
@@ -298,9 +313,9 @@ public class DrawerActivity extends SherlockFragmentActivity
       // update the main content by replacing fragments
       fragment = new SnippetFragment();
       break;
-    // case SETTINGS_POSITION:
-    // fragment = new SettingsFragment();
-    // break;
+    case SETTINGS_POSITION:
+      fragment = new SettingsFragment();
+      break;
     }
 
     // FragmentTransaction transaction = getSupportFragmentManager()

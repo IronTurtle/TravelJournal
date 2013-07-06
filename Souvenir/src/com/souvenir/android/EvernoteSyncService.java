@@ -668,12 +668,13 @@ public class EvernoteSyncService extends IntentService
     {
       System.out.println("Not logged in");
     }
-    // m_updateTimer.scheduleAtFixedRate(m_updateTask, 0, UPDATE_FREQUENCY);
+    m_updateTimer.scheduleAtFixedRate(m_updateTask, 0, UPDATE_FREQUENCY);
   }
 
   @Override
   public void onCreate()
   {
+    prefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
     m_updateTimer = new Timer();
     m_updateTask = new TimerTask()
     {
@@ -686,7 +687,6 @@ public class EvernoteSyncService extends IntentService
     };
     super.onCreate();
 
-    prefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
   }
 
   @Override

@@ -119,6 +119,11 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   {
     super.onResume();
     updateUi();
+    if (((DrawerActivity) getActivity()).isAutosync())
+    {
+      getActivity().startService(
+          new Intent(getActivity(), EvernoteSyncService.class));
+    }
     getActivity().getSupportLoaderManager().restartLoader(id, null, this);
     adapter.notifyDataSetChanged();
   }

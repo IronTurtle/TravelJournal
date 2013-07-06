@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -20,6 +23,7 @@ public class SettingsFragment extends ParentFragment
 {
   TextView username;
   LoginButton fbLoginBtn;
+  Switch autoSyncSwitch;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,6 +40,19 @@ public class SettingsFragment extends ParentFragment
 
     username = (TextView) view.findViewById(R.id.settings_username);
     username.setText(pref.getString("settings_username", null));
+
+    autoSyncSwitch = (Switch) view.findViewById(R.id.settings_switch_autosync);
+
+    autoSyncSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener()
+    {
+
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+      {
+        ((DrawerActivity) getActivity()).setAutosync(isChecked);
+      }
+
+    });
 
     fbLoginBtn = (LoginButton) view.findViewById(R.id.settings_btn_facebook);
     fbLoginBtn.setOnClickListener(new FacebookOnClickListener());

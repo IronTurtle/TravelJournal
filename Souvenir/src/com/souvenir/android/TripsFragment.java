@@ -173,6 +173,11 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
   {
     super.onResume();
     updateUi();
+    if (((DrawerActivity) getActivity()).isAutosync())
+    {
+      getActivity().startService(
+          new Intent(getActivity(), EvernoteSyncService.class));
+    }
     getActivity().getSupportLoaderManager().restartLoader(1, null, this);
     adapter.notifyDataSetChanged();
   }
@@ -187,6 +192,11 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
 
       // checkForTravelNotebook();
       // syncCheck();
+      if (((DrawerActivity) getActivity()).isAutosync())
+      {
+        getActivity().startService(
+            new Intent(getActivity(), EvernoteSyncService.class));
+      }
     }
     else
     {
@@ -416,9 +426,9 @@ public class TripsFragment extends ParentFragment implements OnClickListener,
     Toast.makeText(getActivity(),
         "Trip Created: " + tripInfo.getCharSequence("tripName").toString(),
         Toast.LENGTH_SHORT).show();
-    getActivity().startService(
-        new Intent(getActivity(), EvernoteSyncService.class));
-    getActivity().getSupportLoaderManager().restartLoader(2, null, this);
+    // getActivity().startService(
+    // new Intent(getActivity(), EvernoteSyncService.class));
+    // getActivity().getSupportLoaderManager().restartLoader(2, null, this);
     System.out.println("Trip ID: " + sTrip.getId());
 
   }

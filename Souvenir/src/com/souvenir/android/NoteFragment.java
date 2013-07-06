@@ -1840,8 +1840,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mLocationEdit.setText(data);
   }
 
-  private class PhotoPagerAdapter extends
-      android.support.v4.view.PagerAdapter
+  private class PhotoPagerAdapter extends android.support.v4.view.PagerAdapter
   {
 
     private ArrayList<ImageData> imageList;
@@ -1887,7 +1886,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           // TODO Auto-generated method stub
           ImagePagerFragment frag = new ImagePagerFragment();
           Bundle args1 = new Bundle();
-          args1.putParcelableArrayList("images", clothing);
+          args1.putParcelableArrayList("images", imageList);
           args1.putInt("position", position);
           // Put any other arguments
           frag.setArguments(args1);
