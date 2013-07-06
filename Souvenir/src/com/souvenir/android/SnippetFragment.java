@@ -445,7 +445,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
       getActivity().getActionBar().setTitle(
           getActivity().getActionBar().getTitle() + ": "
               + getArguments().getString("tripName"));
-      String[] args1 = { trip };
+      String[] args1 = { getArguments().getString("tripName") };
       cursorLoader = new CursorLoader(getActivity(), uri, null,
           SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_TRIP_ID + "=?", args1,
           SouvenirContract.SouvenirNote.COLUMN_NAME_NOTE_MODIFY_DATE + " DESC");
