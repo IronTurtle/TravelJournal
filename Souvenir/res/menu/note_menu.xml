@@ -9,7 +9,7 @@
 		android:title="Save"/>
     -->
 	<item android:id="@+id/menu_note_camera" android:showAsAction="ifRoom"
-		android:icon="@drawable/camera"
+		android:icon="@drawable/camera_240_hdpi"
 		android:title="Camera"/>
 	
 	<item android:id="@+id/menu_note_select" android:showAsAction="ifRoom"
