@@ -1213,9 +1213,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     snote.setSyncNum(mNote.syncNum);
     snote.setId(mNote.getId());
     // snote.finished = mIsFinished.isChecked();
-    snote.setTripID(((STrip) tripMap.get(tripSpinner.getSelectedItem()
-        .toString())).evernoteGUID);
-    snote.setTripName(tripSpinner.getSelectedItem().toString().trim());
+    snote.setTripID(tripSpinner.getSelectedItem().toString());
+//    snote.setTripName(tripSpinner.getSelectedItem().toString().trim());
 
     if (!title.equals(mNote.getTitle()))
     {

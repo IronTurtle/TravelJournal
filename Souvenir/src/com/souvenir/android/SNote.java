@@ -459,7 +459,7 @@ public class SNote implements Parcelable
     note.setTitle(this.getTitle());
 
     List<String> list = new ArrayList<String>();
-    list.add(tripName.trim());
+    list.add(tripID.trim());
     note.setTagNames(list);
 
     if (syncNum == -1)
