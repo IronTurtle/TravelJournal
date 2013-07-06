@@ -40,6 +40,9 @@
     <color name="primaryOrange">#f3c21c</color>
     <color name="primaryBlack">#000000</color>
     <color name="primaryRed">#be1e2d</color>
+    <color name="primaryRed2">#a81b1a</color>
+    <color name="primaryRed3">#d42120</color>
+    <color name="primaryRed4">#df302f</color>
 
     <string name="app_name_banner">SOUVENIR</string>
     <string name="dialog_award_title">Give An Award:</string>

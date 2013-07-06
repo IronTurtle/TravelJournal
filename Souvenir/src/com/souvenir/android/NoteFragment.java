@@ -56,6 +56,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -183,7 +184,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
   EditText mEntryEdit;
   EditText mCaptionEdit;
 
-  Button mLocationBtn;
+  ImageButton mLocationBtn;
   CheckBox mIsFinished;
   Spinner tripSpinner;
 
@@ -213,6 +214,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     View view = inflater.inflate(R.layout.fragment_note, container, false);
     super.onCreateView(inflater, container, savedInstanceState);
     setHasOptionsMenu(true);
+    // int titleId = Resources.getSystem().getIdentifier("action_bar_title",
+    // "id",
+    // "android");
+    // TextView tv = (TextView) view.findViewById(titleId);
+    // tv.setTextColor(getResources().getColor(android.R.color.white));
 
     // mImageView = (ImageView) view.findViewById(R.id.entry_image);
     mTitle = (TextView) view.findViewById(R.id.note_title);
@@ -223,7 +229,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mEntryEdit = (EditText) view.findViewById(R.id.note_entry_edit);
     mCaption = (TextView) view.findViewById(R.id.image_caption);
     mCaptionEdit = (EditText) view.findViewById(R.id.image_caption_edit);
-    mLocationBtn = (Button) view.findViewById(R.id.note_location_btn);
+    mLocationBtn = (ImageButton) view.findViewById(R.id.note_location_btn);
     // mIsFinished = (CheckBox) view.findViewById(R.id.note_is_finished);
 
     tripSpinner = (Spinner) view.findViewById(R.id.note_trips_spinner);
@@ -1214,7 +1220,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     snote.setId(mNote.getId());
     // snote.finished = mIsFinished.isChecked();
     snote.setTripID(tripSpinner.getSelectedItem().toString());
-//    snote.setTripName(tripSpinner.getSelectedItem().toString().trim());
+    // snote.setTripName(tripSpinner.getSelectedItem().toString().trim());
 
     if (!title.equals(mNote.getTitle()))
     {

@@ -24,6 +24,7 @@ public class SettingsFragment extends ParentFragment
   TextView username;
   LoginButton fbLoginBtn;
   Switch autoSyncSwitch;
+  SharedPreferences pref;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,7 +35,7 @@ public class SettingsFragment extends ParentFragment
     setHasOptionsMenu(true);
     View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-    SharedPreferences pref = getActivity().getSharedPreferences(
+    pref = getActivity().getSharedPreferences(
         getActivity().getApplicationContext().getPackageName(),
         Context.MODE_PRIVATE);
 
@@ -42,6 +43,7 @@ public class SettingsFragment extends ParentFragment
     username.setText(pref.getString("settings_username", null));
 
     autoSyncSwitch = (Switch) view.findViewById(R.id.settings_switch_autosync);
+    autoSyncSwitch.setChecked(((DrawerActivity) getActivity()).isAutosync());
 
     autoSyncSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener()
     {
@@ -50,6 +52,7 @@ public class SettingsFragment extends ParentFragment
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
       {
         ((DrawerActivity) getActivity()).setAutosync(isChecked);
+        saveAutoSyncPref(isChecked);
       }
 
     });
@@ -58,6 +61,12 @@ public class SettingsFragment extends ParentFragment
     fbLoginBtn.setOnClickListener(new FacebookOnClickListener());
 
     return view;
+  }
+
+  public void saveAutoSyncPref(boolean isChecked)
+  {
+
+    pref.edit().putBoolean("autosync", isChecked).commit();
   }
 
   @Override

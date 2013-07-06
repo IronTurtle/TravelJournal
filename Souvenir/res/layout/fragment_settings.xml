@@ -13,18 +13,21 @@
         android:id="@+id/settings_btn_evernotesync"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:padding="20dp"
         android:text="Sync with Evernote" />
 
     <Switch
         android:id="@+id/settings_switch_autosync"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="20dp"
         android:text="Allow Auto-Sync" />
 
     <com.facebook.widget.LoginButton
         android:id="@+id/settings_btn_facebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="20dp"
         android:text="@string/fb_login" />
 
 </LinearLayout>

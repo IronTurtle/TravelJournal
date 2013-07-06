@@ -19,6 +19,7 @@ package com.souvenir.android;
 import java.util.Locale;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -101,6 +102,8 @@ public class DrawerActivity extends SherlockFragmentActivity
   private CharSequence mTitle;
   private String[] mDrawerTitles;
 
+  SharedPreferences prefs;
+
   public class aa extends ArrayAdapter<String>
   {
 
@@ -132,14 +135,13 @@ public class DrawerActivity extends SherlockFragmentActivity
       switch (position)
       {
       case 0:
-        tv.setBackgroundColor(getResources().getColor(R.color.primaryOrange));
+        tv.setBackgroundColor(getResources().getColor(R.color.primaryRed2));
         break;
       case 1:
-        tv.setBackgroundColor(getResources().getColor(
-            android.R.color.holo_purple));
+        tv.setBackgroundColor(getResources().getColor(R.color.primaryRed3));
         break;
       case 2:
-        tv.setBackgroundColor(getResources().getColor(android.R.color.black));
+        tv.setBackgroundColor(getResources().getColor(R.color.primaryRed4));
         break;
       }
       tv.setText(objects[position]);
@@ -181,6 +183,13 @@ public class DrawerActivity extends SherlockFragmentActivity
         "android");
     TextView yourTextView = (TextView) findViewById(titleId);
     yourTextView.setTextColor(getResources().getColor(android.R.color.white));
+
+    prefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+    if (prefs.contains("autosync"))
+    {
+      autosync = prefs.getBoolean("autosync", false);
+    }
+
     // ActionBarDrawerToggle ties together the the proper interactions
     // between the sliding drawer and the action bar app icon
     mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
