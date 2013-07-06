@@ -18,6 +18,7 @@ package com.souvenir.android;
 
 import java.util.Locale;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -33,6 +34,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -87,6 +89,53 @@ public class DrawerActivity extends SherlockFragmentActivity
   private CharSequence mTitle;
   private String[] mDrawerTitles;
 
+  public class aa extends ArrayAdapter<String>
+  {
+
+    int resource;
+    String[] objects;
+
+    public aa(Context context, int resource, String[] objects)
+    {
+      super(context, resource, objects);
+      this.resource = resource;
+      this.objects = objects;
+      // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
+
+      if (convertView == null)
+      {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = inflater.inflate(resource, null, false);
+      }
+      else
+      {
+      }
+      TextView tv = (TextView) convertView;
+
+      switch (position)
+      {
+      case 0:
+        tv.setBackgroundColor(getResources().getColor(R.color.primaryOrange));
+        break;
+      case 1:
+        tv.setBackgroundColor(getResources().getColor(
+            android.R.color.holo_purple));
+        break;
+      case 2:
+        tv.setBackgroundColor(getResources().getColor(android.R.color.black));
+        break;
+      }
+      tv.setText(objects[position]);
+      tv.setHeight(mDrawerLayout.getHeight() / objects.length);
+      return convertView;
+    }
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
@@ -109,8 +158,8 @@ public class DrawerActivity extends SherlockFragmentActivity
     mDrawerLayout
         .setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
     // set up the drawer's list view with items and click listener
-    mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-        R.layout.drawer_list_item, mDrawerTitles));
+    mDrawerList.setAdapter(new aa(this, R.layout.drawer_list_item,
+        mDrawerTitles));
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
     // enable ActionBar app icon to behave as action to toggle nav drawer

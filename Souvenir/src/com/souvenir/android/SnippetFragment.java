@@ -71,6 +71,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   final String TAG1 = "MyCamera";
   ListView listView;
   SnippetCursorAdapter adapter;
+  int id = 2;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,6 +79,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   {
     if (getArguments() != null)
     {
+      id = 3;
       trip = getArguments().getString("trip");
     }
 
@@ -107,7 +109,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
         getActivity().startActivityForResult(intent, 300);
       }
     });
-    getActivity().getSupportLoaderManager().initLoader(2, null, this);
+    getActivity().getSupportLoaderManager().initLoader(id, null, this);
 
     return view;
   }
@@ -117,7 +119,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   {
     super.onResume();
     updateUi();
-    getActivity().getSupportLoaderManager().restartLoader(2, null, this);
+    getActivity().getSupportLoaderManager().restartLoader(id, null, this);
     adapter.notifyDataSetChanged();
   }
 
@@ -538,7 +540,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     case R.id.menu_refresh:
       getActivity().startService(
           new Intent(getActivity(), EvernoteSyncService.class));
-      getActivity().getSupportLoaderManager().restartLoader(2, null, this);
+      getActivity().getSupportLoaderManager().restartLoader(id, null, this);
       // adapter.notifyDataSetChanged();
       return true;
 
@@ -605,7 +607,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
         Toast.LENGTH_SHORT).show();
     getActivity().startService(
         new Intent(getActivity(), EvernoteSyncService.class));
-    getActivity().getSupportLoaderManager().restartLoader(2, null, this);
+    getActivity().getSupportLoaderManager().restartLoader(id, null, this);
     System.out.println("Trip ID: " + sTrip.getId());
 
   }
