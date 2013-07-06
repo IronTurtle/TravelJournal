@@ -1,5 +1,6 @@
 package com.souvenir.android;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -104,6 +105,7 @@ public class EvernoteSyncService extends IntentService
     // filter.setOrder(NoteSortOrder.UPDATED.getValue());
     // filter.setWords("notebook:\"" + TRAVEL_NOTEBOOK_NAME + "\"");
     // int high = 0;
+    ArrayList<SyncChunk> sc = new ArrayList<SyncChunk>();
     while (high != serverlastUpdateCount)
     {
 
@@ -112,6 +114,7 @@ public class EvernoteSyncService extends IntentService
       {
         data = noteStore.getFilteredSyncChunk(mEvernoteSession.getAuthToken(),
             high, 15, filter1);
+        sc.add(data);
       }
       catch (Exception e1)
       {
@@ -123,11 +126,16 @@ public class EvernoteSyncService extends IntentService
       high = data.getChunkHighUSN();
 
       System.out.println(data.getChunkHighUSN() + " " + serverlastUpdateCount);
+    }
 
+    for (SyncChunk data : sc)
+    {
       if (data.isSetTags())
       {
         if (TRIPS_GUID == null)
         {
+          // TODO
+          // bad way of doing this/expensive
           try
           {
             List<Tag> tags = noteStore
@@ -150,6 +158,7 @@ public class EvernoteSyncService extends IntentService
         {
           for (Tag tag : data.getTags())
           {
+
             System.out.println("tag " + tag.getName());
             if (tag.isSetParentGuid() && tag.getParentGuid().equals(TRIPS_GUID))
             {
@@ -161,7 +170,10 @@ public class EvernoteSyncService extends IntentService
           }
         }
       }
+    }
 
+    for (SyncChunk data : sc)
+    {
       if (data.isSetNotebooks())
       {
         for (Notebook notebook : data.getNotebooks())
@@ -173,7 +185,10 @@ public class EvernoteSyncService extends IntentService
           }
         }
       }
+    }
 
+    for (SyncChunk data : sc)
+    {
       if (data.isSetNotes())
       {
         for (Note note : data.getNotes())
@@ -239,6 +254,7 @@ public class EvernoteSyncService extends IntentService
         }
       }
     }
+
     lastUpdateCount = serverlastUpdateCount;
     lastSyncTime = serverLastSyncTime;
     prefs.edit().putInt("lastUpdateCount", lastUpdateCount).commit();
@@ -642,9 +658,16 @@ public class EvernoteSyncService extends IntentService
   @Override
   protected void onHandleIntent(Intent intent)
   {
-    syncCheck();
-    System.out.println("Sync Done");
+    if (mEvernoteSession.isLoggedIn())
+    {
+      syncCheck();
 
+      System.out.println("Sync Done");
+    }
+    else
+    {
+      System.out.println("Not logged in");
+    }
     // m_updateTimer.scheduleAtFixedRate(m_updateTask, 0, UPDATE_FREQUENCY);
   }
 

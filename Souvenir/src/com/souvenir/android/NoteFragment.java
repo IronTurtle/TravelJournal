@@ -34,9 +34,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
@@ -92,15 +94,63 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
 
   // The path to and MIME type of the currently selected image from the
   // gallery
-  private class ImageData
+  public class ImageData implements Parcelable
   {
-    public Bitmap imageBitmap;
+    // public Bitmap imageBitmap;
     public String filePath;
     public String mimeType;
     public String fileName;
     public String hash = "";
     protected String caption = "";
+
     public boolean isNew = false;
+
+    public ImageData(Parcel in)
+    {
+      filePath = in.readString();
+      mimeType = in.readString();
+      fileName = in.readString();
+      hash = in.readString();
+      caption = in.readString();
+      isNew = in.readInt() == 1;
+      // TODO Auto-generated constructor stub
+    }
+
+    public ImageData()
+    {
+      // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public int describeContents()
+    {
+      // TODO Auto-generated method stub
+      return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
+    {
+      dest.writeString(filePath);
+      dest.writeString(mimeType);
+      dest.writeString(fileName);
+      dest.writeString(hash);
+      dest.writeString(caption);
+      dest.writeInt(isNew ? 1 : 0);
+    }
+
+    public final Parcelable.Creator<ImageData> CREATOR = new Parcelable.Creator<ImageData>()
+    {
+      public ImageData createFromParcel(Parcel in)
+      {
+        return new ImageData(in);
+      }
+
+      public ImageData[] newArray(int size)
+      {
+        return new ImageData[size];
+      }
+    };
   }
 
   Uri mImageUri;
@@ -1540,7 +1590,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           BitmapFactory.Options options = new BitmapFactory.Options();
           options.inJustDecodeBounds = true;
 
-          Bitmap tempBitmap = BitmapFactory.decodeFile(image.filePath, options);
+          // Bitmap tempBitmap = BitmapFactory.decodeFile(image.filePath,
+          // options);
 
           int dimen = 0;
           int x = 0;
@@ -1574,10 +1625,11 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           // tempBitmap = BitmapFactory.decodeFile(image.filePath,options);
 
           // Scaling isn't changed...
-          tempBitmap = BitmapFactory.decodeFile(image.filePath);
+          // tempBitmap = BitmapFactory.decodeFile(image.filePath);
 
-          image.imageBitmap = Bitmap.createScaledBitmap(tempBitmap, y, x, true);
-          tempBitmap.recycle();
+          // image.imageBitmap = Bitmap.createScaledBitmap(tempBitmap, y, x,
+          // true);
+          // tempBitmap.recycle();
 
         }
       }
@@ -1825,6 +1877,28 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
           false);
       ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
       // mCaption.setText(imageList.get(position).caption);
+
+      imageView.setOnClickListener(new OnClickListener()
+      {
+
+        @Override
+        public void onClick(View v)
+        {
+          // TODO Auto-generated method stub
+          ImagePagerFragment frag = new ImagePagerFragment();
+          Bundle args1 = new Bundle();
+          args1.putParcelableArrayList("images", clothing);
+          args1.putInt("position", position);
+          // Put any other arguments
+          frag.setArguments(args1);
+
+          FragmentTransaction transaction = getFragmentManager()
+              .beginTransaction();
+          transaction.replace(android.R.id.content, frag);
+          // transaction.addToBackStack(null);
+          transaction.commit();
+        }
+      });
 
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);
