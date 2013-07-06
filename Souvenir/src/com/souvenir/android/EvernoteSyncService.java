@@ -227,7 +227,24 @@ public class EvernoteSyncService extends IntentService
               continue;
             }
             SNote insertNote = new SNote(note2);
-
+            if (insertNote.getTripID() != null)
+            {
+              Cursor resCursor;
+              if ((resCursor = getContentResolver().query(
+                  Uri.parse(SouvenirContentProvider.CONTENT_URI
+                      + SouvenirContentProvider.DatabaseConstants.TRIP),
+                  null,
+                  SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID + "="
+                      + insertNote.getTripID(), null, null)) != null
+                  && resCursor.getCount() > 0)
+              {
+                while (resCursor.moveToNext())
+                {
+                  insertNote.setTripID(new STrip(resCursor).tripName);
+                }
+              }
+              resCursor.close();
+            }
             Uri uri = getContentResolver().insert(
                 Uri.parse(SouvenirContentProvider.CONTENT_URI
                     + SouvenirContentProvider.DatabaseConstants.NOTE),
