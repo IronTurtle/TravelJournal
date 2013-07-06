@@ -247,10 +247,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()
         .showStubImage(R.drawable.traveljournal).build();
 
-    // mTitle.setText("LOREM IPSUM LROSDFSADFSDAFSAFDSDFSDFASFSAFSADF");
-    // urls.add("http://www.joshuakennon.com/wp-content/uploads/2010/01/earnings-yield-stock-valuation.jpg");
-    // urls.add("http://us.123rf.com/400wm/400/400/forwardcom/forwardcom0710/forwardcom071000126/1877196-parthenon-erechthion-herodion-and-lycabetus-the-main-landmarks-of-athens-greece.jpg");
-    pager.setAdapter(new ClothingPagerAdapter(images));
+    pager.setAdapter(new PhotoPagerAdapter(images));
     pager.setOnPageChangeListener(new OnPageChangeListener()
     {
 
@@ -1791,16 +1788,16 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     mLocationEdit.setText(data);
   }
 
-  private class ClothingPagerAdapter extends
+  private class PhotoPagerAdapter extends
       android.support.v4.view.PagerAdapter
   {
 
-    private ArrayList<ImageData> clothing;
+    private ArrayList<ImageData> imageList;
     private LayoutInflater inflater;
 
-    ClothingPagerAdapter(ArrayList<ImageData> clothing)
+    PhotoPagerAdapter(ArrayList<ImageData> imageList)
     {
-      this.clothing = clothing;
+      this.imageList = imageList;
       inflater = getActivity().getLayoutInflater();
     }
 
@@ -1818,7 +1815,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     @Override
     public int getCount()
     {
-      return clothing.size();
+      return imageList.size();
     }
 
     @Override
@@ -1827,12 +1824,12 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
       View imageLayout = inflater.inflate(R.layout.item_pager_image, view,
           false);
       ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
-      // mCaption.setText(clothing.get(position).caption);
+      // mCaption.setText(imageList.get(position).caption);
 
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);
 
-      imageLoader.displayImage("file://" + clothing.get(position).filePath,
+      imageLoader.displayImage("file://" + imageList.get(position).filePath,
           imageView, options, new SimpleImageLoadingListener()
           {
             @Override

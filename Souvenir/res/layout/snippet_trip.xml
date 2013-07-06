@@ -21,7 +21,7 @@
         android:ellipsize="end"
         android:lines="1"
         android:scrollHorizontally="true"
-        android:textColor="@color/primaryOrange"
+        android:textColor="@color/primaryRed"
         android:textSize="25sp"
         android:textStyle="bold"
         android:typeface="sans" 

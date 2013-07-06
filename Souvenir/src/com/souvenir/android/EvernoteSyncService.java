@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -661,6 +662,8 @@ public class EvernoteSyncService extends IntentService
       }
     };
     super.onCreate();
+
+    prefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
   }
 
   @Override
@@ -670,7 +673,7 @@ public class EvernoteSyncService extends IntentService
     super.onDestroy();
   }
 
-  public void userAccountInfo()
+  public void getUserAccountInfo()
   {
     try
     {
@@ -686,12 +689,8 @@ public class EvernoteSyncService extends IntentService
             @Override
             public void onSuccess(User data)
             {
-              System.out.println(data.getUsername());
-              // TODO Auto-generated method stub
-              // SharedPreferences prefs = getSharedPreferences(packageName,
-              // Context.MODE_PRIVATE);
-              // prefs.edit().putString("settings_username",
-              // data.getUsername());
+              System.out.println("get username:" + data.getUsername());
+              saveUsername(data.getUsername());
             }
 
             @Override
@@ -715,5 +714,13 @@ public class EvernoteSyncService extends IntentService
       System.out.println("TTransportException");
       e.printStackTrace();
     }
+  }
+
+  private void saveUsername(String username)
+  {
+    System.out.println("save username:" + username);
+    Editor edit = prefs.edit();
+    edit.putString("username", username);
+    edit.commit();
   }
 }

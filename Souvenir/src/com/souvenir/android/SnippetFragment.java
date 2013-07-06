@@ -131,6 +131,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
 
       // checkForTravelNotebook();
       // syncCheck();
+      // EvernoteSyncService ess = new EvernoteSyncService();
+      // ess.getUserAccountInfo();
     }
     else
     {

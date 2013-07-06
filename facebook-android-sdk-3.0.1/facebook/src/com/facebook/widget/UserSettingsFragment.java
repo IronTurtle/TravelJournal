@@ -16,6 +16,8 @@
 
 package com.facebook.widget;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -68,6 +70,7 @@ public class UserSettingsFragment extends FacebookFragment {
         loginButton = (LoginButton) view.findViewById(R.id.com_facebook_usersettingsfragment_login_button);
         loginButton.setProperties(loginButtonProperties);
         loginButton.setFragment(this);
+       
         Session session = getSession();
         if (session != null && !session.equals(Session.getActiveSession())) {
             loginButton.setSession(session);

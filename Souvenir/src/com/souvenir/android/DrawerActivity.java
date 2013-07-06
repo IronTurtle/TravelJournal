@@ -128,16 +128,17 @@ public class DrawerActivity extends SherlockFragmentActivity
     {
       public void onDrawerClosed(View view)
       {
-        String curTitle = (String) getActionBar().getTitle();
-        if (curTitle.toString().contains(":"))
-        {
-          setTitle(curTitle);
-        }
-        else
-        {
-
-          getActionBar().setTitle(mTitle);
-        }
+        // String curTitle = (String) getActionBar().getTitle();
+        // if (curTitle.toString().contains(":"))
+        // {
+        // setTitle(curTitle);
+        // }
+        // else
+        // {
+        //
+        // getActionBar().setTitle(mTitle);
+        // }
+        getActionBar().setTitle(mTitle);
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
       }
 
@@ -248,9 +249,9 @@ public class DrawerActivity extends SherlockFragmentActivity
       // update the main content by replacing fragments
       fragment = new SnippetFragment();
       break;
-    case SETTINGS_POSITION:
-      fragment = new SettingsFragment();
-      break;
+    // case SETTINGS_POSITION:
+    // fragment = new SettingsFragment();
+    // break;
     }
 
     // FragmentTransaction transaction = getSupportFragmentManager()

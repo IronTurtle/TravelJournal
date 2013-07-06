@@ -7,7 +7,7 @@
     </style>
 
     <style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/primaryOrange</item>
+        <item name="android:background">@color/primaryRed</item>
     </style>
 
 </resources>

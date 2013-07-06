@@ -39,6 +39,7 @@
 
     <color name="primaryOrange">#f3c21c</color>
     <color name="primaryBlack">#000000</color>
+    <color name="primaryRed">#be1e2d</color>
 
     <string name="app_name_banner">SOUVENIR</string>
     <string name="dialog_award_title">Give An Award:</string>
@@ -75,7 +76,7 @@
         <!-- <item>Explore</item> -->
         <item>Trips</item>
         <item>All Souvenirs</item>
-        <item>Settings</item>
+        <!-- <item>Settings</item> -->
     </string-array>
     
     <string-array name="trips_array">

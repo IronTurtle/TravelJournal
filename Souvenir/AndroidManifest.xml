@@ -14,7 +14,7 @@
         android:targetSdkVersion="17" />
 
     <application
-        android:icon="@drawable/icon"
+        android:icon="@drawable/icon_souvenir"
         android:label="@string/app_name"
         android:theme="@style/Theme.Styled" >
 

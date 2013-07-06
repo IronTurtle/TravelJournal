@@ -37,6 +37,7 @@ public class UninterceptableViewPager extends ViewPager
     boolean ret = super.onInterceptTouchEvent(ev);
     // if (ret)
     // {
+
     getParent().requestDisallowInterceptTouchEvent(true);
     // }
     return ret;

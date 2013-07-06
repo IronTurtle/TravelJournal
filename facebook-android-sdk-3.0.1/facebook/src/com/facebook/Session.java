@@ -318,6 +318,12 @@ public class Session implements Serializable {
             return (this.tokenInfo == null) ? null : this.tokenInfo.getToken();
         }
     }
+    
+    public final void setAccessToken(String token) {
+        synchronized (this.lock) {
+            
+        }
+    }
 
     /**
      * <p>

@@ -1,7 +1,9 @@
 package com.souvenir.android;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -10,11 +12,16 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 public class SplashActivity extends Activity
 {
 
+  SharedPreferences pref;
+
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.splash);
+
+    pref = this.getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+    String access_token = pref.getString("facebook_access_token", null);
 
     if (!ImageLoader.getInstance().isInited())
     {
@@ -55,5 +62,4 @@ public class SplashActivity extends Activity
     splashThread.start();
 
   }
-
 }
