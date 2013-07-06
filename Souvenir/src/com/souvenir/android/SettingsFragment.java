@@ -17,6 +17,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.evernote.client.android.InvalidAuthenticationException;
 import com.facebook.widget.LoginButton;
 
 public class SettingsFragment extends ParentFragment
@@ -60,6 +61,47 @@ public class SettingsFragment extends ParentFragment
     return view;
   }
 
+  private void updateUi()
+  {
+    if (mEvernoteSession.isLoggedIn())
+    {
+      // mBtnAuth.setText(R.string.label_log_out);
+      View b = this.getView().findViewById(R.id.auth_button);
+      // b.setVisibility(View.GONE);
+
+      // checkForTravelNotebook();
+      // syncCheck();
+      // EvernoteSyncService ess = new EvernoteSyncService();
+      // ess.getUserAccountInfo();
+    }
+    else
+    {
+      View b = this.getView().findViewById(R.id.auth_button);
+      // b.setVisibility(View.VISIBLE);
+      // mBtnAuth.setText(R.string.label_log_in);
+    }
+  }
+
+  public void startAuth(View view)
+  {
+    if (mEvernoteSession.isLoggedIn())
+    {
+      try
+      {
+        mEvernoteSession.logOut(this.getActivity().getApplicationContext());
+      }
+      catch (InvalidAuthenticationException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    else
+    {
+      mEvernoteSession.authenticate(this.getActivity());
+    }
+    updateUi();
+  }
+
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
   {
@@ -80,6 +122,7 @@ public class SettingsFragment extends ParentFragment
   public void onResume()
   {
     super.onResume();
+    updateUi();
   }
 
   private class FacebookOnClickListener implements Button.OnClickListener

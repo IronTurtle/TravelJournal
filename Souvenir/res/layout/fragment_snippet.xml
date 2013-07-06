@@ -5,14 +5,14 @@
     android:background="@android:color/darker_gray"
     android:orientation="vertical" >
 
-  	<Button
-      android:id="@+id/auth_button"
-      style="@color/primaryOrange"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="20dp"
-      android:background="@color/primaryOrange"
-      android:text="@string/label_log_in" />
+<!--   	<Button -->
+<!--       android:id="@+id/auth_button" -->
+<!--       style="@color/primaryOrange" -->
+<!--       android:layout_width="fill_parent" -->
+<!--       android:layout_height="wrap_content" -->
+<!--       android:layout_marginTop="20dp" -->
+<!--       android:background="@color/primaryOrange" -->
+<!--       android:text="@string/label_log_in" /> -->
 
   <ListView
       android:id="@+id/lview"

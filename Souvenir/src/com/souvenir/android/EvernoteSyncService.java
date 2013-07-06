@@ -685,7 +685,7 @@ public class EvernoteSyncService extends IntentService
     {
       System.out.println("Not logged in");
     }
-    m_updateTimer.scheduleAtFixedRate(m_updateTask, 0, UPDATE_FREQUENCY);
+    // m_updateTimer.scheduleAtFixedRate(m_updateTask, 0, UPDATE_FREQUENCY);
   }
 
   @Override

@@ -50,7 +50,6 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.edam.type.Note;
 import com.souvenir.android.CreateDialogFragment.DialogListener;
 import com.souvenir.android.NewTripDialogFragment.TripDialogListener;
@@ -88,8 +87,8 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     abs.setDisplayHomeAsUpEnabled(true);
     setHasOptionsMenu(true);
     View view = inflater.inflate(R.layout.fragment_snippet, container, false);
-    mBtnAuth = (Button) view.findViewById(R.id.auth_button);
-    mBtnAuth.setOnClickListener(this);
+    // mBtnAuth = (Button) view.findViewById(R.id.auth_button);
+    // mBtnAuth.setOnClickListener(this);
 
     listView = (ListView) view.findViewById(R.id.lview);
     adapter = new SnippetCursorAdapter(getActivity(), null, 0);
@@ -118,7 +117,7 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   public void onResume()
   {
     super.onResume();
-    updateUi();
+    // updateUi();
     if (((DrawerActivity) getActivity()).isAutosync())
     {
       getActivity().startService(
@@ -126,47 +125,6 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
     }
     getActivity().getSupportLoaderManager().restartLoader(id, null, this);
     adapter.notifyDataSetChanged();
-  }
-
-  private void updateUi()
-  {
-    if (mEvernoteSession.isLoggedIn())
-    {
-      // mBtnAuth.setText(R.string.label_log_out);
-      View b = this.getView().findViewById(R.id.auth_button);
-      b.setVisibility(View.GONE);
-
-      // checkForTravelNotebook();
-      // syncCheck();
-      // EvernoteSyncService ess = new EvernoteSyncService();
-      // ess.getUserAccountInfo();
-    }
-    else
-    {
-      View b = this.getView().findViewById(R.id.auth_button);
-      b.setVisibility(View.VISIBLE);
-      // mBtnAuth.setText(R.string.label_log_in);
-    }
-  }
-
-  public void startAuth(View view)
-  {
-    if (mEvernoteSession.isLoggedIn())
-    {
-      try
-      {
-        mEvernoteSession.logOut(this.getActivity().getApplicationContext());
-      }
-      catch (InvalidAuthenticationException e)
-      {
-        e.printStackTrace();
-      }
-    }
-    else
-    {
-      mEvernoteSession.authenticate(this.getActivity());
-    }
-    updateUi();
   }
 
   public void addNoteOnClick(View view)
@@ -208,11 +166,11 @@ public class SnippetFragment extends ParentFragment implements OnClickListener,
   {
     switch (v.getId())
     {
-    case R.id.auth_button:
-
-      startAuth(this.getView());
-
-      break;
+    // case R.id.auth_button:
+    //
+    // startAuth(this.getView());
+    //
+    // break;
     }
   }
 

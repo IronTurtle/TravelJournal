@@ -10,7 +10,7 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/settings_btn_evernotesync"
+        android:id="@+id/auth_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Sync with Evernote" />

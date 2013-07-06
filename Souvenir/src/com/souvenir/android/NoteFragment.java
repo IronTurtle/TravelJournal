@@ -1149,7 +1149,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     // snote.finished = mIsFinished.isChecked();
 
     snote.tripID = ((STrip) tripMap.get(tripSpinner.getSelectedItem()
-        .toString())).evernoteGUID;
+        .toString())).tripName;
     Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.NOTE),
@@ -1214,7 +1214,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     snote.setId(mNote.getId());
     // snote.finished = mIsFinished.isChecked();
     snote.setTripID(tripSpinner.getSelectedItem().toString());
-//    snote.setTripName(tripSpinner.getSelectedItem().toString().trim());
+    // snote.setTripName(tripSpinner.getSelectedItem().toString().trim());
 
     if (!title.equals(mNote.getTitle()))
     {
