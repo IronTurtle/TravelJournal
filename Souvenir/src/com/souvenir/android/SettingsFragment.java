@@ -63,12 +63,6 @@ public class SettingsFragment extends ParentFragment
     return view;
   }
 
-  public void saveAutoSyncPref(boolean isChecked)
-  {
-
-    pref.edit().putBoolean("autosync", isChecked).commit();
-  }
-
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
   {
@@ -102,6 +96,12 @@ public class SettingsFragment extends ParentFragment
       transaction.addToBackStack(null);
       transaction.commit();
     }
+  }
+
+  public void saveAutoSyncPref(boolean isChecked)
+  {
+
+    pref.edit().putBoolean("autosync", isChecked).commit();
   }
 
 }
