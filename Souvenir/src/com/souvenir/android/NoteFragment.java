@@ -1155,7 +1155,7 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     // snote.finished = mIsFinished.isChecked();
 
     snote.tripID = ((STrip) tripMap.get(tripSpinner.getSelectedItem()
-        .toString())).evernoteGUID;
+        .toString())).tripName;
     Uri uri = getActivity().getContentResolver().insert(
         Uri.parse(SouvenirContentProvider.CONTENT_URI
             + SouvenirContentProvider.DatabaseConstants.NOTE),
@@ -1242,12 +1242,14 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     if (!location.equals(mNote.getLocation()))
     {
+      // System.out.println(location);
+      // System.out.println(mNote.getLocation());
       snote.issetV.add(SNote.isset.location);
     }
     if (!(tripSpinner.getSelectedItem().toString()).equals(mNote.getTripID()))
     {
       snote.issetV.add(SNote.isset.tripid);
-      snote.issetV.add(SNote.isset.tripname);
+      // snote.issetV.add(SNote.isset.tripname);
     }
     // System.out.println(SNote.encode((EnumSet<SNote.isset>) snote.issetV));
     snote.setDirty(true);

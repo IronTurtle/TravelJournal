@@ -119,7 +119,7 @@ public class ImagePagerFragment extends ParentFragment
     super.onCreateView(inflater, container, savedInstanceState);
     setHasOptionsMenu(true);
     getSherlockActivity().getSupportActionBar().hide();
-
+    getActivity().invalidateOptionsMenu();
     pager = (ViewPager) view.findViewById(R.id.bigpager);
 
     options = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc()

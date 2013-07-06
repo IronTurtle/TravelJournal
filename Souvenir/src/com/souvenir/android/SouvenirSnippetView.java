@@ -98,13 +98,16 @@ public class SouvenirSnippetView extends RelativeLayout
     if (!mNote.resources.isEmpty())
     {
       // System.out.println("file://" + mNote.resources.get(0).getPath());
-      snippetPic.setVisibility(View.VISIBLE);
+      // snippetPic.setVisibility(View.VISIBLE);
       ImageLoader.getInstance().displayImage(
           "file://" + mNote.resources.get(0).getPath(), snippetPic, options);
     }
     else
     {
-      snippetPic.setVisibility(View.INVISIBLE);
+      // snippetPic.setVisibility(View.INVISIBLE);
+      // snippetPic.setImageResource(android.R.color.transparent);
+      // snippetPic.setBackgroundColor(getResources().getColor(
+      // android.R.color.white));
       ImageLoader.getInstance().displayImage(
           "drawable://" + R.drawable.traveljournal, snippetPic, options);
     }
