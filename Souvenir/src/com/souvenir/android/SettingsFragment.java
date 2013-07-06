@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -20,11 +21,12 @@ import com.actionbarsherlock.view.MenuItem;
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.facebook.widget.LoginButton;
 
-public class SettingsFragment extends ParentFragment
+public class SettingsFragment extends ParentFragment implements OnClickListener
 {
   TextView username;
   LoginButton fbLoginBtn;
   Switch autoSyncSwitch;
+  Button auth_button;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,6 +40,9 @@ public class SettingsFragment extends ParentFragment
     SharedPreferences pref = getActivity().getSharedPreferences(
         getActivity().getApplicationContext().getPackageName(),
         Context.MODE_PRIVATE);
+
+    auth_button = (Button) view.findViewById(R.id.auth_button);
+    auth_button.setOnClickListener(this);
 
     username = (TextView) view.findViewById(R.id.settings_username);
     username.setText(pref.getString("settings_username", null));
@@ -136,6 +141,13 @@ public class SettingsFragment extends ParentFragment
       transaction.addToBackStack(null);
       transaction.commit();
     }
+  }
+
+  @Override
+  public void onClick(View v)
+  {
+    // TODO Auto-generated method stub
+    startAuth(v);
   }
 
 }

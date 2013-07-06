@@ -69,7 +69,8 @@ public class SNote implements Parcelable
   {
     content, location, resources, tags, title, tripid, // tripid just added (7/4
                                                        // - Kevin)
-    tripname// tripid just added (7/5 - Kevin)
+                                                       // tripname// tripid just
+                                                       // added (7/5 - Kevin)
   }
 
   // From Adamski's answer
@@ -169,7 +170,9 @@ public class SNote implements Parcelable
   {
     this.title = note.getTitle();
     this.content = note.getContent();
-    // this.location = note.getAttributes().ge;
+    this.location = note.getAttributes().getPlaceName();
+    if (this.location == null)
+      this.location = "";
     this.modifyDate = note.getUpdated();
     this.createDate = note.getCreated();
     this.evernoteGUID = note.getGuid();

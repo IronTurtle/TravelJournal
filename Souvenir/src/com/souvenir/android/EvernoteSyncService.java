@@ -212,20 +212,24 @@ public class EvernoteSyncService extends IntentService
               SNote oldNote = new SNote(cursor);
               // System.out.println(oldNote.getEvernoteGUID());
             }
-            cursor.close();
             // System.out.println("syncnumber: " + syncnum);
+            cursor.close();
             continue;
           }
+          cursor.close();
 
           try
           {
             // System.out.println("new note");
-            Note note2 = noteStore.getNote(mEvernoteSession.getAuthToken(),
-                note.getGuid(), true, true, false, false);
-            if (!note.isActive())
+            if (!note.isActive()
+                || !note.getNotebookGuid().equals(NOTEBOOK_GUID))
             {
               continue;
             }
+
+            Note note2 = noteStore.getNote(mEvernoteSession.getAuthToken(),
+                note.getGuid(), true, true, false, false);
+
             SNote insertNote = new SNote(note2);
             if (insertNote.getTripID() != null)
             {
@@ -458,8 +462,9 @@ public class EvernoteSyncService extends IntentService
           {
             snote.addResource(new SResource(resCursor));
           }
-          resCursor.close();
         }
+        resCursor.close();
+
         System.out.println("getting trips...");
         // note trip
         Cursor tripCursor;
