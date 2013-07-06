@@ -44,9 +44,9 @@ public class FacebookLoginFragment extends ParentFragment implements
       {
         // TODO Auto-generated method stub
         this.cur = session;
-        pref.edit().putString("facebook_app_id", session.getApplicationId());
-        pref.edit()
-            .putString("facebook_access_token", session.getAccessToken());
+        // pref.edit().putString("facebook_app_id", session.getApplicationId());
+        // pref.edit()
+        // .putString("facebook_access_token", session.getAccessToken());
       }
     });
 
