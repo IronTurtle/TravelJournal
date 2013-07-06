@@ -234,8 +234,8 @@ public class EvernoteSyncService extends IntentService
                   Uri.parse(SouvenirContentProvider.CONTENT_URI
                       + SouvenirContentProvider.DatabaseConstants.TRIP),
                   null,
-                  SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID + "="
-                      + insertNote.getTripID(), null, null)) != null
+                  SouvenirContract.SouvenirTrip.COLUMN_NAME_TRIP_GUID + "='"
+                      + insertNote.getTripID() + "'", null, null)) != null
                   && resCursor.getCount() > 0)
               {
                 while (resCursor.moveToNext())
