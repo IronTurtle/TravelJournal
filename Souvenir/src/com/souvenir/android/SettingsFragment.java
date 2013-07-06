@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -17,13 +18,16 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.evernote.client.android.InvalidAuthenticationException;
 import com.facebook.widget.LoginButton;
 
-public class SettingsFragment extends ParentFragment
+public class SettingsFragment extends ParentFragment implements OnClickListener
 {
   TextView username;
   LoginButton fbLoginBtn;
   Switch autoSyncSwitch;
+  Button auth_button;
+
   SharedPreferences pref;
 
   @Override
@@ -38,6 +42,9 @@ public class SettingsFragment extends ParentFragment
     pref = getActivity().getSharedPreferences(
         getActivity().getApplicationContext().getPackageName(),
         Context.MODE_PRIVATE);
+
+    auth_button = (Button) view.findViewById(R.id.auth_button);
+    auth_button.setOnClickListener(this);
 
     username = (TextView) view.findViewById(R.id.settings_username);
     username.setText(pref.getString("settings_username", null));
@@ -63,6 +70,49 @@ public class SettingsFragment extends ParentFragment
     return view;
   }
 
+  private void updateUi()
+  {
+    if (mEvernoteSession.isLoggedIn())
+    {
+      // mBtnAuth.setText(R.string.label_log_out);
+      Button b = (Button) this.getView().findViewById(R.id.auth_button);
+      b.setText(R.string.label_log_out);
+      // b.setVisibility(View.GONE);
+
+      // checkForTravelNotebook();
+      // syncCheck();
+      // EvernoteSyncService ess = new EvernoteSyncService();
+      // ess.getUserAccountInfo();
+    }
+    else
+    {
+      Button b = (Button) this.getView().findViewById(R.id.auth_button);
+      b.setText(R.string.label_log_in);
+      // b.setVisibility(View.VISIBLE);
+      // mBtnAuth.setText(R.string.label_log_in);
+    }
+  }
+
+  public void startAuth(View view)
+  {
+    if (mEvernoteSession.isLoggedIn())
+    {
+      try
+      {
+        mEvernoteSession.logOut(this.getActivity().getApplicationContext());
+      }
+      catch (InvalidAuthenticationException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    else
+    {
+      mEvernoteSession.authenticate(this.getActivity());
+    }
+    updateUi();
+  }
+
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
   {
@@ -83,6 +133,7 @@ public class SettingsFragment extends ParentFragment
   public void onResume()
   {
     super.onResume();
+    updateUi();
   }
 
   private class FacebookOnClickListener implements Button.OnClickListener
@@ -96,6 +147,13 @@ public class SettingsFragment extends ParentFragment
       transaction.addToBackStack(null);
       transaction.commit();
     }
+  }
+
+  @Override
+  public void onClick(View v)
+  {
+    // TODO Auto-generated method stub
+    startAuth(v);
   }
 
   public void saveAutoSyncPref(boolean isChecked)

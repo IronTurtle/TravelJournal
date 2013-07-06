@@ -14,7 +14,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:text="Sync with Evernote" />
+        android:text="@string/label_log_in"
+        android:background="@color/primaryRed"
+        android:onClick="startAuth" />
 
     <Switch
         android:id="@+id/settings_switch_autosync"

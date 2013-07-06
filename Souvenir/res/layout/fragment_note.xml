@@ -99,12 +99,15 @@
 
 	        </ViewSwitcher>
 
-	        <Button
+	        <ImageButton
 	            android:id="@+id/note_location_btn"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_weight="4"
 	            android:text="Sel" />
+	        
+	        <!-- 
+	            android:background="@drawable/location" -->
 
         </LinearLayout>
         <com.souvenir.android.UninterceptableViewPager

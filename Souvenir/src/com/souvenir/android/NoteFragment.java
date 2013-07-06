@@ -725,7 +725,8 @@ public class NoteFragment extends ParentFragment implements OnClickListener,
     }
     else
     {
-      viewEdit.setTitle(R.string.note_edit_mode_string);
+      viewEdit.setTitle(R.string.note_edit_mode_string).setIcon(
+          R.drawable.pencil);
     }
 
   }
