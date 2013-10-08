@@ -181,8 +181,8 @@ public class DrawerActivity extends SherlockFragmentActivity
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
     // enable ActionBar app icon to behave as action to toggle nav drawer
-    getActionBar().setDisplayHomeAsUpEnabled(true);
-    getActionBar().setHomeButtonEnabled(true);
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setHomeButtonEnabled(true);
     int titleId = Resources.getSystem().getIdentifier("action_bar_title", "id",
         "android");
     TextView yourTextView = (TextView) findViewById(titleId);
@@ -205,7 +205,7 @@ public class DrawerActivity extends SherlockFragmentActivity
     {
       public void onDrawerClosed(View view)
       {
-        // String curTitle = (String) getActionBar().getTitle();
+        // String curTitle = (String) getSupportActionBar().getTitle();
         // if (curTitle.toString().contains(":"))
         // {
         // setTitle(curTitle);
@@ -213,15 +213,15 @@ public class DrawerActivity extends SherlockFragmentActivity
         // else
         // {
         //
-        // getActionBar().setTitle(mTitle);
+        // getSupportActionBar().setTitle(mTitle);
         // }
-        getActionBar().setTitle(mTitle);
+        getSupportActionBar().setTitle(mTitle);
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
       }
 
       public void onDrawerOpened(View drawerView)
       {
-        getActionBar().setTitle(mDrawerTitle);
+        getSupportActionBar().setTitle(mDrawerTitle);
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
       }
     };
@@ -279,7 +279,7 @@ public class DrawerActivity extends SherlockFragmentActivity
     // case R.id.action_websearch:
     // // create intent to perform web search for this planet
     // Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-    // intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
+    // intent.putExtra(SearchManager.QUERY, getSupportActionBar().getTitle());
     // // catch event that there's no activity to handle intent
     // if (intent.resolveActivity(getPackageManager()) != null) {
     // startActivity(intent);
@@ -352,7 +352,7 @@ public class DrawerActivity extends SherlockFragmentActivity
   public void setTitle(CharSequence title)
   {
     mTitle = title;
-    getActionBar().setTitle(mTitle);
+    getSupportActionBar().setTitle(mTitle);
   }
 
   /**
